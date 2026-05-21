@@ -11,7 +11,22 @@ risks = [
 print("=== AI Operations Risk Summary ===\n")
 
 for risk in risks:
-    print(f"[SEVERITY {risk['severity']}] {risk['name']}")
+
+    # Store the severity number from the dictionary
+    severity = risk["severity"]
+
+    # Determine priority level
+    if severity >= 9:
+        priority = "CRITICAL"
+
+    elif severity >= 7:
+        priority = "HIGH"
+
+    else:
+        priority = "MODERATE"
+
+    # Print formatted output
+    print(f"[{priority}] Severity {severity} - {risk['name']}")
 
 print("\nRecommended Actions:")
 print("Prioritize remediation of the highest severity risks first.")
