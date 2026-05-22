@@ -1,7 +1,10 @@
-name,severity
-Weak Password Policy,9
-Outdated Firewall Firmware,8
-No MFA for VPN,10
-Inactive User Accounts,6
-Phishing,10
-Social Engineering,10
+name,severity,timestamp
+Weak Password Policy,9,2026-05-15 10:30:00
+Outdated Firewall Firmware,8,2026-05-15 11:15:00
+No MFA for VPN,10,2026-05-16 08:45:00
+Inactive User Accounts,6,2026-05-16 13:20:00
+Phishing,10,2026-05-17 09:10:00
+Social Engineering,10,2026-05-17 14:40:00
+Exposed RDP Port,9,2026-05-18 16:05:00
+Aging Hardware,2,2026-05-19 12:00:00
+Weak Wi-Fi Security,8,2026-05-21 19:29:46
