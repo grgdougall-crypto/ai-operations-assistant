@@ -10,6 +10,8 @@
 | BACKUP/RECOVERY FAILURE | CRITICAL | 9 | Backup and Recovery | OPEN | 2026-05-21 20:09:03 | Verify backup integrity and perform a test restore. |
 | SHARED ADMIN ACCOUNT | CRITICAL | 9 | Authentication | OPEN | 2026-05-21 20:35:09 | Review privileged access and remove shared or unnecessary admin accounts. |
 | DEFAULT ROUTER CREDENTIALS | CRITICAL | 9 | Network | OPEN | 2026-05-21 20:38:16Unpatched Domain Controller | Replace default credentials and restrict management access. |
+| EXPOSED DATABASE PORT | CRITICAL | 9 | Network | OPEN | 2026-05-21 21:31:17 | Review data access controls and investigate possible exposure. |
+| EXPOSED DATABASE PORT | CRITICAL | 9 | Network | OPEN | 2026-05-21 21:36:06 | Review data access controls and investigate possible exposure. |
 | OUTDATED FIREWALL FIRMWARE | HIGH | 8 | Network | IN PROGRESS | 2026-05-15 11:15:00 | Update firewall firmware and review network rules. |
 | WEAK WI-FI SECURITY | HIGH | 8 | Network | IN PROGRESS | 2026-05-21 19:29:46 | Review wireless security settings and enforce strong encryption. |
 | DATA LEAK | HIGH | 8 | Data Protection | OPEN | 2026-05-21 19:39:40 | Review data access controls and investigate possible exposure. |
@@ -30,19 +32,19 @@
 
 ## Executive Summary
 
-- Critical Risks: **8**
+- Critical Risks: **10**
 - High Risks: **12**
 - Moderate Risks: **3**
-- Average Severity: **7.87**
+- Average Severity: **7.96**
 - Highest Risk: **NO MFA FOR VPN** (Severity 10)
-- Newest Risk Added: **STALE SERVICE ACCOUNT**
+- Newest Risk Added: **EXPOSED DATABASE PORT**
 
 ---
 
 ## Category Summary
 
 - Authentication: **4**
-- Network: **4**
+- Network: **6**
 - User Access: **2**
 - Security Awareness: **2**
 - Endpoint Security: **3**
@@ -56,7 +58,7 @@
 
 ## Status Summary
 
-- OPEN: **15**
+- OPEN: **17**
 - IN PROGRESS: **4**
 - MITIGATED: **1**
 - ACCEPTED: **2**

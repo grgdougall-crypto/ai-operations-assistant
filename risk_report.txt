@@ -49,6 +49,18 @@ Status: OPEN
 Timestamp: 2026-05-21 20:38:16Unpatched Domain Controller
 Recommendation: Replace default credentials and restrict management access.
 
+[CRITICAL] Severity 9 - EXPOSED DATABASE PORT
+Category: Network
+Status: OPEN
+Timestamp: 2026-05-21 21:31:17
+Recommendation: Review data access controls and investigate possible exposure.
+
+[CRITICAL] Severity 9 - EXPOSED DATABASE PORT
+Category: Network
+Status: OPEN
+Timestamp: 2026-05-21 21:36:06
+Recommendation: Review data access controls and investigate possible exposure.
+
 [HIGH] Severity 8 - OUTDATED FIREWALL FIRMWARE
 Category: Network
 Status: IN PROGRESS
@@ -139,32 +151,3 @@ Status: ACCEPTED
 Timestamp: 2026-05-19 12:00:00
 Recommendation: Review and remediate this risk as soon as possible.
 
-Executive Summary
-=================
-Critical Risks: 8
-High Risks: 12
-Moderate Risks: 3
-Average Severity: 7.87
-Highest Risk: NO MFA FOR VPN (Severity 10)
-Newest Risk Added: STALE SERVICE ACCOUNT
-
-Category Summary
-================
-Authentication: 4
-Network: 4
-User Access: 2
-Security Awareness: 2
-Endpoint Security: 3
-Data Protection: 1
-Incident Response: 1
-Physical Security: 1
-Backup and Recovery: 2
-Infrastructure: 3
-
-Status Summary
-==============
-OPEN: 15
-IN PROGRESS: 4
-MITIGATED: 1
-ACCEPTED: 2
-CLOSED: 1

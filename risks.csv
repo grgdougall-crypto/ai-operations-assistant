@@ -22,3 +22,5 @@ Deprecated TLS Version,8,Infrastructure,OPEN,2026-05-21 20:56:40
 Outdated SSL Certificate,7,Infrastructure,OPEN,2026-05-21 21:02:33
 Expired Antivirus Signatures,8,Endpoint Security,OPEN,2026-05-21 21:09:10
 STALE SERVICE ACCOUNT,8,Authentication,OPEN,2026-05-21 21:22:20
+EXPOSED DATABASE PORT,9,Network,OPEN,2026-05-21 21:31:17
+EXPOSED DATABASE PORT,9,Network,OPEN,2026-05-21 21:36:06
