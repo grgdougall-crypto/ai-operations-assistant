@@ -10,7 +10,9 @@ risks = [
 
 print("=== AI Operations Risk Summary ===\n")
 
-for risk in risks:
+sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+
+for risk in sorted_risks:
 
     # Store the severity number from the dictionary
     severity = risk["severity"]
