@@ -87,6 +87,28 @@ def determine_due_status(due_date, status):
     return "ON TRACK"
 
 
+def calculate_days_open(timestamp):
+    created_date = datetime.strptime(
+        timestamp,
+        "%Y-%m-%d %H:%M:%S"
+    ).date()
+
+    today = date.today()
+
+    return (today - created_date).days
+
+
+def calculate_days_until_due(due_date):
+    due_date_object = datetime.strptime(
+        due_date,
+        "%Y-%m-%d"
+    ).date()
+
+    today = date.today()
+
+    return (due_date_object - today).days
+
+
 def recommend_action(risk_name):
     risk_name = risk_name.lower()
 
@@ -114,6 +136,8 @@ def recommend_action(risk_name):
         return "Upgrade or replace unsupported systems and apply compensating controls."
     elif "encryption" in risk_name:
         return "Review encryption settings and enforce approved encryption standards."
+    elif "ssl" in risk_name or "certificate" in risk_name:
+        return "Renew the certificate and verify TLS configuration."
     else:
         return "Review and remediate this risk as soon as possible."
 
@@ -178,6 +202,8 @@ for risk in risks:
     risk["priority"] = determine_priority(risk["severity"])
     risk["recommendation"] = recommend_action(risk["name"])
     risk["due_status"] = determine_due_status(risk["due_date"], risk["status"])
+    risk["days_open"] = calculate_days_open(risk["timestamp"])
+    risk["days_until_due"] = calculate_days_until_due(risk["due_date"])
 
 sorted_risks = sorted(
     risks,
@@ -190,6 +216,27 @@ high_count = sum(1 for risk in risks if risk["priority"] == "HIGH")
 moderate_count = sum(1 for risk in risks if risk["priority"] == "MODERATE")
 overdue_count = sum(1 for risk in risks if risk["due_status"] == "OVERDUE")
 on_track_count = sum(1 for risk in risks if risk["due_status"] == "ON TRACK")
+
+critical_overdue_count = sum(
+    1 for risk in risks
+    if risk["priority"] == "CRITICAL"
+    and risk["due_status"] == "OVERDUE"
+)
+
+due_soon_count = sum(
+    1 for risk in risks
+    if 0 <= risk["days_until_due"] <= 7
+)
+
+open_risks = [
+    risk for risk in risks
+    if risk["status"] in ["OPEN", "IN PROGRESS"]
+]
+
+oldest_open_risk = max(
+    open_risks,
+    key=lambda risk: risk["days_open"]
+)
 
 category_counts = {}
 status_counts = {}
@@ -215,6 +262,8 @@ for risk in sorted_risks:
     print(f"Timestamp: {risk['timestamp']}")
     print(f"Due Date: {risk['due_date']}")
     print(f"Due Status: {risk['due_status']}")
+    print(f"Days Open: {risk['days_open']}")
+    print(f"Days Until Due: {risk['days_until_due']}")
     print(f"Recommendation: {risk['recommendation']}\n")
 
 print("=== Executive Summary ===")
@@ -226,6 +275,14 @@ print(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}")
 print(f"Newest Risk Added: {newest_risk['id']}")
 print(f"Overdue Risks: {overdue_count}")
 print(f"On Track Risks: {on_track_count}")
+
+print("\n=== SLA Summary ===")
+print(f"Critical Risks Overdue: {critical_overdue_count}")
+print(f"Risks Due Within 7 Days: {due_soon_count}")
+print(
+    f"Oldest Open Risk: {oldest_open_risk['id']} "
+    f"({oldest_open_risk['days_open']} days open)"
+)
 
 print("\n=== Category Summary ===")
 for category, count in category_counts.items():
@@ -257,6 +314,8 @@ with open(TXT_REPORT, mode="w") as report:
         report.write(f"Timestamp: {risk['timestamp']}\n")
         report.write(f"Due Date: {risk['due_date']}\n")
         report.write(f"Due Status: {risk['due_status']}\n")
+        report.write(f"Days Open: {risk['days_open']}\n")
+        report.write(f"Days Until Due: {risk['days_until_due']}\n")
         report.write(f"Recommendation: {risk['recommendation']}\n\n")
 
     report.write("=== Executive Summary ===\n")
@@ -268,6 +327,14 @@ with open(TXT_REPORT, mode="w") as report:
     report.write(f"Newest Risk Added: {newest_risk['id']}\n")
     report.write(f"Overdue Risks: {overdue_count}\n")
     report.write(f"On Track Risks: {on_track_count}\n\n")
+
+    report.write("=== SLA Summary ===\n")
+    report.write(f"Critical Risks Overdue: {critical_overdue_count}\n")
+    report.write(f"Risks Due Within 7 Days: {due_soon_count}\n")
+    report.write(
+        f"Oldest Open Risk: {oldest_open_risk['id']} "
+        f"({oldest_open_risk['days_open']} days open)\n\n"
+    )
 
     report.write("=== Category Summary ===\n")
     for category, count in category_counts.items():
@@ -290,10 +357,10 @@ with open(MD_REPORT, mode="w") as report:
     report.write("# AI Operations Risk Report\n\n")
 
     report.write(
-        "| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Recommendation |\n"
+        "| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n"
     )
     report.write(
-        "|----|------|----------|----------|----------|--------|-------|------------|----------|------------|----------------|\n"
+        "|----|------|----------|----------|----------|--------|-------|------------|----------|------------|-----------|----------------|----------------|\n"
     )
 
     for risk in sorted_risks:
@@ -308,6 +375,8 @@ with open(MD_REPORT, mode="w") as report:
             f"{risk['timestamp']} | "
             f"{risk['due_date']} | "
             f"{risk['due_status']} | "
+            f"{risk['days_open']} | "
+            f"{risk['days_until_due']} | "
             f"{risk['recommendation']} |\n"
         )
 
@@ -320,6 +389,14 @@ with open(MD_REPORT, mode="w") as report:
     report.write(f"- Newest Risk Added: {newest_risk['id']}\n")
     report.write(f"- Overdue Risks: {overdue_count}\n")
     report.write(f"- On Track Risks: {on_track_count}\n")
+
+    report.write("\n## SLA Summary\n\n")
+    report.write(f"- Critical Risks Overdue: {critical_overdue_count}\n")
+    report.write(f"- Risks Due Within 7 Days: {due_soon_count}\n")
+    report.write(
+        f"- Oldest Open Risk: {oldest_open_risk['id']} "
+        f"({oldest_open_risk['days_open']} days open)\n"
+    )
 
     report.write("\n## Category Summary\n\n")
     for category, count in category_counts.items():
