@@ -22,15 +22,15 @@
 | RISK-020 | EXPOSED BACKUP SHARE | HIGH | 8 | Backup and Recovery | OPEN | Infrastructure Team | 2026-05-21 23:31:01 | 2026-05-26 | ON TRACK | 0 | 5 | Verify backup integrity and perform a test restore. |
 | RISK-011 | MISSING ENDPOINT MONITORING | HIGH | 7 | Endpoint Security | OPEN | Security Team | 2026-05-21 22:05:00 | 2026-06-20 | ON TRACK | 0 | 30 | Review and remediate this risk as soon as possible. |
 | RISK-017 | EXPIRED SSL CERTIFICATE | HIGH | 7 | Infrastructure | OPEN | Infrastructure Team | 2026-05-21 22:55:00 | 2026-05-25 | ON TRACK | 0 | 4 | Renew the certificate and verify TLS configuration. |
+| RISK-021 | TEST | MODERATE | 1 | Authentication | CLOSED | SOC Analyst | 2026-05-21 23:47:33 | 2026-05-22 | NOT ACTIVE | 0 | 1 | Review and remediate this risk as soon as possible. |
 
 ## Executive Summary
 
 - Critical Risks: 8
 - High Risks: 12
-- Moderate Risks: 0
-- Average Severity: 8.35
+- Moderate Risks: 1
+- Average Severity: 8.00
 - Highest Risk: RISK-003 - NO MFA FOR VPN
-- Newest Risk Added: RISK-020
 - Overdue Risks: 0
 - On Track Risks: 20
 
@@ -42,7 +42,7 @@
 
 ## Category Summary
 
-- Authentication: 5
+- Authentication: 6
 - Network: 4
 - Security Awareness: 1
 - Endpoint Security: 2
@@ -54,6 +54,7 @@
 
 - OPEN: 16
 - IN PROGRESS: 4
+- CLOSED: 1
 
 ## Owner Summary
 
@@ -62,7 +63,9 @@
 - Help Desk: 1
 - Infrastructure Team: 8
 - Compliance Team: 1
+- SOC Analyst: 1
 
 ## Due Status Summary
 
 - ON TRACK: 20
+- NOT ACTIVE: 1
