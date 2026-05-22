@@ -8,6 +8,17 @@ risks = [
     {"name": "Inactive User Accounts", "severity": 6}
 ]
 
+def determine_priority(severity):
+
+    if severity >= 9:
+        return "CRITICAL"
+
+    elif severity >= 7:
+        return "HIGH"
+
+    else:
+        return "MODERATE"
+
 print("=== AI Operations Risk Summary ===\n")
 
 sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
@@ -18,14 +29,7 @@ for risk in sorted_risks:
     severity = risk["severity"]
 
     # Determine priority level
-    if severity >= 9:
-        priority = "CRITICAL"
-
-    elif severity >= 7:
-        priority = "HIGH"
-
-    else:
-        priority = "MODERATE"
+    priority = determine_priority(severity)
 
     # Print formatted output
     print(f"[{priority}] Severity {severity} - {risk['name']}")
