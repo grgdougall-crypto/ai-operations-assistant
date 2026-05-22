@@ -9,6 +9,7 @@ This project focuses on:
 - lifecycle management
 - reporting automation
 - governance/risk concepts
+- operational analytics
 - future AI-assisted operational workflows
 
 ---
@@ -132,13 +133,15 @@ ai-operations-assistant/
 └── README.md
 ```
 
+---
+
 # Screenshots
 
 ## Main Menu
 
 The primary operational interface for interacting with the AI Operations Assistant.
 
-![Main Menu](screenshots/01_AI_Assist_SS1_Main_Menu.png)
+![Main Menu](screenshots/01_AI_Assist_Main_Menu.png)
 
 ---
 
@@ -176,7 +179,11 @@ Automatically generated markdown-based operational risk reporting.
 
 ## Executive and SLA Summaries
 
-Executive summary metrics including severity distribution, SLA tracking, category summaries, and operational reporting metrics.
+Executive summary metrics including:
+- severity distribution
+- SLA tracking
+- category summaries
+- operational reporting metrics
 
 ![Markdown Summaries](screenshots/06_AI_Assist_SS6_Markdown_Summaries.png)
 
@@ -199,6 +206,13 @@ Structured CSV-based operational risk storage and persistence.
 - Filter by status
 - Search by keyword
 - Show overdue risks
+
+## Phase 1.5 — Recommendation Library
+- Expanded recommendation mappings
+- Keyword-based remediation library
+- Category-aware remediation guidance
+- Multi-keyword scoring logic
+- Improved operational recommendations
 
 ## Phase 2 — Dashboard Metrics
 - Risk visualizations
@@ -236,6 +250,15 @@ This project is evolving toward a lightweight AI-assisted operational risk and r
 - remediation tracking systems
 - operational governance tooling
 - project management workflows
+
+Future roadmap concepts include:
+- AI-assisted remediation guidance
+- intelligent recommendation scoring
+- dashboard analytics
+- database-backed persistence
+- operational ticket integration
+- authentication and role-based access
+- web-based operational workflows
 
 ---
 
