@@ -21,7 +21,22 @@ def determine_priority(severity):
 
 print("=== AI Operations Risk Summary ===\n")
 
+# Collect a new risk from the user
+new_risk_name = input("Enter a new risk name: ")
+
+new_risk_severity = int(input("Enter severity level (1-10): "))
+
+# Add the new risk into the list
+risks.append({
+    "name": new_risk_name,
+    "severity": new_risk_severity
+})
+
 sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+
+critical_count = 0
+high_count = 0
+moderate_count = 0
 
 for risk in sorted_risks:
 
@@ -31,8 +46,24 @@ for risk in sorted_risks:
     # Determine priority level
     priority = determine_priority(severity)
 
+    # Count priority totals
+    if priority == "CRITICAL":
+        critical_count += 1
+
+    elif priority == "HIGH":
+        high_count += 1
+
+    else:
+        moderate_count += 1
+
     # Print formatted output
     print(f"[{priority}] Severity {severity} - {risk['name']}")
 
+print("\n=== Executive Summary ===")
+
+print(f"Critical Risks: {critical_count}")
+print(f"High Risks: {high_count}")
+print(f"Moderate Risks: {moderate_count}")
+
 print("\nRecommended Actions:")
-print("Prioritize remediation of the highest severity risks first.")
+print("Prioritize remediation of critical authentication and network security risks.")
