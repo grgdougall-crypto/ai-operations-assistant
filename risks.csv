@@ -1,26 +1,17 @@
-name,severity,category,status,timestamp
-Weak Password Policy,9,Authentication,OPEN,2026-05-15 10:30:00
-Outdated Firewall Firmware,8,Network,IN PROGRESS,2026-05-15 11:15:00
-No MFA for VPN,10,Authentication,OPEN,2026-05-16 08:45:00
-Inactive User Accounts,6,User Access,MITIGATED,2026-05-16 13:20:00
-Phishing,10,Security Awareness,OPEN,2026-05-17 09:10:00
-Social Engineering,10,Security Awareness,OPEN,2026-05-17 14:40:00
-Exposed RDP Port,9,Network,IN PROGRESS,2026-05-18 16:05:00
-Aging Hardware,2,Endpoint Security,ACCEPTED,2026-05-19 12:00:00
-Weak Wi-Fi Security,8,Network,IN PROGRESS,2026-05-21 19:29:46
-Data Leak,8,Data Protection,OPEN,2026-05-21 19:39:40
-Unpracticed Incident Response,7,Incident Response,OPEN,2026-05-21 19:46:52
-Unauthorized Access,5,User Access,CLOSED,2026-05-21 19:51:21
-Environmental Damage,8,Physical Security,ACCEPTED,2026-05-21 20:05:51
-Backup/Recovery Failure,9,Backup and Recovery,OPEN,2026-05-21 20:09:03
-Missing Backup Verification,8,Backup and Recovery,IN PROGRESS,2026-05-21 20:15:12
-Unencrypted Laptop,8,Endpoint Security,OPEN,2026-05-21 20:20:33
-Shared Admin Account,9,Authentication,OPEN,2026-05-21 20:35:09
-Default Router Credentials,9,Network,OPEN,2026-05-21 20:38:16Unpatched Domain Controller,10,Infrastructure,OPEN,2026-05-21 20:47:28
-Misconfigured DNS,7,Infrastructure,OPEN,2026-05-21 20:52:18
-Deprecated TLS Version,8,Infrastructure,OPEN,2026-05-21 20:56:40
-Outdated SSL Certificate,7,Infrastructure,OPEN,2026-05-21 21:02:33
-Expired Antivirus Signatures,8,Endpoint Security,OPEN,2026-05-21 21:09:10
-STALE SERVICE ACCOUNT,8,Authentication,OPEN,2026-05-21 21:22:20
-EXPOSED DATABASE PORT,9,Network,OPEN,2026-05-21 21:31:17
-EXPOSED DATABASE PORT,9,Network,OPEN,2026-05-21 21:36:06
+id,name,severity,category,status,owner,timestamp,due_date
+RISK-001,WEAK PASSWORD POLICY,9,Authentication,OPEN,Security Team,2026-05-15 10:30:00,2026-06-01
+RISK-002,OUTDATED FIREWALL FIRMWARE,8,Network,IN PROGRESS,Network Operations,2026-05-15 11:15:00,2026-06-05
+RISK-003,NO MFA FOR VPN,10,Authentication,OPEN,Security Team,2026-05-16 08:45:00,2026-05-30
+RISK-004,PHISHING CAMPAIGN EXPOSURE,9,Security Awareness,OPEN,Security Team,2026-05-17 09:10:00,2026-06-10
+RISK-005,EXPOSED RDP PORT,9,Network,IN PROGRESS,Network Operations,2026-05-18 16:05:00,2026-05-28
+RISK-006,UNENCRYPTED LAPTOP,8,Endpoint Security,OPEN,Help Desk,2026-05-21 20:20:33,2026-06-12
+RISK-007,SHARED ADMIN ACCOUNT,9,Authentication,OPEN,Security Team,2026-05-21 20:35:09,2026-05-29
+RISK-008,EXPOSED DATABASE PORT,9,Network,OPEN,Infrastructure Team,2026-05-21 21:02:11,2026-05-27
+RISK-009,INSECURE API ENDPOINT,8,Infrastructure,OPEN,Infrastructure Team,2026-05-21 21:45:25,2026-06-08
+RISK-010,LEGACY VPN APPLIANCE,8,Network,IN PROGRESS,Network Operations,2026-05-21 21:50:03,2026-06-15
+RISK-011,MISSING ENDPOINT MONITORING,7,Endpoint Security,OPEN,Security Team,2026-05-21 22:05:00,2026-06-20
+RISK-012,UNAUTHORIZED CLOUD STORAGE,8,Data Protection,OPEN,Compliance Team,2026-05-21 22:18:00,2026-06-18
+RISK-013,UNSUPPORTED OPERATING SYSTEM,9,Infrastructure,IN PROGRESS,Infrastructure Team,2026-05-21 22:30:00,2026-06-15
+RISK-014,EXPOSED TEST ENVIRONMENT ,8,Infrastructure,OPEN,Infrastructure Team,2026-05-21 22:29:22,2026-06-22
+RISK-015,INSECURE SERVICE ACCOUNT,8,Authentication,OPEN,Security Team,2026-05-21 22:38:39,2026-06-25
+RISK-016,WEAK ENCRYPTION SETTING,8,Infrastructure,OPEN,Infrastructure Team,2026-05-21 22:44:39,2026-06-28

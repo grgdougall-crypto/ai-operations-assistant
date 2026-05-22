@@ -1,153 +1,194 @@
 AI Operations Risk Report
 =========================
 
-[CRITICAL] Severity 10 - NO MFA FOR VPN
+[CRITICAL] RISK-003 - NO MFA FOR VPN
+Severity: 10
 Category: Authentication
 Status: OPEN
+Owner: Security Team
 Timestamp: 2026-05-16 08:45:00
+Due Date: 2026-05-30
+Due Status: ON TRACK
 Recommendation: Enable multi-factor authentication for all remote access.
 
-[CRITICAL] Severity 10 - PHISHING
-Category: Security Awareness
-Status: OPEN
-Timestamp: 2026-05-17 09:10:00
-Recommendation: Provide phishing awareness training to employees.
-
-[CRITICAL] Severity 10 - SOCIAL ENGINEERING
-Category: Security Awareness
-Status: OPEN
-Timestamp: 2026-05-17 14:40:00
-Recommendation: Review and remediate this risk as soon as possible.
-
-[CRITICAL] Severity 9 - WEAK PASSWORD POLICY
+[CRITICAL] RISK-001 - WEAK PASSWORD POLICY
+Severity: 9
 Category: Authentication
 Status: OPEN
+Owner: Security Team
 Timestamp: 2026-05-15 10:30:00
+Due Date: 2026-06-01
+Due Status: ON TRACK
 Recommendation: Enforce stronger password policies and password rotation.
 
-[CRITICAL] Severity 9 - EXPOSED RDP PORT
+[CRITICAL] RISK-004 - PHISHING CAMPAIGN EXPOSURE
+Severity: 9
+Category: Security Awareness
+Status: OPEN
+Owner: Security Team
+Timestamp: 2026-05-17 09:10:00
+Due Date: 2026-06-10
+Due Status: ON TRACK
+Recommendation: Provide phishing awareness training to employees.
+
+[CRITICAL] RISK-005 - EXPOSED RDP PORT
+Severity: 9
 Category: Network
 Status: IN PROGRESS
+Owner: Network Operations
 Timestamp: 2026-05-18 16:05:00
+Due Date: 2026-05-28
+Due Status: ON TRACK
 Recommendation: Review and remediate this risk as soon as possible.
 
-[CRITICAL] Severity 9 - BACKUP/RECOVERY FAILURE
-Category: Backup and Recovery
-Status: OPEN
-Timestamp: 2026-05-21 20:09:03
-Recommendation: Verify backup integrity and perform a test restore.
-
-[CRITICAL] Severity 9 - SHARED ADMIN ACCOUNT
+[CRITICAL] RISK-007 - SHARED ADMIN ACCOUNT
+Severity: 9
 Category: Authentication
 Status: OPEN
+Owner: Security Team
 Timestamp: 2026-05-21 20:35:09
-Recommendation: Review privileged access and remove shared or unnecessary admin accounts.
+Due Date: 2026-05-29
+Due Status: ON TRACK
+Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
 
-[CRITICAL] Severity 9 - DEFAULT ROUTER CREDENTIALS
+[CRITICAL] RISK-008 - EXPOSED DATABASE PORT
+Severity: 9
 Category: Network
 Status: OPEN
-Timestamp: 2026-05-21 20:38:16Unpatched Domain Controller
-Recommendation: Replace default credentials and restrict management access.
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 21:02:11
+Due Date: 2026-05-27
+Due Status: ON TRACK
+Recommendation: Review access controls, restrict exposure, and enforce approved storage policies.
 
-[CRITICAL] Severity 9 - EXPOSED DATABASE PORT
-Category: Network
-Status: OPEN
-Timestamp: 2026-05-21 21:31:17
-Recommendation: Review data access controls and investigate possible exposure.
+[CRITICAL] RISK-013 - UNSUPPORTED OPERATING SYSTEM
+Severity: 9
+Category: Infrastructure
+Status: IN PROGRESS
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 22:30:00
+Due Date: 2026-06-15
+Due Status: ON TRACK
+Recommendation: Upgrade or replace unsupported systems and apply compensating controls.
 
-[CRITICAL] Severity 9 - EXPOSED DATABASE PORT
-Category: Network
-Status: OPEN
-Timestamp: 2026-05-21 21:36:06
-Recommendation: Review data access controls and investigate possible exposure.
-
-[HIGH] Severity 8 - OUTDATED FIREWALL FIRMWARE
+[HIGH] RISK-002 - OUTDATED FIREWALL FIRMWARE
+Severity: 8
 Category: Network
 Status: IN PROGRESS
+Owner: Network Operations
 Timestamp: 2026-05-15 11:15:00
+Due Date: 2026-06-05
+Due Status: ON TRACK
 Recommendation: Update firewall firmware and review network rules.
 
-[HIGH] Severity 8 - WEAK WI-FI SECURITY
+[HIGH] RISK-006 - UNENCRYPTED LAPTOP
+Severity: 8
+Category: Endpoint Security
+Status: OPEN
+Owner: Help Desk
+Timestamp: 2026-05-21 20:20:33
+Due Date: 2026-06-12
+Due Status: ON TRACK
+Recommendation: Enable full-disk encryption and verify endpoint protections.
+
+[HIGH] RISK-009 - INSECURE API ENDPOINT
+Severity: 8
+Category: Infrastructure
+Status: OPEN
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 21:45:25
+Due Date: 2026-06-08
+Due Status: ON TRACK
+Recommendation: Review API authentication and restrict public exposure.
+
+[HIGH] RISK-010 - LEGACY VPN APPLIANCE
+Severity: 8
 Category: Network
 Status: IN PROGRESS
-Timestamp: 2026-05-21 19:29:46
-Recommendation: Review wireless security settings and enforce strong encryption.
+Owner: Network Operations
+Timestamp: 2026-05-21 21:50:03
+Due Date: 2026-06-15
+Due Status: ON TRACK
+Recommendation: Review VPN configuration, patch appliances, and enforce MFA.
 
-[HIGH] Severity 8 - DATA LEAK
+[HIGH] RISK-012 - UNAUTHORIZED CLOUD STORAGE
+Severity: 8
 Category: Data Protection
 Status: OPEN
-Timestamp: 2026-05-21 19:39:40
-Recommendation: Review data access controls and investigate possible exposure.
+Owner: Compliance Team
+Timestamp: 2026-05-21 22:18:00
+Due Date: 2026-06-18
+Due Status: ON TRACK
+Recommendation: Review access controls, restrict exposure, and enforce approved storage policies.
 
-[HIGH] Severity 8 - ENVIRONMENTAL DAMAGE
-Category: Physical Security
-Status: ACCEPTED
-Timestamp: 2026-05-21 20:05:51
-Recommendation: Review and remediate this risk as soon as possible.
-
-[HIGH] Severity 8 - MISSING BACKUP VERIFICATION
-Category: Backup and Recovery
-Status: IN PROGRESS
-Timestamp: 2026-05-21 20:15:12
-Recommendation: Verify backup integrity and perform a test restore.
-
-[HIGH] Severity 8 - UNENCRYPTED LAPTOP
-Category: Endpoint Security
-Status: OPEN
-Timestamp: 2026-05-21 20:20:33
-Recommendation: Enable full-disk encryption and verify endpoint security controls.
-
-[HIGH] Severity 8 - DEPRECATED TLS VERSION
+[HIGH] RISK-014 - EXPOSED TEST ENVIRONMENT 
+Severity: 8
 Category: Infrastructure
 Status: OPEN
-Timestamp: 2026-05-21 20:56:40
-Recommendation: Disable deprecated TLS versions and enforce modern encryption standards.
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 22:29:22
+Due Date: 2026-06-22
+Due Status: ON TRACK
+Recommendation: Review and remediate this risk as soon as possible.
 
-[HIGH] Severity 8 - EXPIRED ANTIVIRUS SIGNATURES
-Category: Endpoint Security
-Status: OPEN
-Timestamp: 2026-05-21 21:09:10
-Recommendation: Update antivirus signatures and confirm endpoint protection status.
-
-[HIGH] Severity 8 - STALE SERVICE ACCOUNT
+[HIGH] RISK-015 - INSECURE SERVICE ACCOUNT
+Severity: 8
 Category: Authentication
 Status: OPEN
-Timestamp: 2026-05-21 21:22:20
-Recommendation: Review service account permissions, rotate credentials, and remove unused accounts.
+Owner: Security Team
+Timestamp: 2026-05-21 22:38:39
+Due Date: 2026-06-25
+Due Status: ON TRACK
+Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
 
-[HIGH] Severity 7 - UNPRACTICED INCIDENT RESPONSE
-Category: Incident Response
-Status: OPEN
-Timestamp: 2026-05-21 19:46:52
-Recommendation: Review and test the incident response plan.
-
-[HIGH] Severity 7 - MISCONFIGURED DNS
+[HIGH] RISK-016 - WEAK ENCRYPTION SETTING
+Severity: 8
 Category: Infrastructure
 Status: OPEN
-Timestamp: 2026-05-21 20:52:18
-Recommendation: Review DNS configuration, restrict zone transfers, and validate records.
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 22:44:39
+Due Date: 2026-06-28
+Due Status: ON TRACK
+Recommendation: Review encryption settings and enforce approved encryption standards.
 
-[HIGH] Severity 7 - OUTDATED SSL CERTIFICATE
-Category: Infrastructure
-Status: OPEN
-Timestamp: 2026-05-21 21:02:33
-Recommendation: Review and remediate this risk as soon as possible.
-
-[MODERATE] Severity 6 - INACTIVE USER ACCOUNTS
-Category: User Access
-Status: MITIGATED
-Timestamp: 2026-05-16 13:20:00
-Recommendation: Disable or remove inactive user accounts.
-
-[MODERATE] Severity 5 - UNAUTHORIZED ACCESS
-Category: User Access
-Status: CLOSED
-Timestamp: 2026-05-21 19:51:21
-Recommendation: Review and remediate this risk as soon as possible.
-
-[MODERATE] Severity 2 - AGING HARDWARE
+[HIGH] RISK-011 - MISSING ENDPOINT MONITORING
+Severity: 7
 Category: Endpoint Security
-Status: ACCEPTED
-Timestamp: 2026-05-19 12:00:00
+Status: OPEN
+Owner: Security Team
+Timestamp: 2026-05-21 22:05:00
+Due Date: 2026-06-20
+Due Status: ON TRACK
 Recommendation: Review and remediate this risk as soon as possible.
 
+=== Executive Summary ===
+Critical Risks: 7
+High Risks: 9
+Moderate Risks: 0
+Average Severity: 8.44
+Highest Risk: RISK-003 - NO MFA FOR VPN
+Newest Risk Added: RISK-016
+Overdue Risks: 0
+On Track Risks: 16
+
+=== Category Summary ===
+Authentication: 4
+Network: 4
+Security Awareness: 1
+Endpoint Security: 2
+Infrastructure: 4
+Data Protection: 1
+
+=== Status Summary ===
+OPEN: 12
+IN PROGRESS: 4
+
+=== Owner Summary ===
+Security Team: 6
+Network Operations: 3
+Help Desk: 1
+Infrastructure Team: 5
+Compliance Team: 1
+
+=== Due Status Summary ===
+ON TRACK: 16
