@@ -132,8 +132,6 @@ ai-operations-assistant/
 └── README.md
 ```
 
----
-
 # Screenshots
 
 ## Main Menu
@@ -178,11 +176,7 @@ Automatically generated markdown-based operational risk reporting.
 
 ## Executive and SLA Summaries
 
-Executive summary metrics including:
-- severity distribution
-- SLA tracking
-- category summaries
-- operational reporting metrics
+Executive summary metrics including severity distribution, SLA tracking, category summaries, and operational reporting metrics.
 
 ![Markdown Summaries](screenshots/06_AI_Assist_SS6_Markdown_Summaries.png)
 
