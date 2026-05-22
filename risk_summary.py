@@ -93,3 +93,23 @@ print(f"Moderate Risks: {moderate_count}")
 
 print("\nRecommended Actions:")
 print("Prioritize remediation of critical authentication and network security risks.")
+
+# Generate a text report file
+with open("risk_report.txt", mode="w") as report_file:
+    report_file.write("AI Operations Risk Report\n")
+    report_file.write("=========================\n\n")
+
+    for risk in sorted_risks:
+        severity = risk["severity"]
+        priority = determine_priority(severity)
+        recommendation = recommend_action(risk["name"])
+
+        report_file.write(f"[{priority}] Severity {severity} - {risk['name']}\n")
+        report_file.write(f"Timestamp: {risk['timestamp']}\n")
+        report_file.write(f"Recommendation: {recommendation}\n\n")
+
+    report_file.write("Executive Summary\n")
+    report_file.write("=================\n")
+    report_file.write(f"Critical Risks: {critical_count}\n")
+    report_file.write(f"High Risks: {high_count}\n")
+    report_file.write(f"Moderate Risks: {moderate_count}\n")
