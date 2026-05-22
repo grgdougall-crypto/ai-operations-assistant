@@ -1,0 +1,7 @@
+name,severity
+Weak Password Policy,9
+Outdated Firewall Firmware,8
+No MFA for VPN,10
+Inactive User Accounts,6
+Phishing,10
+Social Engineering,10
