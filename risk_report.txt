@@ -2,74 +2,107 @@ AI Operations Risk Report
 =========================
 
 [CRITICAL] Severity 10 - No MFA for VPN
+Category: Authentication
 Timestamp: 2026-05-16 08:45:00
 Recommendation: Enable multi-factor authentication for all remote access.
 
 [CRITICAL] Severity 10 - Phishing
+Category: Security Awareness
 Timestamp: 2026-05-17 09:10:00
 Recommendation: Provide phishing awareness training to employees.
 
 [CRITICAL] Severity 10 - Social Engineering
+Category: Security Awareness
 Timestamp: 2026-05-17 14:40:00
 Recommendation: Review and remediate this risk as soon as possible.
 
 [CRITICAL] Severity 9 - Weak Password Policy
+Category: Authentication
 Timestamp: 2026-05-15 10:30:00
 Recommendation: Enforce stronger password policies and password rotation.
 
 [CRITICAL] Severity 9 - Exposed RDP Port
+Category: Network
 Timestamp: 2026-05-18 16:05:00
 Recommendation: Review and remediate this risk as soon as possible.
 
 [CRITICAL] Severity 9 - Backup/Recovery Failure
+Category: Backup and Recovery
 Timestamp: 2026-05-21 20:09:03
 Recommendation: Verify backup integrity and perform a test restore.
 
+[CRITICAL] Severity 9 - Default Router Credentials
+Category: Network
+Timestamp: 2026-05-21 20:38:16
+Recommendation: Review and remediate this risk as soon as possible.
+
 [HIGH] Severity 8 - Outdated Firewall Firmware
+Category: Network
 Timestamp: 2026-05-15 11:15:00
 Recommendation: Update firewall firmware and review network rules.
 
 [HIGH] Severity 8 - Weak Wi-Fi Security
+Category: Network
 Timestamp: 2026-05-21 19:29:46
 Recommendation: Review wireless security settings and enforce strong encryption.
 
 [HIGH] Severity 8 - Data Leak
+Category: Data Protection
 Timestamp: 2026-05-21 19:39:40
 Recommendation: Review data access controls and investigate possible exposure.
 
 [HIGH] Severity 8 - Environmental Damage
+Category: Physical Security
 Timestamp: 2026-05-21 20:05:51
 Recommendation: Review and remediate this risk as soon as possible.
 
-[HIGH] Severity 8 - unencrypted Laptop
-Timestamp: 2026-05-21 20:22:01
-Recommendation: Review and remediate this risk as soon as possible.
+[HIGH] Severity 8 - Missing Backup Verification
+Category: Backup and Recovery
+Timestamp: 2026-05-21 20:15:12
+Recommendation: Verify backup integrity and perform a test restore.
 
-[HIGH] Severity 8 - Malware Infection
-Timestamp: 2026-05-21 20:23:43
-Recommendation: Review and remediate this risk as soon as possible.
+[HIGH] Severity 8 - Unencrypted Laptop
+Category: Endpoint Security
+Timestamp: 2026-05-21 20:20:33Shared Admin Account
+Recommendation: Enable full-disk encryption and verify endpoint security controls.
 
 [HIGH] Severity 7 - Unpracticed Incident Response
+Category: Incident Response
 Timestamp: 2026-05-21 19:46:52
 Recommendation: Review and test the incident response plan.
 
 [MODERATE] Severity 6 - Inactive User Accounts
+Category: User Access
 Timestamp: 2026-05-16 13:20:00
 Recommendation: Disable or remove inactive user accounts.
 
 [MODERATE] Severity 5 - Unauthorized Access
+Category: User Access
 Timestamp: 2026-05-21 19:51:21
 Recommendation: Review and remediate this risk as soon as possible.
 
 [MODERATE] Severity 2 - Aging Hardware
+Category: Endpoint Security
 Timestamp: 2026-05-19 12:00:00
 Recommendation: Review and remediate this risk as soon as possible.
 
 Executive Summary
 =================
-Critical Risks: 6
+Critical Risks: 7
 High Risks: 7
 Moderate Risks: 3
-Average Severity: 7.81
+Average Severity: 7.88
 Highest Risk: No MFA for VPN (Severity 10)
-Newest Risk Added: Malware Infection
+Newest Risk Added: Default Router Credentials
+
+Category Summary
+================
+Authentication: 2
+Security Awareness: 2
+Network: 4
+Backup and Recovery: 2
+Data Protection: 1
+Physical Security: 1
+Endpoint Security: 2
+Incident Response: 1
+User Access: 2

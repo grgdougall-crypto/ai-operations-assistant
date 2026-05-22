@@ -1,17 +1,18 @@
-name,severity,timestamp
-Weak Password Policy,9,2026-05-15 10:30:00
-Outdated Firewall Firmware,8,2026-05-15 11:15:00
-No MFA for VPN,10,2026-05-16 08:45:00
-Inactive User Accounts,6,2026-05-16 13:20:00
-Phishing,10,2026-05-17 09:10:00
-Social Engineering,10,2026-05-17 14:40:00
-Exposed RDP Port,9,2026-05-18 16:05:00
-Aging Hardware,2,2026-05-19 12:00:00
-Weak Wi-Fi Security,8,2026-05-21 19:29:46
-Data Leak,8,2026-05-21 19:39:40
-Unpracticed Incident Response,7,2026-05-21 19:46:52
-Unauthorized Access,5,2026-05-21 19:51:21
-Environmental Damage,8,2026-05-21 20:05:51
-Backup/Recovery Failure,9,2026-05-21 20:09:03
-unencrypted Laptop,8,2026-05-21 20:22:01
-Malware Infection,8,2026-05-21 20:23:43
+name,severity,category,timestamp
+Weak Password Policy,9,Authentication,2026-05-15 10:30:00
+Outdated Firewall Firmware,8,Network,2026-05-15 11:15:00
+No MFA for VPN,10,Authentication,2026-05-16 08:45:00
+Inactive User Accounts,6,User Access,2026-05-16 13:20:00
+Phishing,10,Security Awareness,2026-05-17 09:10:00
+Social Engineering,10,Security Awareness,2026-05-17 14:40:00
+Exposed RDP Port,9,Network,2026-05-18 16:05:00
+Aging Hardware,2,Endpoint Security,2026-05-19 12:00:00
+Weak Wi-Fi Security,8,Network,2026-05-21 19:29:46
+Data Leak,8,Data Protection,2026-05-21 19:39:40
+Unpracticed Incident Response,7,Incident Response,2026-05-21 19:46:52
+Unauthorized Access,5,User Access,2026-05-21 19:51:21
+Environmental Damage,8,Physical Security,2026-05-21 20:05:51
+Backup/Recovery Failure,9,Backup and Recovery,2026-05-21 20:09:03
+Missing Backup Verification,8,Backup and Recovery,2026-05-21 20:15:12
+Unencrypted Laptop,8,Endpoint Security,2026-05-21 20:20:33Shared Admin Account,9,Authentication,2026-05-21 20:35:09
+Default Router Credentials,9,Network,2026-05-21 20:38:16
