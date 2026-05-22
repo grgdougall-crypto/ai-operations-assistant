@@ -39,6 +39,85 @@ owners = [
 due_date_options = [1, 3, 5, 7, 10, 14, 30]
 
 
+recommendation_library = [
+    {
+        "name": "MFA / Remote Access",
+        "keywords": ["mfa", "multi-factor", "2fa", "vpn", "remote access"],
+        "recommendation": "Require MFA for VPN, remote access, privileged accounts, and cloud applications. Review access logs and disable accounts that no longer require remote access."
+    },
+    {
+        "name": "Weak Passwords",
+        "keywords": ["password", "weak password", "credential", "login"],
+        "recommendation": "Enforce stronger password policies, require password length and complexity, enable account lockout protections, and review failed login activity."
+    },
+    {
+        "name": "Firewall Exposure",
+        "keywords": ["firewall", "open port", "rule", "inbound"],
+        "recommendation": "Review firewall rules, remove unnecessary inbound access, restrict management ports, document approved exceptions, and verify firmware is current."
+    },
+    {
+        "name": "RDP Exposure",
+        "keywords": ["rdp", "remote desktop", "3389"],
+        "recommendation": "Disable public RDP exposure, restrict access through VPN or jump hosts, enforce MFA, and limit access to approved administrative users."
+    },
+    {
+        "name": "Phishing",
+        "keywords": ["phishing", "email", "social engineering"],
+        "recommendation": "Provide phishing awareness training, enable email filtering, review reported messages, and run targeted simulations for high-risk user groups."
+    },
+    {
+        "name": "Backup Risk",
+        "keywords": ["backup", "restore", "backup share", "recovery"],
+        "recommendation": "Verify backup integrity, restrict backup share permissions, perform a documented test restore, and confirm backups are protected from ransomware."
+    },
+    {
+        "name": "Database Exposure",
+        "keywords": ["database", "sql", "data exposure", "db"],
+        "recommendation": "Restrict database access, review user permissions, disable public exposure, enforce encryption, and monitor for unauthorized queries."
+    },
+    {
+        "name": "Cloud Misconfiguration",
+        "keywords": ["cloud", "s3", "azure", "storage bucket", "cloud storage"],
+        "recommendation": "Review cloud permissions, disable public access where not required, enforce least privilege, enable logging, and validate configuration baselines."
+    },
+    {
+        "name": "Admin Account Risk",
+        "keywords": ["admin", "administrator", "privileged", "local admin", "shared admin"],
+        "recommendation": "Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts."
+    },
+    {
+        "name": "Endpoint Security",
+        "keywords": ["laptop", "endpoint", "workstation", "device"],
+        "recommendation": "Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management."
+    },
+    {
+        "name": "API Exposure",
+        "keywords": ["api", "endpoint", "token", "key"],
+        "recommendation": "Review API authentication, rotate exposed keys or tokens, restrict public access, validate rate limiting, and monitor API activity logs."
+    },
+    {
+        "name": "SSL / Certificate",
+        "keywords": ["ssl", "tls", "certificate", "cert"],
+        "recommendation": "Renew expired certificates, verify TLS configuration, remove weak protocols, and document certificate ownership and renewal dates."
+    },
+    {
+        "name": "Unsupported Systems",
+        "keywords": ["unsupported", "legacy", "operating system", "end of life", "eol"],
+        "recommendation": "Upgrade unsupported systems, isolate legacy assets, apply compensating controls, and create a retirement or replacement plan."
+    },
+    {
+        "name": "Monitoring Gap",
+        "keywords": ["monitoring", "logging", "logs", "siem", "alert"],
+        "recommendation": "Enable centralized logging, configure alerting for high-risk events, review monitoring coverage, and validate that alerts are assigned to an owner."
+    },
+    {
+        "name": "Encryption Weakness",
+        "keywords": ["encryption", "unencrypted", "weak encryption", "plaintext"],
+        "recommendation": "Enable strong encryption, remove weak protocols, protect sensitive data at rest and in transit, and verify encryption settings through policy review."
+    }
+]
+
+
 def load_risks():
     risks = []
 
@@ -140,45 +219,33 @@ def calculate_days_until_due(due_date):
     return (due_date_object - today).days
 
 
-def recommend_action(risk_name):
-    risk_name = risk_name.lower()
+def recommend_action(risk_name, category):
+    risk_text = f"{risk_name} {category}".lower()
 
-    if "password" in risk_name:
-        return "Enforce stronger password policies and password rotation."
-    elif "mfa" in risk_name:
-        return "Enable multi-factor authentication for all remote access."
-    elif "firewall" in risk_name:
-        return "Update firewall firmware and review network rules."
-    elif "phishing" in risk_name:
-        return "Provide phishing awareness training to employees."
-    elif "backup" in risk_name:
-        return "Verify backup integrity and perform a test restore."
-    elif "database" in risk_name:
-        return "Review database access controls and restrict exposure."
-    elif "cloud" in risk_name:
-        return "Review cloud storage permissions and enforce approved configurations."
-    elif "admin" in risk_name:
-        return "Review privileged access, rotate credentials, and remove unnecessary accounts."
-    elif "laptop" in risk_name:
-        return "Enable full-disk encryption and verify endpoint protections."
-    elif "api" in risk_name:
-        return "Review API authentication and restrict public exposure."
-    elif "vpn" in risk_name:
-        return "Review VPN configuration, patch appliances, and enforce MFA."
-    elif "ssl" in risk_name or "certificate" in risk_name:
-        return "Renew the certificate and verify TLS configuration."
-    elif "operating system" in risk_name:
-        return "Upgrade unsupported systems and apply compensating controls."
-    elif "backup share" in risk_name:
-        return "Restrict backup share access and review permissions."
-    else:
-        return "Review and remediate this risk as soon as possible."
+    best_match = None
+    best_score = 0
+
+    for item in recommendation_library:
+        score = 0
+
+        for keyword in item["keywords"]:
+            if keyword in risk_text:
+                score += 1
+
+        if score > best_score:
+            best_score = score
+            best_match = item
+
+    if best_match:
+        return best_match["recommendation"]
+
+    return "Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted."
 
 
 def enrich_risks(risks):
     for risk in risks:
         risk["priority"] = determine_priority(risk["severity"])
-        risk["recommendation"] = recommend_action(risk["name"])
+        risk["recommendation"] = recommend_action(risk["name"], risk["category"])
         risk["due_status"] = determine_due_status(risk["due_date"], risk["status"])
         risk["days_open"] = calculate_days_open(risk["timestamp"])
         risk["days_until_due"] = calculate_days_until_due(risk["due_date"])
