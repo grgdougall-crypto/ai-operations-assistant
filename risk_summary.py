@@ -113,3 +113,32 @@ with open("risk_report.txt", mode="w") as report_file:
     report_file.write(f"Critical Risks: {critical_count}\n")
     report_file.write(f"High Risks: {high_count}\n")
     report_file.write(f"Moderate Risks: {moderate_count}\n")
+
+  # Generate a Markdown report
+with open("risk_report.md", mode="w") as md_file:
+
+    md_file.write("# AI Operations Risk Report\n\n")
+
+    md_file.write("| Risk | Priority | Severity | Timestamp | Recommendation |\n")
+    md_file.write("|------|----------|----------|------------|----------------|\n")
+
+    for risk in sorted_risks:
+
+        severity = risk["severity"]
+        priority = determine_priority(severity)
+        recommendation = recommend_action(risk["name"])
+
+        md_file.write(
+            f"| {risk['name']} | "
+            f"{priority} | "
+            f"{severity} | "
+            f"{risk['timestamp']} | "
+            f"{recommendation} |\n"
+        )
+
+    md_file.write("\n---\n\n")
+
+    md_file.write("## Executive Summary\n\n")
+    md_file.write(f"- Critical Risks: **{critical_count}**\n")
+    md_file.write(f"- High Risks: **{high_count}**\n")
+    md_file.write(f"- Moderate Risks: **{moderate_count}**\n")

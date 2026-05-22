@@ -33,9 +33,17 @@ Recommendation: Review and remediate this risk as soon as possible.
 Timestamp: 2026-05-21 19:39:40
 Recommendation: Review and remediate this risk as soon as possible.
 
+[HIGH] Severity 7 - Unpracticed Incident Response
+Timestamp: 2026-05-21 19:46:52
+Recommendation: Review and remediate this risk as soon as possible.
+
 [MODERATE] Severity 6 - Inactive User Accounts
 Timestamp: 2026-05-16 13:20:00
 Recommendation: Disable or remove inactive user accounts.
+
+[MODERATE] Severity 5 - Unauthorized Access
+Timestamp: 2026-05-21 19:51:21
+Recommendation: Review and remediate this risk as soon as possible.
 
 [MODERATE] Severity 2 - Aging Hardware
 Timestamp: 2026-05-19 12:00:00
@@ -44,5 +52,5 @@ Recommendation: Review and remediate this risk as soon as possible.
 Executive Summary
 =================
 Critical Risks: 5
-High Risks: 3
-Moderate Risks: 2
+High Risks: 4
+Moderate Risks: 3
