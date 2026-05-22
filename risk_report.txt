@@ -9,8 +9,8 @@ Owner: Security Team
 Timestamp: 2026-05-16 08:45:00
 Due Date: 2026-05-30
 Due Status: ON TRACK
-Days Open: 5
-Days Until Due: 9
+Days Open: 6
+Days Until Due: 8
 Recommendation: Enable multi-factor authentication for all remote access.
 
 [CRITICAL] RISK-001 - WEAK PASSWORD POLICY
@@ -21,8 +21,8 @@ Owner: Security Team
 Timestamp: 2026-05-15 10:30:00
 Due Date: 2026-06-01
 Due Status: ON TRACK
-Days Open: 6
-Days Until Due: 11
+Days Open: 7
+Days Until Due: 10
 Recommendation: Enforce stronger password policies and password rotation.
 
 [CRITICAL] RISK-004 - PHISHING CAMPAIGN EXPOSURE
@@ -33,8 +33,8 @@ Owner: Security Team
 Timestamp: 2026-05-17 09:10:00
 Due Date: 2026-06-10
 Due Status: ON TRACK
-Days Open: 4
-Days Until Due: 20
+Days Open: 5
+Days Until Due: 19
 Recommendation: Provide phishing awareness training to employees.
 
 [CRITICAL] RISK-005 - EXPOSED RDP PORT
@@ -45,8 +45,8 @@ Owner: Network Operations
 Timestamp: 2026-05-18 16:05:00
 Due Date: 2026-05-28
 Due Status: ON TRACK
-Days Open: 3
-Days Until Due: 7
+Days Open: 4
+Days Until Due: 6
 Recommendation: Review and remediate this risk as soon as possible.
 
 [CRITICAL] RISK-007 - SHARED ADMIN ACCOUNT
@@ -57,8 +57,8 @@ Owner: Security Team
 Timestamp: 2026-05-21 20:35:09
 Due Date: 2026-05-29
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 8
+Days Open: 1
+Days Until Due: 7
 Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
 
 [CRITICAL] RISK-008 - EXPOSED DATABASE PORT
@@ -69,8 +69,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 21:02:11
 Due Date: 2026-05-27
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 6
+Days Open: 1
+Days Until Due: 5
 Recommendation: Review database access controls and restrict exposure.
 
 [CRITICAL] RISK-013 - UNSUPPORTED OPERATING SYSTEM
@@ -81,8 +81,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 22:30:00
 Due Date: 2026-06-15
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 25
+Days Open: 1
+Days Until Due: 24
 Recommendation: Upgrade unsupported systems and apply compensating controls.
 
 [CRITICAL] RISK-018 - UNMANAGED LOCAL ADMIN ACCOUNT
@@ -93,8 +93,8 @@ Owner: Security Team
 Timestamp: 2026-05-21 23:05:01
 Due Date: 2026-05-28
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 7
+Days Open: 1
+Days Until Due: 6
 Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
 
 [HIGH] RISK-002 - OUTDATED FIREWALL FIRMWARE
@@ -105,8 +105,8 @@ Owner: Network Operations
 Timestamp: 2026-05-15 11:15:00
 Due Date: 2026-06-05
 Due Status: ON TRACK
-Days Open: 6
-Days Until Due: 15
+Days Open: 7
+Days Until Due: 14
 Recommendation: Update firewall firmware and review network rules.
 
 [HIGH] RISK-006 - UNENCRYPTED LAPTOP
@@ -117,8 +117,8 @@ Owner: Help Desk
 Timestamp: 2026-05-21 20:20:33
 Due Date: 2026-06-12
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 22
+Days Open: 1
+Days Until Due: 21
 Recommendation: Enable full-disk encryption and verify endpoint protections.
 
 [HIGH] RISK-009 - INSECURE API ENDPOINT
@@ -129,8 +129,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 21:45:25
 Due Date: 2026-06-08
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 18
+Days Open: 1
+Days Until Due: 17
 Recommendation: Review API authentication and restrict public exposure.
 
 [HIGH] RISK-010 - LEGACY VPN APPLIANCE
@@ -141,8 +141,8 @@ Owner: Network Operations
 Timestamp: 2026-05-21 21:50:03
 Due Date: 2026-06-15
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 25
+Days Open: 1
+Days Until Due: 24
 Recommendation: Review VPN configuration, patch appliances, and enforce MFA.
 
 [HIGH] RISK-012 - UNAUTHORIZED CLOUD STORAGE
@@ -153,8 +153,8 @@ Owner: Compliance Team
 Timestamp: 2026-05-21 22:18:00
 Due Date: 2026-06-18
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 28
+Days Open: 1
+Days Until Due: 27
 Recommendation: Review cloud storage permissions and enforce approved configurations.
 
 [HIGH] RISK-014 - EXPOSED TEST ENVIRONMENT 
@@ -165,8 +165,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 22:29:22
 Due Date: 2026-06-22
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 32
+Days Open: 1
+Days Until Due: 31
 Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] RISK-015 - INSECURE SERVICE ACCOUNT
@@ -177,8 +177,8 @@ Owner: Security Team
 Timestamp: 2026-05-21 22:38:39
 Due Date: 2026-06-25
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 35
+Days Open: 1
+Days Until Due: 34
 Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] RISK-016 - WEAK ENCRYPTION SETTING
@@ -189,8 +189,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 22:44:39
 Due Date: 2026-06-28
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 38
+Days Open: 1
+Days Until Due: 37
 Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] RISK-019 - EXPOSED BACKUP SHARE
@@ -201,8 +201,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 23:23:52
 Due Date: 2026-05-26
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 5
+Days Open: 1
+Days Until Due: 4
 Recommendation: Verify backup integrity and perform a test restore.
 
 [HIGH] RISK-020 - EXPOSED BACKUP SHARE
@@ -213,8 +213,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 23:31:01
 Due Date: 2026-05-26
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 5
+Days Open: 1
+Days Until Due: 4
 Recommendation: Verify backup integrity and perform a test restore.
 
 [HIGH] RISK-011 - MISSING ENDPOINT MONITORING
@@ -225,8 +225,8 @@ Owner: Security Team
 Timestamp: 2026-05-21 22:05:00
 Due Date: 2026-06-20
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 30
+Days Open: 1
+Days Until Due: 29
 Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] RISK-017 - EXPIRED SSL CERTIFICATE
@@ -237,8 +237,8 @@ Owner: Infrastructure Team
 Timestamp: 2026-05-21 22:55:00
 Due Date: 2026-05-25
 Due Status: ON TRACK
-Days Open: 0
-Days Until Due: 4
+Days Open: 1
+Days Until Due: 3
 Recommendation: Renew the certificate and verify TLS configuration.
 
 [MODERATE] RISK-021 - TEST
@@ -249,8 +249,8 @@ Owner: SOC Analyst
 Timestamp: 2026-05-21 23:47:33
 Due Date: 2026-05-22
 Due Status: NOT ACTIVE
-Days Open: 0
-Days Until Due: 1
+Days Open: 1
+Days Until Due: 0
 Recommendation: Review and remediate this risk as soon as possible.
 
 === Executive Summary ===
@@ -264,8 +264,8 @@ On Track Risks: 20
 
 === SLA Summary ===
 Critical Risks Overdue: 0
-Risks Due Within 7 Days: 6
-Oldest Open Risk: RISK-001 (6 days open)
+Risks Due Within 7 Days: 7
+Oldest Open Risk: RISK-001 (7 days open)
 
 === Category Summary ===
 Authentication: 6

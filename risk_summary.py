@@ -247,15 +247,13 @@ def add_new_risk(risks):
     print(f"\n{new_risk['id']} has been added successfully.")
 
 
-def view_all_risks(risks):
-    print("\n=== Current Risks ===")
-
-    if not risks:
-        print("No risks found.")
+def display_risks(risks_to_display):
+    if not risks_to_display:
+        print("No matching risks found.")
         return
 
-    enrich_risks(risks)
-    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+    enrich_risks(risks_to_display)
+    sorted_risks = sorted(risks_to_display, key=lambda risk: risk["severity"], reverse=True)
 
     for risk in sorted_risks:
         print(f"\n[{risk['priority']}] {risk['id']} - {risk['name']}")
@@ -268,6 +266,11 @@ def view_all_risks(risks):
         print(f"Days Open: {risk['days_open']}")
         print(f"Days Until Due: {risk['days_until_due']}")
         print(f"Recommendation: {risk['recommendation']}")
+
+
+def view_all_risks(risks):
+    print("\n=== Current Risks ===")
+    display_risks(risks)
 
 
 def find_risk_by_id(risks, risk_id):
@@ -341,6 +344,118 @@ def close_risk(risks):
         print("\nClose action cancelled.")
 
 
+def show_critical_risks(risks):
+    print("\n=== Critical Risks ===")
+
+    enrich_risks(risks)
+
+    critical_risks = [
+        risk for risk in risks
+        if risk["priority"] == "CRITICAL"
+    ]
+
+    display_risks(critical_risks)
+
+
+def show_overdue_risks(risks):
+    print("\n=== Overdue Risks ===")
+
+    enrich_risks(risks)
+
+    overdue_risks = [
+        risk for risk in risks
+        if risk["due_status"] == "OVERDUE"
+    ]
+
+    display_risks(overdue_risks)
+
+
+def filter_by_status(risks):
+    print("\n=== Filter by Status ===")
+
+    selected_status = choose_status()
+
+    filtered_risks = [
+        risk for risk in risks
+        if risk["status"] == selected_status
+    ]
+
+    display_risks(filtered_risks)
+
+
+def filter_by_owner(risks):
+    print("\n=== Filter by Owner ===")
+
+    selected_owner = choose_owner()
+
+    filtered_risks = [
+        risk for risk in risks
+        if risk["owner"] == selected_owner
+    ]
+
+    display_risks(filtered_risks)
+
+
+def filter_by_category(risks):
+    print("\n=== Filter by Category ===")
+
+    selected_category = choose_category()
+
+    filtered_risks = [
+        risk for risk in risks
+        if risk["category"] == selected_category
+    ]
+
+    display_risks(filtered_risks)
+
+
+def search_by_keyword(risks):
+    print("\n=== Search Risks by Keyword ===")
+
+    keyword = input("Enter keyword to search: ").lower()
+
+    matching_risks = [
+        risk for risk in risks
+        if keyword in risk["name"].lower()
+        or keyword in risk["category"].lower()
+        or keyword in risk["status"].lower()
+        or keyword in risk["owner"].lower()
+    ]
+
+    display_risks(matching_risks)
+
+
+def show_filter_menu(risks):
+    while True:
+        print("\n=== Filter and Search Menu ===")
+        print("1. Show Critical Risks")
+        print("2. Show Overdue Risks")
+        print("3. Filter by Status")
+        print("4. Filter by Owner")
+        print("5. Filter by Category")
+        print("6. Search by Keyword")
+        print("7. Return to Main Menu")
+
+        choice = input("\nEnter filter option: ")
+
+        if choice == "1":
+            show_critical_risks(risks)
+        elif choice == "2":
+            show_overdue_risks(risks)
+        elif choice == "3":
+            filter_by_status(risks)
+        elif choice == "4":
+            filter_by_owner(risks)
+        elif choice == "5":
+            filter_by_category(risks)
+        elif choice == "6":
+            search_by_keyword(risks)
+        elif choice == "7":
+            break
+        else:
+            print("\nInvalid option. Please choose 1-7.")
+
+
 def generate_reports(risks):
     print("\n=== Generating Reports ===")
 
@@ -365,7 +480,8 @@ def generate_reports(risks):
 
     due_soon_count = sum(
         1 for risk in risks
-        if 0 <= risk["days_until_due"] <= 7 and risk["status"] not in ["CLOSED", "MITIGATED", "ACCEPTED"]
+        if 0 <= risk["days_until_due"] <= 7
+        and risk["status"] not in ["CLOSED", "MITIGATED", "ACCEPTED"]
     )
 
     open_risks = [
@@ -504,8 +620,9 @@ def show_menu():
     print("3. Update Risk Status")
     print("4. Update Risk Owner")
     print("5. Close Risk")
-    print("6. Generate Reports")
-    print("7. Exit")
+    print("6. Filter/Search Risks")
+    print("7. Generate Reports")
+    print("8. Exit")
 
 
 def main():
@@ -527,12 +644,14 @@ def main():
         elif choice == "5":
             close_risk(risks)
         elif choice == "6":
-            generate_reports(risks)
+            show_filter_menu(risks)
         elif choice == "7":
+            generate_reports(risks)
+        elif choice == "8":
             print("\nExiting AI Operations Assistant.")
             break
         else:
-            print("\nInvalid option. Please choose 1-7.")
+            print("\nInvalid option. Please choose 1-8.")
 
 
 main()
