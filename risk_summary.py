@@ -1,20 +1,34 @@
 import csv
 from datetime import datetime
 
-# AI Operations Assistant
-# Simple operational risk summary example
+CSV_FILE = "risks.csv"
+TXT_REPORT = "risk_report.txt"
+MD_REPORT = "risk_report.md"
+
+categories = [
+    "Authentication",
+    "Network",
+    "Endpoint Security",
+    "Data Protection",
+    "Backup and Recovery",
+    "Incident Response",
+    "Security Awareness",
+    "Infrastructure",
+    "User Access",
+    "Physical Security"
+]
 
 risks = []
 
-# Load existing risks from the CSV file
-with open("risks.csv", mode="r") as file:
-    csv_reader = csv.DictReader(file)
+with open(CSV_FILE, mode="r") as file:
+    reader = csv.DictReader(file)
 
-    for row in csv_reader:
+    for row in reader:
         risks.append({
-            "name": row["name"],
+            "name": row["name"].upper(),
             "severity": int(row["severity"]),
             "category": row["category"],
+            "status": row["status"],
             "timestamp": row["timestamp"]
         })
 
@@ -53,75 +67,89 @@ def recommend_action(risk_name):
         return "Review privileged access and remove shared or unnecessary admin accounts."
     elif "laptop" in risk_name:
         return "Enable full-disk encryption and verify endpoint security controls."
+    elif "router" in risk_name:
+        return "Replace default credentials and restrict management access."
+    elif "domain controller" in risk_name:
+        return "Patch and harden domain controllers immediately."
+    elif "dns" in risk_name:
+        return "Review DNS configuration, restrict zone transfers, and validate records."
+    elif "tls" in risk_name:
+        return "Disable deprecated TLS versions and enforce modern encryption standards."
+    elif "antivirus" in risk_name:
+        return "Update antivirus signatures and confirm endpoint protection status."
+    elif "service account" in risk_name:
+        return "Review service account permissions, rotate credentials, and remove unused accounts."
     else:
         return "Review and remediate this risk as soon as possible."
 
 
+def choose_category():
+    print("\nSelect a category:")
+
+    for index, category in enumerate(categories, start=1):
+        print(f"{index}. {category}")
+
+    choice = int(input("Enter category number: "))
+
+    return categories[choice - 1]
+
+
 print("=== AI Operations Risk Summary ===\n")
 
-# Collect a new risk from the user
-new_risk_name = input("Enter a new risk name: ")
+new_risk_name = input("Enter a new risk name: ").upper()
 new_risk_severity = int(input("Enter severity level (1-10): "))
-new_risk_category = input("Enter category: ")
+new_risk_category = choose_category()
+new_risk_status = input("Enter status: ").upper()
 
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Add the new risk into the list
-risks.append({
+new_risk = {
     "name": new_risk_name,
     "severity": new_risk_severity,
     "category": new_risk_category,
+    "status": new_risk_status,
     "timestamp": timestamp
-})
+}
 
-# Save the new risk back into the CSV file
-with open("risks.csv", mode="a", newline="") as file:
-    csv_writer = csv.writer(file)
-    csv_writer.writerow([new_risk_name, new_risk_severity, new_risk_category, timestamp])
+risks.append(new_risk)
 
-# Sort risks by severity, highest first
-sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
-
-critical_count = 0
-high_count = 0
-moderate_count = 0
-category_counts = {}
-
-for risk in sorted_risks:
-    severity = risk["severity"]
-    priority = determine_priority(severity)
-    recommendation = recommend_action(risk["name"])
-    category = risk["category"]
-
-    if priority == "CRITICAL":
-        critical_count += 1
-    elif priority == "HIGH":
-        high_count += 1
-    else:
-        moderate_count += 1
-
-    if category in category_counts:
-        category_counts[category] += 1
-    else:
-        category_counts[category] = 1
-
-    print(f"[{priority}] Severity {severity} - {risk['name']}")
-    print(f"Category: {category}")
-    print(f"Timestamp: {risk['timestamp']}")
-    print(f"Recommendation: {recommendation}\n")
-
-# Analytics calculations
-total_severity = 0
-highest_risk = risks[0]
-newest_risk = risks[-1]
+with open(CSV_FILE, mode="a", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow([
+        new_risk["name"],
+        new_risk["severity"],
+        new_risk["category"],
+        new_risk["status"],
+        new_risk["timestamp"]
+    ])
 
 for risk in risks:
-    total_severity += risk["severity"]
+    risk["priority"] = determine_priority(risk["severity"])
+    risk["recommendation"] = recommend_action(risk["name"])
 
-    if risk["severity"] > highest_risk["severity"]:
-        highest_risk = risk
+sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
 
-average_severity = total_severity / len(risks)
+critical_count = sum(1 for risk in risks if risk["priority"] == "CRITICAL")
+high_count = sum(1 for risk in risks if risk["priority"] == "HIGH")
+moderate_count = sum(1 for risk in risks if risk["priority"] == "MODERATE")
+
+category_counts = {}
+status_counts = {}
+
+for risk in risks:
+    category_counts[risk["category"]] = category_counts.get(risk["category"], 0) + 1
+    status_counts[risk["status"]] = status_counts.get(risk["status"], 0) + 1
+
+average_severity = sum(risk["severity"] for risk in risks) / len(risks)
+highest_risk = max(risks, key=lambda risk: risk["severity"])
+newest_risk = risks[-1]
+
+for risk in sorted_risks:
+    print(f"[{risk['priority']}] Severity {risk['severity']} - {risk['name']}")
+    print(f"Category: {risk['category']}")
+    print(f"Status: {risk['status']}")
+    print(f"Timestamp: {risk['timestamp']}")
+    print(f"Recommendation: {risk['recommendation']}\n")
 
 print("=== Executive Summary ===")
 print(f"Critical Risks: {critical_count}")
@@ -135,70 +163,72 @@ print("\n=== Category Summary ===")
 for category, count in category_counts.items():
     print(f"{category}: {count}")
 
-print("\nRecommended Actions:")
-print("Prioritize remediation of critical authentication and network security risks.")
+print("\n=== Status Summary ===")
+for status, count in status_counts.items():
+    print(f"{status}: {count}")
 
-# Generate a text report file
-with open("risk_report.txt", mode="w") as report_file:
-    report_file.write("AI Operations Risk Report\n")
-    report_file.write("=========================\n\n")
+with open(TXT_REPORT, mode="w") as report:
+    report.write("AI Operations Risk Report\n")
+    report.write("=========================\n\n")
 
     for risk in sorted_risks:
-        severity = risk["severity"]
-        priority = determine_priority(severity)
-        recommendation = recommend_action(risk["name"])
+        report.write(f"[{risk['priority']}] Severity {risk['severity']} - {risk['name']}\n")
+        report.write(f"Category: {risk['category']}\n")
+        report.write(f"Status: {risk['status']}\n")
+        report.write(f"Timestamp: {risk['timestamp']}\n")
+        report.write(f"Recommendation: {risk['recommendation']}\n\n")
 
-        report_file.write(f"[{priority}] Severity {severity} - {risk['name']}\n")
-        report_file.write(f"Category: {risk['category']}\n")
-        report_file.write(f"Timestamp: {risk['timestamp']}\n")
-        report_file.write(f"Recommendation: {recommendation}\n\n")
+    report.write("Executive Summary\n")
+    report.write("=================\n")
+    report.write(f"Critical Risks: {critical_count}\n")
+    report.write(f"High Risks: {high_count}\n")
+    report.write(f"Moderate Risks: {moderate_count}\n")
+    report.write(f"Average Severity: {average_severity:.2f}\n")
+    report.write(f"Highest Risk: {highest_risk['name']} (Severity {highest_risk['severity']})\n")
+    report.write(f"Newest Risk Added: {newest_risk['name']}\n\n")
 
-    report_file.write("Executive Summary\n")
-    report_file.write("=================\n")
-    report_file.write(f"Critical Risks: {critical_count}\n")
-    report_file.write(f"High Risks: {high_count}\n")
-    report_file.write(f"Moderate Risks: {moderate_count}\n")
-    report_file.write(f"Average Severity: {average_severity:.2f}\n")
-    report_file.write(f"Highest Risk: {highest_risk['name']} (Severity {highest_risk['severity']})\n")
-    report_file.write(f"Newest Risk Added: {newest_risk['name']}\n\n")
-
-    report_file.write("Category Summary\n")
-    report_file.write("================\n")
+    report.write("Category Summary\n")
+    report.write("================\n")
     for category, count in category_counts.items():
-        report_file.write(f"{category}: {count}\n")
+        report.write(f"{category}: {count}\n")
 
-# Generate a Markdown report
-with open("risk_report.md", mode="w") as md_file:
-    md_file.write("# AI Operations Risk Report\n\n")
+    report.write("\nStatus Summary\n")
+    report.write("==============\n")
+    for status, count in status_counts.items():
+        report.write(f"{status}: {count}\n")
 
-    md_file.write("| Risk | Priority | Severity | Category | Timestamp | Recommendation |\n")
-    md_file.write("|------|----------|----------|----------|------------|----------------|\n")
+with open(MD_REPORT, mode="w") as report:
+    report.write("# AI Operations Risk Report\n\n")
+
+    report.write("| Risk | Priority | Severity | Category | Status | Timestamp | Recommendation |\n")
+    report.write("|------|----------|----------|----------|--------|------------|----------------|\n")
 
     for risk in sorted_risks:
-        severity = risk["severity"]
-        priority = determine_priority(severity)
-        recommendation = recommend_action(risk["name"])
-
-        md_file.write(
+        report.write(
             f"| {risk['name']} | "
-            f"{priority} | "
-            f"{severity} | "
+            f"{risk['priority']} | "
+            f"{risk['severity']} | "
             f"{risk['category']} | "
+            f"{risk['status']} | "
             f"{risk['timestamp']} | "
-            f"{recommendation} |\n"
+            f"{risk['recommendation']} |\n"
         )
 
-    md_file.write("\n---\n\n")
-    md_file.write("## Executive Summary\n\n")
-    md_file.write(f"- Critical Risks: **{critical_count}**\n")
-    md_file.write(f"- High Risks: **{high_count}**\n")
-    md_file.write(f"- Moderate Risks: **{moderate_count}**\n")
-    md_file.write(f"- Average Severity: **{average_severity:.2f}**\n")
-    md_file.write(f"- Highest Risk: **{highest_risk['name']}** (Severity {highest_risk['severity']})\n")
-    md_file.write(f"- Newest Risk Added: **{newest_risk['name']}**\n")
+    report.write("\n---\n\n")
+    report.write("## Executive Summary\n\n")
+    report.write(f"- Critical Risks: **{critical_count}**\n")
+    report.write(f"- High Risks: **{high_count}**\n")
+    report.write(f"- Moderate Risks: **{moderate_count}**\n")
+    report.write(f"- Average Severity: **{average_severity:.2f}**\n")
+    report.write(f"- Highest Risk: **{highest_risk['name']}** (Severity {highest_risk['severity']})\n")
+    report.write(f"- Newest Risk Added: **{newest_risk['name']}**\n")
 
-    md_file.write("\n---\n\n")
-    md_file.write("## Category Summary\n\n")
-
+    report.write("\n---\n\n")
+    report.write("## Category Summary\n\n")
     for category, count in category_counts.items():
-        md_file.write(f"- {category}: **{count}**\n")
+        report.write(f"- {category}: **{count}**\n")
+
+    report.write("\n---\n\n")
+    report.write("## Status Summary\n\n")
+    for status, count in status_counts.items():
+        report.write(f"- {status}: **{count}**\n")

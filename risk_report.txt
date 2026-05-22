@@ -1,108 +1,170 @@
 AI Operations Risk Report
 =========================
 
-[CRITICAL] Severity 10 - No MFA for VPN
+[CRITICAL] Severity 10 - NO MFA FOR VPN
 Category: Authentication
+Status: OPEN
 Timestamp: 2026-05-16 08:45:00
 Recommendation: Enable multi-factor authentication for all remote access.
 
-[CRITICAL] Severity 10 - Phishing
+[CRITICAL] Severity 10 - PHISHING
 Category: Security Awareness
+Status: OPEN
 Timestamp: 2026-05-17 09:10:00
 Recommendation: Provide phishing awareness training to employees.
 
-[CRITICAL] Severity 10 - Social Engineering
+[CRITICAL] Severity 10 - SOCIAL ENGINEERING
 Category: Security Awareness
+Status: OPEN
 Timestamp: 2026-05-17 14:40:00
 Recommendation: Review and remediate this risk as soon as possible.
 
-[CRITICAL] Severity 9 - Weak Password Policy
+[CRITICAL] Severity 9 - WEAK PASSWORD POLICY
 Category: Authentication
+Status: OPEN
 Timestamp: 2026-05-15 10:30:00
 Recommendation: Enforce stronger password policies and password rotation.
 
-[CRITICAL] Severity 9 - Exposed RDP Port
+[CRITICAL] Severity 9 - EXPOSED RDP PORT
 Category: Network
+Status: IN PROGRESS
 Timestamp: 2026-05-18 16:05:00
 Recommendation: Review and remediate this risk as soon as possible.
 
-[CRITICAL] Severity 9 - Backup/Recovery Failure
+[CRITICAL] Severity 9 - BACKUP/RECOVERY FAILURE
 Category: Backup and Recovery
+Status: OPEN
 Timestamp: 2026-05-21 20:09:03
 Recommendation: Verify backup integrity and perform a test restore.
 
-[CRITICAL] Severity 9 - Default Router Credentials
-Category: Network
-Timestamp: 2026-05-21 20:38:16
-Recommendation: Review and remediate this risk as soon as possible.
+[CRITICAL] Severity 9 - SHARED ADMIN ACCOUNT
+Category: Authentication
+Status: OPEN
+Timestamp: 2026-05-21 20:35:09
+Recommendation: Review privileged access and remove shared or unnecessary admin accounts.
 
-[HIGH] Severity 8 - Outdated Firewall Firmware
+[CRITICAL] Severity 9 - DEFAULT ROUTER CREDENTIALS
 Category: Network
+Status: OPEN
+Timestamp: 2026-05-21 20:38:16Unpatched Domain Controller
+Recommendation: Replace default credentials and restrict management access.
+
+[HIGH] Severity 8 - OUTDATED FIREWALL FIRMWARE
+Category: Network
+Status: IN PROGRESS
 Timestamp: 2026-05-15 11:15:00
 Recommendation: Update firewall firmware and review network rules.
 
-[HIGH] Severity 8 - Weak Wi-Fi Security
+[HIGH] Severity 8 - WEAK WI-FI SECURITY
 Category: Network
+Status: IN PROGRESS
 Timestamp: 2026-05-21 19:29:46
 Recommendation: Review wireless security settings and enforce strong encryption.
 
-[HIGH] Severity 8 - Data Leak
+[HIGH] Severity 8 - DATA LEAK
 Category: Data Protection
+Status: OPEN
 Timestamp: 2026-05-21 19:39:40
 Recommendation: Review data access controls and investigate possible exposure.
 
-[HIGH] Severity 8 - Environmental Damage
+[HIGH] Severity 8 - ENVIRONMENTAL DAMAGE
 Category: Physical Security
+Status: ACCEPTED
 Timestamp: 2026-05-21 20:05:51
 Recommendation: Review and remediate this risk as soon as possible.
 
-[HIGH] Severity 8 - Missing Backup Verification
+[HIGH] Severity 8 - MISSING BACKUP VERIFICATION
 Category: Backup and Recovery
+Status: IN PROGRESS
 Timestamp: 2026-05-21 20:15:12
 Recommendation: Verify backup integrity and perform a test restore.
 
-[HIGH] Severity 8 - Unencrypted Laptop
+[HIGH] Severity 8 - UNENCRYPTED LAPTOP
 Category: Endpoint Security
-Timestamp: 2026-05-21 20:20:33Shared Admin Account
+Status: OPEN
+Timestamp: 2026-05-21 20:20:33
 Recommendation: Enable full-disk encryption and verify endpoint security controls.
 
-[HIGH] Severity 7 - Unpracticed Incident Response
+[HIGH] Severity 8 - DEPRECATED TLS VERSION
+Category: Infrastructure
+Status: OPEN
+Timestamp: 2026-05-21 20:56:40
+Recommendation: Disable deprecated TLS versions and enforce modern encryption standards.
+
+[HIGH] Severity 8 - EXPIRED ANTIVIRUS SIGNATURES
+Category: Endpoint Security
+Status: OPEN
+Timestamp: 2026-05-21 21:09:10
+Recommendation: Update antivirus signatures and confirm endpoint protection status.
+
+[HIGH] Severity 8 - STALE SERVICE ACCOUNT
+Category: Authentication
+Status: OPEN
+Timestamp: 2026-05-21 21:22:20
+Recommendation: Review service account permissions, rotate credentials, and remove unused accounts.
+
+[HIGH] Severity 7 - UNPRACTICED INCIDENT RESPONSE
 Category: Incident Response
+Status: OPEN
 Timestamp: 2026-05-21 19:46:52
 Recommendation: Review and test the incident response plan.
 
-[MODERATE] Severity 6 - Inactive User Accounts
+[HIGH] Severity 7 - MISCONFIGURED DNS
+Category: Infrastructure
+Status: OPEN
+Timestamp: 2026-05-21 20:52:18
+Recommendation: Review DNS configuration, restrict zone transfers, and validate records.
+
+[HIGH] Severity 7 - OUTDATED SSL CERTIFICATE
+Category: Infrastructure
+Status: OPEN
+Timestamp: 2026-05-21 21:02:33
+Recommendation: Review and remediate this risk as soon as possible.
+
+[MODERATE] Severity 6 - INACTIVE USER ACCOUNTS
 Category: User Access
+Status: MITIGATED
 Timestamp: 2026-05-16 13:20:00
 Recommendation: Disable or remove inactive user accounts.
 
-[MODERATE] Severity 5 - Unauthorized Access
+[MODERATE] Severity 5 - UNAUTHORIZED ACCESS
 Category: User Access
+Status: CLOSED
 Timestamp: 2026-05-21 19:51:21
 Recommendation: Review and remediate this risk as soon as possible.
 
-[MODERATE] Severity 2 - Aging Hardware
+[MODERATE] Severity 2 - AGING HARDWARE
 Category: Endpoint Security
+Status: ACCEPTED
 Timestamp: 2026-05-19 12:00:00
 Recommendation: Review and remediate this risk as soon as possible.
 
 Executive Summary
 =================
-Critical Risks: 7
-High Risks: 7
+Critical Risks: 8
+High Risks: 12
 Moderate Risks: 3
-Average Severity: 7.88
-Highest Risk: No MFA for VPN (Severity 10)
-Newest Risk Added: Default Router Credentials
+Average Severity: 7.87
+Highest Risk: NO MFA FOR VPN (Severity 10)
+Newest Risk Added: STALE SERVICE ACCOUNT
 
 Category Summary
 ================
-Authentication: 2
-Security Awareness: 2
+Authentication: 4
 Network: 4
-Backup and Recovery: 2
-Data Protection: 1
-Physical Security: 1
-Endpoint Security: 2
-Incident Response: 1
 User Access: 2
+Security Awareness: 2
+Endpoint Security: 3
+Data Protection: 1
+Incident Response: 1
+Physical Security: 1
+Backup and Recovery: 2
+Infrastructure: 3
+
+Status Summary
+==============
+OPEN: 15
+IN PROGRESS: 4
+MITIGATED: 1
+ACCEPTED: 2
+CLOSED: 1
