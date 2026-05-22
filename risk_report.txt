@@ -21,21 +21,37 @@ Recommendation: Enforce stronger password policies and password rotation.
 Timestamp: 2026-05-18 16:05:00
 Recommendation: Review and remediate this risk as soon as possible.
 
+[CRITICAL] Severity 9 - Backup/Recovery Failure
+Timestamp: 2026-05-21 20:09:03
+Recommendation: Verify backup integrity and perform a test restore.
+
 [HIGH] Severity 8 - Outdated Firewall Firmware
 Timestamp: 2026-05-15 11:15:00
 Recommendation: Update firewall firmware and review network rules.
 
 [HIGH] Severity 8 - Weak Wi-Fi Security
 Timestamp: 2026-05-21 19:29:46
-Recommendation: Review and remediate this risk as soon as possible.
+Recommendation: Review wireless security settings and enforce strong encryption.
 
 [HIGH] Severity 8 - Data Leak
 Timestamp: 2026-05-21 19:39:40
+Recommendation: Review data access controls and investigate possible exposure.
+
+[HIGH] Severity 8 - Environmental Damage
+Timestamp: 2026-05-21 20:05:51
+Recommendation: Review and remediate this risk as soon as possible.
+
+[HIGH] Severity 8 - unencrypted Laptop
+Timestamp: 2026-05-21 20:22:01
+Recommendation: Review and remediate this risk as soon as possible.
+
+[HIGH] Severity 8 - Malware Infection
+Timestamp: 2026-05-21 20:23:43
 Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] Severity 7 - Unpracticed Incident Response
 Timestamp: 2026-05-21 19:46:52
-Recommendation: Review and remediate this risk as soon as possible.
+Recommendation: Review and test the incident response plan.
 
 [MODERATE] Severity 6 - Inactive User Accounts
 Timestamp: 2026-05-16 13:20:00
@@ -51,6 +67,9 @@ Recommendation: Review and remediate this risk as soon as possible.
 
 Executive Summary
 =================
-Critical Risks: 5
-High Risks: 4
+Critical Risks: 6
+High Risks: 7
 Moderate Risks: 3
+Average Severity: 7.81
+Highest Risk: No MFA for VPN (Severity 10)
+Newest Risk Added: Malware Infection

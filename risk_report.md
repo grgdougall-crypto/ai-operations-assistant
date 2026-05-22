@@ -7,10 +7,14 @@
 | Social Engineering | CRITICAL | 10 | 2026-05-17 14:40:00 | Review and remediate this risk as soon as possible. |
 | Weak Password Policy | CRITICAL | 9 | 2026-05-15 10:30:00 | Enforce stronger password policies and password rotation. |
 | Exposed RDP Port | CRITICAL | 9 | 2026-05-18 16:05:00 | Review and remediate this risk as soon as possible. |
+| Backup/Recovery Failure | CRITICAL | 9 | 2026-05-21 20:09:03 | Verify backup integrity and perform a test restore. |
 | Outdated Firewall Firmware | HIGH | 8 | 2026-05-15 11:15:00 | Update firewall firmware and review network rules. |
-| Weak Wi-Fi Security | HIGH | 8 | 2026-05-21 19:29:46 | Review and remediate this risk as soon as possible. |
-| Data Leak | HIGH | 8 | 2026-05-21 19:39:40 | Review and remediate this risk as soon as possible. |
-| Unpracticed Incident Response | HIGH | 7 | 2026-05-21 19:46:52 | Review and remediate this risk as soon as possible. |
+| Weak Wi-Fi Security | HIGH | 8 | 2026-05-21 19:29:46 | Review wireless security settings and enforce strong encryption. |
+| Data Leak | HIGH | 8 | 2026-05-21 19:39:40 | Review data access controls and investigate possible exposure. |
+| Environmental Damage | HIGH | 8 | 2026-05-21 20:05:51 | Review and remediate this risk as soon as possible. |
+| unencrypted Laptop | HIGH | 8 | 2026-05-21 20:22:01 | Review and remediate this risk as soon as possible. |
+| Malware Infection | HIGH | 8 | 2026-05-21 20:23:43 | Review and remediate this risk as soon as possible. |
+| Unpracticed Incident Response | HIGH | 7 | 2026-05-21 19:46:52 | Review and test the incident response plan. |
 | Inactive User Accounts | MODERATE | 6 | 2026-05-16 13:20:00 | Disable or remove inactive user accounts. |
 | Unauthorized Access | MODERATE | 5 | 2026-05-21 19:51:21 | Review and remediate this risk as soon as possible. |
 | Aging Hardware | MODERATE | 2 | 2026-05-19 12:00:00 | Review and remediate this risk as soon as possible. |
@@ -19,6 +23,9 @@
 
 ## Executive Summary
 
-- Critical Risks: **5**
-- High Risks: **4**
+- Critical Risks: **6**
+- High Risks: **7**
 - Moderate Risks: **3**
+- Average Severity: **7.81**
+- Highest Risk: **No MFA for VPN** (Severity 10)
+- Newest Risk Added: **Malware Infection**
