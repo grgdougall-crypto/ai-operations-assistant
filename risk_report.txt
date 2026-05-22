@@ -71,7 +71,7 @@ Due Date: 2026-05-27
 Due Status: ON TRACK
 Days Open: 0
 Days Until Due: 6
-Recommendation: Review access controls, restrict exposure, and enforce approved storage policies.
+Recommendation: Review database access controls and restrict exposure.
 
 [CRITICAL] RISK-013 - UNSUPPORTED OPERATING SYSTEM
 Severity: 9
@@ -83,7 +83,19 @@ Due Date: 2026-06-15
 Due Status: ON TRACK
 Days Open: 0
 Days Until Due: 25
-Recommendation: Upgrade or replace unsupported systems and apply compensating controls.
+Recommendation: Upgrade unsupported systems and apply compensating controls.
+
+[CRITICAL] RISK-018 - UNMANAGED LOCAL ADMIN ACCOUNT
+Severity: 9
+Category: Authentication
+Status: OPEN
+Owner: Security Team
+Timestamp: 2026-05-21 23:05:01
+Due Date: 2026-05-28
+Due Status: ON TRACK
+Days Open: 0
+Days Until Due: 7
+Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
 
 [HIGH] RISK-002 - OUTDATED FIREWALL FIRMWARE
 Severity: 8
@@ -143,7 +155,7 @@ Due Date: 2026-06-18
 Due Status: ON TRACK
 Days Open: 0
 Days Until Due: 28
-Recommendation: Review access controls, restrict exposure, and enforce approved storage policies.
+Recommendation: Review cloud storage permissions and enforce approved configurations.
 
 [HIGH] RISK-014 - EXPOSED TEST ENVIRONMENT 
 Severity: 8
@@ -167,7 +179,7 @@ Due Date: 2026-06-25
 Due Status: ON TRACK
 Days Open: 0
 Days Until Due: 35
-Recommendation: Review privileged access, rotate credentials, and remove unnecessary accounts.
+Recommendation: Review and remediate this risk as soon as possible.
 
 [HIGH] RISK-016 - WEAK ENCRYPTION SETTING
 Severity: 8
@@ -179,7 +191,31 @@ Due Date: 2026-06-28
 Due Status: ON TRACK
 Days Open: 0
 Days Until Due: 38
-Recommendation: Review encryption settings and enforce approved encryption standards.
+Recommendation: Review and remediate this risk as soon as possible.
+
+[HIGH] RISK-019 - EXPOSED BACKUP SHARE
+Severity: 8
+Category: Backup and Recovery
+Status: OPEN
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 23:23:52
+Due Date: 2026-05-26
+Due Status: ON TRACK
+Days Open: 0
+Days Until Due: 5
+Recommendation: Verify backup integrity and perform a test restore.
+
+[HIGH] RISK-020 - EXPOSED BACKUP SHARE
+Severity: 8
+Category: Backup and Recovery
+Status: OPEN
+Owner: Infrastructure Team
+Timestamp: 2026-05-21 23:31:01
+Due Date: 2026-05-26
+Due Status: ON TRACK
+Days Open: 0
+Days Until Due: 5
+Recommendation: Verify backup integrity and perform a test restore.
 
 [HIGH] RISK-011 - MISSING ENDPOINT MONITORING
 Severity: 7
@@ -206,38 +242,39 @@ Days Until Due: 4
 Recommendation: Renew the certificate and verify TLS configuration.
 
 === Executive Summary ===
-Critical Risks: 7
-High Risks: 10
+Critical Risks: 8
+High Risks: 12
 Moderate Risks: 0
 Average Severity: 8.35
 Highest Risk: RISK-003 - NO MFA FOR VPN
-Newest Risk Added: RISK-017
+Newest Risk Added: RISK-020
 Overdue Risks: 0
-On Track Risks: 17
+On Track Risks: 20
 
 === SLA Summary ===
 Critical Risks Overdue: 0
-Risks Due Within 7 Days: 3
+Risks Due Within 7 Days: 6
 Oldest Open Risk: RISK-001 (6 days open)
 
 === Category Summary ===
-Authentication: 4
+Authentication: 5
 Network: 4
 Security Awareness: 1
 Endpoint Security: 2
 Infrastructure: 5
 Data Protection: 1
+Backup and Recovery: 2
 
 === Status Summary ===
-OPEN: 13
+OPEN: 16
 IN PROGRESS: 4
 
 === Owner Summary ===
-Security Team: 6
+Security Team: 7
 Network Operations: 3
 Help Desk: 1
-Infrastructure Team: 6
+Infrastructure Team: 8
 Compliance Team: 1
 
 === Due Status Summary ===
-ON TRACK: 17
+ON TRACK: 20
