@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 CSV_FILE = "risks.csv"
 TXT_REPORT = "risk_report.txt"
 MD_REPORT = "risk_report.md"
+HTML_REPORT = "dashboard.html"
 CHARTS_DIR = "charts"
+TEMPLATE_FILE = os.path.join("templates", "dashboard_template.html")
 
 CATEGORIES = [
     "Authentication",
@@ -1029,6 +1031,73 @@ def write_md_report(risks, metrics):
             report.write(f"- {due_status}: {count}\n")
 
 
+def build_html_risk_rows(risks):
+    rows = ""
+
+    active_risks = [
+        risk for risk in risks
+        if risk["status"] in ACTIVE_STATUSES
+    ]
+
+    sorted_active_risks = sorted(active_risks, key=lambda risk: risk["severity"], reverse=True)
+
+    for risk in sorted_active_risks:
+        if risk["priority"] == "CRITICAL":
+            priority_class = "priority-critical"
+        elif risk["priority"] == "HIGH":
+            priority_class = "priority-high"
+        else:
+            priority_class = "priority-moderate"
+
+        rows += f"""
+<tr>
+<td>{risk['id']}</td>
+<td>{risk['name']}</td>
+<td class=\"{priority_class}\">{risk['severity']}</td>
+<td>{risk['status']}</td>
+<td>{risk['owner']}</td>
+<td>{risk['due_date']}</td>
+</tr>
+"""
+
+    return rows
+
+
+def write_html_dashboard(risks, metrics):
+    if not os.path.exists(TEMPLATE_FILE):
+        print("HTML template not found. Skipping dashboard.html generation.")
+        print(f"Missing file: {TEMPLATE_FILE}")
+        return
+
+    highest_risk = metrics["highest_risk"]
+    highest_risk_text = "None"
+
+    if highest_risk:
+        highest_risk_text = f"{highest_risk['id']} - {highest_risk['name']}"
+
+    with open(TEMPLATE_FILE, mode="r", encoding="utf-8") as template_file:
+        html = template_file.read()
+
+    replacements = {
+        "{{TOTAL_RISKS}}": str(metrics["total_risks"]),
+        "{{CRITICAL_RISKS}}": str(metrics["critical_count"]),
+        "{{HIGH_RISKS}}": str(metrics["high_count"]),
+        "{{SLA_COMPLIANCE}}": f"{metrics['sla_compliance']:.1f}",
+        "{{OVERDUE_RISKS}}": str(metrics["overdue_count"]),
+        "{{HIGHEST_RISK}}": highest_risk_text,
+        "{{AVERAGE_SEVERITY}}": f"{metrics['average_severity']:.2f}",
+        "{{MOST_COMMON_CATEGORY}}": metrics["most_common_category"],
+        "{{AVG_DAYS_OPEN}}": f"{metrics['average_days_open_active']:.1f}",
+        "{{RISK_ROWS}}": build_html_risk_rows(risks),
+    }
+
+    for placeholder, value in replacements.items():
+        html = html.replace(placeholder, value)
+
+    with open(HTML_REPORT, mode="w", encoding="utf-8") as dashboard_file:
+        dashboard_file.write(html)
+
+
 def generate_reports(risks):
     print("\n=== Generating Reports ===")
 
@@ -1043,10 +1112,12 @@ def generate_reports(risks):
 
     write_txt_report(risks, metrics)
     write_md_report(risks, metrics)
+    write_html_dashboard(risks, metrics)
 
     print("Reports and charts generated successfully.")
     print(f"- {TXT_REPORT}")
     print(f"- {MD_REPORT}")
+    print(f"- {HTML_REPORT}")
     print(f"- {CHARTS_DIR}/")
 
 

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Operations Executive Dashboard</title>
+
+<style>
+body {
+    background-color: #f4f6f8;
+    color: #1f2933;
+    font-family: Arial, sans-serif;
+    margin: 25px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    background: #222;
+    color: white;
+    font-size: 16px;
+    padding: 8px;
+    margin: -14px -14px 12px -14px;
+    border-radius: 6px 6px 0 0;
+}
+
+.kpi-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.kpi-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.kpi-value {
+    font-weight: bold;
+    text-align: right;
+}
+
+.chart-card img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+}
+
+.wide {
+    grid-column: span 2;
+}
+
+.full {
+    grid-column: span 3;
+}
+
+.risk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.risk-table th {
+    background: #222;
+    color: white;
+    padding: 8px;
+}
+
+.risk-table td {
+    border: 1px solid #d0d7de;
+    padding: 8px;
+}
+
+.risk-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.priority-critical {
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.priority-high {
+    color: #c2410c;
+    font-weight: bold;
+}
+
+.priority-moderate {
+    color: #ca8a04;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Risk Management KPI Dashboard</h1>
+
+<div class="dashboard-grid">
+
+    <div class="card">
+        <h2>Executive KPIs</h2>
+        <table class="kpi-table">
+            <tr><td>Total Risks</td><td class="kpi-value">27</td></tr>
+            <tr><td>Critical Risks</td><td class="kpi-value">10</td></tr>
+            <tr><td>High Risks</td><td class="kpi-value">13</td></tr>
+            <tr><td>Overdue Risks</td><td class="kpi-value">0</td></tr>
+            <tr><td>SLA Compliance</td><td class="kpi-value">92.6%</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Executive Summary</h2>
+        <p><strong>Highest Risk:</strong><br>RISK-003 - NO MFA FOR VPN</p>
+        <p><strong>Average Severity:</strong> 7.63</p>
+        <p><strong>Most Common Category:</strong><br>Authentication</p>
+        <p><strong>Average Active Risk Age:</strong> 2.8 days</p>
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Distribution</h2>
+        <img src="charts/risks_by_priority.png" alt="Risk Distribution by Priority">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Lifecycle Status</h2>
+        <img src="charts/risks_by_status.png" alt="Risks by Status">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Heat Map</h2>
+        <img src="charts/operational_risk_heat_map.png" alt="Operational Risk Heat Map">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Top 5 Risks</h2>
+        <img src="charts/top_5_risks.png" alt="Top 5 Risks">
+    </div>
+
+    <div class="card chart-card wide">
+        <h2>Risks by Category</h2>
+        <img src="charts/risks_by_category.png" alt="Risks by Category">
+    </div>
+
+    <div class="card chart-card">
+        <h2>SLA Due Status</h2>
+        <img src="charts/risks_by_due_status.png" alt="SLA Due Status">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Active vs Inactive</h2>
+        <img src="charts/active_vs_inactive_risks.png" alt="Active vs Inactive Risks">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Open Risk Aging</h2>
+        <img src="charts/open_risk_aging_distribution.png" alt="Open Risk Aging Distribution">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risks Created by Date</h2>
+        <img src="charts/risks_created_by_date.png" alt="Risks Created by Date">
+    </div>
+
+    <div class="card full">
+        <h2>Active Risk Register</h2>
+        <table class="risk-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+<tr>
+<td>RISK-003</td>
+<td>NO MFA FOR VPN</td>
+<td class="priority-critical">10</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-05-30</td>
+</tr>
+
+<tr>
+<td>RISK-001</td>
+<td>WEAK PASSWORD POLICY</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-06-01</td>
+</tr>
+
+<tr>
+<td>RISK-004</td>
+<td>PHISHING CAMPAIGN EXPOSURE</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-06-10</td>
+</tr>
+
+<tr>
+<td>RISK-005</td>
+<td>EXPOSED RDP PORT</td>
+<td class="priority-critical">9</td>
+<td>IN PROGRESS</td>
+<td>Network Operations</td>
+<td>2026-05-28</td>
+</tr>
+
+<tr>
+<td>RISK-007</td>
+<td>SHARED ADMIN ACCOUNT</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-05-29</td>
+</tr>
+
+<tr>
+<td>RISK-008</td>
+<td>EXPOSED DATABASE PORT</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-27</td>
+</tr>
+
+<tr>
+<td>RISK-013</td>
+<td>UNSUPPORTED OPERATING SYSTEM</td>
+<td class="priority-critical">9</td>
+<td>IN PROGRESS</td>
+<td>Infrastructure Team</td>
+<td>2026-06-15</td>
+</tr>
+
+<tr>
+<td>RISK-018</td>
+<td>UNMANAGED LOCAL ADMIN ACCOUNT</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-05-28</td>
+</tr>
+
+<tr>
+<td>RISK-023</td>
+<td>PUBLIC RDP PORT EXPOSED</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-25</td>
+</tr>
+
+<tr>
+<td>RISK-026</td>
+<td>UNSUPPORTED OPERATING SYSTEM</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-05-27</td>
+</tr>
+
+<tr>
+<td>RISK-002</td>
+<td>OUTDATED FIREWALL FIRMWARE</td>
+<td class="priority-high">8</td>
+<td>IN PROGRESS</td>
+<td>Network Operations</td>
+<td>2026-06-05</td>
+</tr>
+
+<tr>
+<td>RISK-006</td>
+<td>UNENCRYPTED LAPTOP</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Help Desk</td>
+<td>2026-06-12</td>
+</tr>
+
+<tr>
+<td>RISK-009</td>
+<td>INSECURE API ENDPOINT</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-06-08</td>
+</tr>
+
+<tr>
+<td>RISK-010</td>
+<td>LEGACY VPN APPLIANCE</td>
+<td class="priority-high">8</td>
+<td>IN PROGRESS</td>
+<td>Network Operations</td>
+<td>2026-06-15</td>
+</tr>
+
+<tr>
+<td>RISK-012</td>
+<td>UNAUTHORIZED CLOUD STORAGE</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Compliance Team</td>
+<td>2026-06-18</td>
+</tr>
+
+<tr>
+<td>RISK-014</td>
+<td>EXPOSED TEST ENVIRONMENT </td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-06-22</td>
+</tr>
+
+<tr>
+<td>RISK-015</td>
+<td>INSECURE SERVICE ACCOUNT</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-06-25</td>
+</tr>
+
+<tr>
+<td>RISK-016</td>
+<td>WEAK ENCRYPTION SETTING</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-06-28</td>
+</tr>
+
+<tr>
+<td>RISK-019</td>
+<td>EXPOSED BACKUP SHARE</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-26</td>
+</tr>
+
+<tr>
+<td>RISK-020</td>
+<td>EXPOSED BACKUP SHARE</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-26</td>
+</tr>
+
+<tr>
+<td>RISK-024</td>
+<td>EXPIRED SSL CERTIFICATE</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-05-25</td>
+</tr>
+
+<tr>
+<td>RISK-011</td>
+<td>MISSING ENDPOINT MONITORING</td>
+<td class="priority-high">7</td>
+<td>OPEN</td>
+<td>Security Team</td>
+<td>2026-06-20</td>
+</tr>
+
+<tr>
+<td>RISK-017</td>
+<td>EXPIRED SSL CERTIFICATE</td>
+<td class="priority-high">7</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-25</td>
+</tr>
+
+<tr>
+<td>RISK-025</td>
+<td>SHARED ADMIN ACCOUNT</td>
+<td class="priority-moderate">6</td>
+<td>OPEN</td>
+<td>Network Operations</td>
+<td>2026-05-25</td>
+</tr>
+
+<tr>
+<td>RISK-022</td>
+<td>TEST 1</td>
+<td class="priority-moderate">1</td>
+<td>OPEN</td>
+<td>Network Operations</td>
+<td>2026-06-01</td>
+</tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

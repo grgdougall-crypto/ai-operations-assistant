@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Operations Executive Dashboard</title>
+
+<style>
+body {
+    background-color: #f4f6f8;
+    color: #1f2933;
+    font-family: Arial, sans-serif;
+    margin: 25px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    background: #222;
+    color: white;
+    font-size: 16px;
+    padding: 8px;
+    margin: -14px -14px 12px -14px;
+    border-radius: 6px 6px 0 0;
+}
+
+.kpi-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.kpi-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.kpi-value {
+    font-weight: bold;
+    text-align: right;
+}
+
+.chart-card img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+}
+
+.wide {
+    grid-column: span 2;
+}
+
+.full {
+    grid-column: span 3;
+}
+
+.risk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.risk-table th {
+    background: #222;
+    color: white;
+    padding: 8px;
+}
+
+.risk-table td {
+    border: 1px solid #d0d7de;
+    padding: 8px;
+}
+
+.risk-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.priority-critical {
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.priority-high {
+    color: #c2410c;
+    font-weight: bold;
+}
+
+.priority-moderate {
+    color: #ca8a04;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Risk Management KPI Dashboard</h1>
+
+<div class="dashboard-grid">
+
+    <div class="card">
+        <h2>Executive KPIs</h2>
+        <table class="kpi-table">
+            <tr><td>Total Risks</td><td class="kpi-value">{{TOTAL_RISKS}}</td></tr>
+            <tr><td>Critical Risks</td><td class="kpi-value">{{CRITICAL_RISKS}}</td></tr>
+            <tr><td>High Risks</td><td class="kpi-value">{{HIGH_RISKS}}</td></tr>
+            <tr><td>Overdue Risks</td><td class="kpi-value">{{OVERDUE_RISKS}}</td></tr>
+            <tr><td>SLA Compliance</td><td class="kpi-value">{{SLA_COMPLIANCE}}%</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Executive Summary</h2>
+        <p><strong>Highest Risk:</strong><br>{{HIGHEST_RISK}}</p>
+        <p><strong>Average Severity:</strong> {{AVERAGE_SEVERITY}}</p>
+        <p><strong>Most Common Category:</strong><br>{{MOST_COMMON_CATEGORY}}</p>
+        <p><strong>Average Active Risk Age:</strong> {{AVG_DAYS_OPEN}} days</p>
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Distribution</h2>
+        <img src="charts/risks_by_priority.png" alt="Risk Distribution by Priority">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Lifecycle Status</h2>
+        <img src="charts/risks_by_status.png" alt="Risks by Status">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risk Heat Map</h2>
+        <img src="charts/operational_risk_heat_map.png" alt="Operational Risk Heat Map">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Top 5 Risks</h2>
+        <img src="charts/top_5_risks.png" alt="Top 5 Risks">
+    </div>
+
+    <div class="card chart-card wide">
+        <h2>Risks by Category</h2>
+        <img src="charts/risks_by_category.png" alt="Risks by Category">
+    </div>
+
+    <div class="card chart-card">
+        <h2>SLA Due Status</h2>
+        <img src="charts/risks_by_due_status.png" alt="SLA Due Status">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Active vs Inactive</h2>
+        <img src="charts/active_vs_inactive_risks.png" alt="Active vs Inactive Risks">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Open Risk Aging</h2>
+        <img src="charts/open_risk_aging_distribution.png" alt="Open Risk Aging Distribution">
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risks Created by Date</h2>
+        <img src="charts/risks_created_by_date.png" alt="Risks Created by Date">
+    </div>
+
+    <div class="card full">
+        <h2>Active Risk Register</h2>
+        <table class="risk-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{RISK_ROWS}}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
