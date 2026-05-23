@@ -514,6 +514,40 @@ def get_count_dictionary(risks, key):
     return counts
 
 
+priority_colors = {
+    "CRITICAL": "red",
+    "HIGH": "orange",
+    "MODERATE": "gold",
+    "LOW": "green"
+}
+
+status_colors = {
+    "OPEN": "royalblue",
+    "IN PROGRESS": "purple",
+    "PENDING REVIEW": "gray",
+    "MITIGATED": "green",
+    "ACCEPTED": "teal",
+    "CLOSED": "darkgreen"
+}
+
+due_status_colors = {
+    "OVERDUE": "red",
+    "ON TRACK": "green",
+    "NOT ACTIVE": "gray"
+}
+
+default_chart_color = "steelblue"
+
+
+def get_colors_for_labels(labels, color_map):
+    colors = []
+
+    for label in labels:
+        colors.append(color_map.get(label, default_chart_color))
+
+    return colors
+
+
 def add_value_labels_to_bars(bars):
     for bar in bars:
         height = bar.get_height()
@@ -540,13 +574,14 @@ def add_value_labels_to_horizontal_bars(bars):
         )
 
 
-def create_vertical_bar_chart(title, labels, values, filename, x_label):
+def create_vertical_bar_chart(title, labels, values, filename, x_label, color_map=None):
     if not labels or not values:
         return
 
     plt.figure(figsize=(11, 6))
 
-    bars = plt.bar(labels, values)
+    colors = get_colors_for_labels(labels, color_map) if color_map else default_chart_color
+    bars = plt.bar(labels, values, color=colors)
 
     plt.title(title, fontsize=16, fontweight="bold")
     plt.xlabel(x_label, fontsize=12)
@@ -560,13 +595,16 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label):
     plt.close()
 
 
-def create_horizontal_bar_chart(title, labels, values, filename, y_label):
+def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors=None):
     if not labels or not values:
         return
 
     plt.figure(figsize=(11, 6))
 
-    bars = plt.barh(labels, values)
+    if colors:
+        bars = plt.barh(labels, values, color=colors)
+    else:
+        bars = plt.barh(labels, values, color=default_chart_color)
 
     plt.title(title, fontsize=16, fontweight="bold")
     plt.xlabel("Number of Risks", fontsize=12)
@@ -596,7 +634,8 @@ def generate_charts(risks):
         list(priority_counts.keys()),
         list(priority_counts.values()),
         "risks_by_priority.png",
-        "Priority Level"
+        "Priority Level",
+        priority_colors
     )
 
     create_vertical_bar_chart(
@@ -604,7 +643,8 @@ def generate_charts(risks):
         list(status_counts.keys()),
         list(status_counts.values()),
         "risks_by_status.png",
-        "Risk Status"
+        "Risk Status",
+        status_colors
     )
 
     create_horizontal_bar_chart(
@@ -628,7 +668,8 @@ def generate_charts(risks):
         list(due_status_counts.keys()),
         list(due_status_counts.values()),
         "risks_by_due_status.png",
-        "Due Status"
+        "Due Status",
+        due_status_colors
     )
 
     top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
@@ -638,14 +679,19 @@ def generate_charts(risks):
     ]
     top_risk_values = [risk["severity"] for risk in top_risks]
 
+    top_risk_colors = []
+
+    for risk in top_risks:
+        top_risk_colors.append(priority_colors.get(risk["priority"], default_chart_color))
+
     create_horizontal_bar_chart(
         "Top 5 Highest Severity Risks",
         top_risk_labels,
         top_risk_values,
         "top_5_risks.png",
-        "Risk"
+        "Risk",
+        top_risk_colors
     )
-
 
 def generate_reports(risks):
     print("\n=== Generating Reports ===")
