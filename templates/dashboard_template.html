@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Operations Dashboard</title>
 
+<style>
+
+body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+h1, h2 {
+    color: #58a6ff;
+}
+
+.kpi-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.kpi-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+    width: 220px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
+}
+
+.kpi-title {
+    font-size: 14px;
+    color: #8b949e;
+}
+
+.kpi-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.chart-section {
+    margin-top: 50px;
+}
+
+.chart-section img {
+    width: 100%;
+    max-width: 1100px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+th {
+    background-color: #161b22;
+    color: #58a6ff;
+    padding: 12px;
+    border: 1px solid #30363d;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #30363d;
+}
+
+tr:nth-child(even) {
+    background-color: #161b22;
+}
+
+.priority-critical {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.priority-high {
+    color: #ffae42;
+    font-weight: bold;
+}
+
+.priority-moderate {
+    color: #58a6ff;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>AI Operations Executive Dashboard</h1>
+
+<h2>Executive KPI Overview</h2>
+
+<div class="kpi-container">
+
+<div class="kpi-card">
+<div class="kpi-title">Total Risks</div>
+<div class="kpi-value">{{TOTAL_RISKS}}</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">Critical Risks</div>
+<div class="kpi-value">{{CRITICAL_RISKS}}</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">High Risks</div>
+<div class="kpi-value">{{HIGH_RISKS}}</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">SLA Compliance</div>
+<div class="kpi-value">{{SLA_COMPLIANCE}}%</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">Overdue Risks</div>
+<div class="kpi-value">{{OVERDUE_RISKS}}</div>
+</div>
+
+</div>
+
+<h2>Executive Summary</h2>
+
+<ul>
+<li>Highest Risk: {{HIGHEST_RISK}}</li>
+<li>Average Severity: {{AVERAGE_SEVERITY}}</li>
+<li>Most Common Category: {{MOST_COMMON_CATEGORY}}</li>
+<li>Average Active Risk Age: {{AVG_DAYS_OPEN}} days</li>
+</ul>
+
+<div class="chart-section">
+<h2>Risk Distribution by Priority</h2>
+<img src="../charts/risk_priority_distribution.png">
+</div>
+
+<div class="chart-section">
+<h2>Operational Heat Map</h2>
+<img src="../charts/risk_heatmap.png">
+</div>
+
+<div class="chart-section">
+<h2>Top 5 Risks by Severity</h2>
+<img src="../charts/top_5_risks.png">
+</div>
+
+<h2>Active Risk Register</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Severity</th>
+<th>Status</th>
+<th>Owner</th>
+<th>Due Date</th>
+</tr>
+
+{{RISK_ROWS}}
+
+</table>
+
+</body>
+</html>
