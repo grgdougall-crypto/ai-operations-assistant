@@ -569,10 +569,10 @@ def add_value_labels_to_bars(bars):
 
         plt.text(
             bar.get_x() + bar.get_width() / 2,
-            height + 0.2,
+            height + 0.08,
             str(int(height)),
             ha="center",
-            fontsize=11,
+            fontsize=8,
         )
 
 
@@ -581,11 +581,11 @@ def add_value_labels_to_horizontal_bars(bars):
         width = bar.get_width()
 
         plt.text(
-            width + 0.2,
+            width + 0.08,
             bar.get_y() + bar.get_height() / 2,
             str(int(width)),
             va="center",
-            fontsize=11,
+            fontsize=8,
         )
 
 
@@ -593,14 +593,14 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label, color_ma
     if not labels or not values:
         return
 
-    plt.figure(figsize=(7.5, 4.5), dpi=130)
+    plt.figure(figsize=(5.8, 3.4), dpi=125)
 
     colors = get_colors_for_labels(labels, color_map) if color_map else DEFAULT_CHART_COLOR
     bars = plt.bar(labels, values, color=colors)
 
-    plt.title(title, fontsize=13, fontweight="bold")
-    plt.xlabel(x_label, fontsize=10)
-    plt.ylabel("Count", fontsize=10)
+    plt.title(title, fontsize=8, fontweight="bold")
+    plt.xlabel(x_label, fontsize=8)
+    plt.ylabel("Count", fontsize=8)
     plt.xticks(rotation=25, ha="right", fontsize=8)
     plt.yticks(fontsize=8)
     plt.grid(axis="y", linestyle="--", alpha=0.35)
@@ -616,7 +616,7 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
     if not labels or not values:
         return
 
-    plt.figure(figsize=(7.8, 4.8), dpi=130)
+    plt.figure(figsize=(6.0, 3.6), dpi=125)
 
     bars = plt.barh(
         labels,
@@ -624,9 +624,9 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
         color=colors if colors else DEFAULT_CHART_COLOR,
     )
 
-    plt.title(title, fontsize=13, fontweight="bold")
-    plt.xlabel("Count", fontsize=10)
-    plt.ylabel(y_label, fontsize=10)
+    plt.title(title, fontsize=8, fontweight="bold")
+    plt.xlabel("Count", fontsize=8)
+    plt.ylabel(y_label, fontsize=8)
     plt.xticks(fontsize=8)
     plt.yticks(fontsize=8)
     plt.grid(axis="x", linestyle="--", alpha=0.35)
@@ -656,12 +656,12 @@ def create_operational_heat_map(risks):
 
         heatmap_data.append(row)
 
-    plt.figure(figsize=(6.8, 4.4), dpi=130)
+    plt.figure(figsize=(5.4, 3.4), dpi=125)
     plt.imshow(heatmap_data, cmap="Reds")
 
-    plt.title("Operational Risk Heat Map", fontsize=13, fontweight="bold")
-    plt.xlabel("Due Status", fontsize=10)
-    plt.ylabel("Priority", fontsize=10)
+    plt.title("Operational Risk Heat Map", fontsize=8, fontweight="bold")
+    plt.xlabel("Due Status", fontsize=8)
+    plt.ylabel("Priority", fontsize=8)
 
     plt.xticks(range(len(due_status_order)), due_status_order, fontsize=8)
     plt.yticks(range(len(priority_order)), priority_order, fontsize=8)
@@ -677,7 +677,7 @@ def create_operational_heat_map(risks):
                 str(value),
                 ha="center",
                 va="center",
-                fontsize=13,
+                fontsize=10,
                 fontweight="bold",
                 color=text_color,
             )

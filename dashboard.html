@@ -6,84 +6,106 @@
 
 <style>
 body {
-    background-color: #f4f6f8;
-    color: #1f2933;
+    background-color: #eef2f6;
+    color: #111827;
     font-family: Arial, sans-serif;
-    margin: 25px;
+    margin: 10px;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 25px;
+    font-size: 22px;
+    margin: 6px 0 10px 0;
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: 1.05fr 1fr 1fr;
+    grid-auto-rows: 265px;
+    gap: 8px;
 }
 
 .card {
-    background: white;
-    border: 1px solid #d0d7de;
-    border-radius: 6px;
-    padding: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    background: #ffffff;
+    border: 1px solid #cfd8e3;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .card h2 {
-    background: #222;
-    color: white;
-    font-size: 16px;
+    background: #202938;
+    color: #ffffff;
+    font-size: 13px;
+    padding: 6px 8px;
+    margin: 0;
+}
+
+.card-content {
     padding: 8px;
-    margin: -14px -14px 12px -14px;
-    border-radius: 6px 6px 0 0;
+    height: calc(100% - 31px);
+    overflow: hidden;
 }
 
 .kpi-table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 12px;
 }
 
 .kpi-table td {
-    padding: 8px;
+    padding: 5px;
     border-bottom: 1px solid #e5e7eb;
 }
 
 .kpi-value {
-    font-weight: bold;
     text-align: right;
+    font-weight: bold;
+}
+
+.summary-list {
+    font-size: 12px;
+    line-height: 1.3;
 }
 
 .chart-card img {
     width: 100%;
-    max-height: 360px;
+    height: 100%;
     object-fit: contain;
-}
-
-.wide {
-    grid-column: span 2;
 }
 
 .full {
     grid-column: span 3;
 }
 
+.risk-register {
+    grid-column: span 3;
+    height: 315px;
+}
+
+.table-wrap {
+    height: 265px;
+    overflow-y: auto;
+}
+
 .risk-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .risk-table th {
-    background: #222;
-    color: white;
-    padding: 8px;
+    background: #202938;
+    color: #ffffff;
+    padding: 6px;
+    text-align: left;
+    position: sticky;
+    top: 0;
 }
 
 .risk-table td {
     border: 1px solid #d0d7de;
-    padding: 8px;
+    padding: 5px;
 }
 
 .risk-table tr:nth-child(even) {
@@ -104,6 +126,13 @@ h1 {
     color: #ca8a04;
     font-weight: bold;
 }
+
+.footer-note {
+    text-align: center;
+    color: #64748b;
+    font-size: 10px;
+    margin-top: 8px;
+}
 </style>
 </head>
 
@@ -115,83 +144,92 @@ h1 {
 
     <div class="card">
         <h2>Executive KPIs</h2>
-        <table class="kpi-table">
-            <tr><td>Total Risks</td><td class="kpi-value">40</td></tr>
-            <tr><td>Critical Risks</td><td class="kpi-value">17</td></tr>
-            <tr><td>High Risks</td><td class="kpi-value">20</td></tr>
-            <tr><td>Overdue Risks</td><td class="kpi-value">0</td></tr>
-            <tr><td>SLA Compliance</td><td class="kpi-value">95.0%</td></tr>
-        </table>
+        <div class="card-content">
+            <table class="kpi-table">
+                <tr><td>Total Risks</td><td class="kpi-value">40</td></tr>
+                <tr><td>Critical Risks</td><td class="kpi-value">17</td></tr>
+                <tr><td>High Risks</td><td class="kpi-value">20</td></tr>
+                <tr><td>Overdue Risks</td><td class="kpi-value">0</td></tr>
+                <tr><td>SLA Compliance</td><td class="kpi-value">95.0%</td></tr>
+            </table>
+        </div>
     </div>
 
     <div class="card">
         <h2>Executive Summary</h2>
-        <p><strong>Highest Risk:</strong><br>RISK-003 - NO MFA FOR VPN</p>
-        <p><strong>Average Severity:</strong> 8.25</p>
-        <p><strong>Most Common Category:</strong><br>Infrastructure</p>
-        <p><strong>Average Active Risk Age:</strong> 2.3 days</p>
+        <div class="card-content summary-list">
+            <p><strong>Highest Risk:</strong><br>RISK-003 - NO MFA FOR VPN</p>
+            <p><strong>Average Severity:</strong> 8.25</p>
+            <p><strong>Most Common Category:</strong><br>Infrastructure</p>
+            <p><strong>Average Active Risk Age:</strong> 2.3 days</p>
+        </div>
     </div>
 
     <div class="card chart-card">
         <h2>Risk Distribution</h2>
-        <img src="charts/risks_by_priority.png" alt="Risk Distribution by Priority">
+        <div class="card-content">
+            <img src="charts/risks_by_priority.png">
+        </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Risk Lifecycle Status</h2>
-        <img src="charts/risks_by_status.png" alt="Risks by Status">
-    </div>
-
-    <div class="card chart-card">
-        <h2>Risk Heat Map</h2>
-        <img src="charts/operational_risk_heat_map.png" alt="Operational Risk Heat Map">
-    </div>
-
-    <div class="card chart-card">
-        <h2>Top 5 Risks</h2>
-        <img src="charts/top_5_risks.png" alt="Top 5 Risks">
-    </div>
-
-    <div class="card chart-card wide">
-        <h2>Risks by Category</h2>
-        <img src="charts/risks_by_category.png" alt="Risks by Category">
+        <h2>Lifecycle Status</h2>
+        <div class="card-content">
+            <img src="charts/risks_by_status.png">
+        </div>
     </div>
 
     <div class="card chart-card">
         <h2>SLA Due Status</h2>
-        <img src="charts/risks_by_due_status.png" alt="SLA Due Status">
+        <div class="card-content">
+            <img src="charts/risks_by_due_status.png">
+        </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Active vs Inactive</h2>
-        <img src="charts/active_vs_inactive_risks.png" alt="Active vs Inactive Risks">
+        <h2>Risk Heat Map</h2>
+        <div class="card-content">
+            <img src="charts/operational_risk_heat_map.png">
+        </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Open Risk Aging</h2>
-        <img src="charts/open_risk_aging_distribution.png" alt="Open Risk Aging Distribution">
+        <h2>Top 5 Risks</h2>
+        <div class="card-content">
+            <img src="charts/top_5_risks.png">
+        </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Risks Created by Date</h2>
-        <img src="charts/risks_created_by_date.png" alt="Risks Created by Date">
+        <h2>Risks by Category</h2>
+        <div class="card-content">
+            <img src="charts/risks_by_category.png">
+        </div>
     </div>
 
-    <div class="card full">
+    <div class="card chart-card">
+        <h2>Owner Workload</h2>
+        <div class="card-content">
+            <img src="charts/risks_by_owner.png">
+        </div>
+    </div>
+
+    <div class="card risk-register">
         <h2>Active Risk Register</h2>
-        <table class="risk-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                    <th>Owner</th>
-                    <th>Due Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                
+        <div class="card-content table-wrap">
+            <table class="risk-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
 <tr>
 <td>RISK-003</td>
 <td>NO MFA FOR VPN</td>
@@ -534,10 +572,15 @@ h1 {
 <td>2026-06-11</td>
 </tr>
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 
+</div>
+
+<div class="footer-note">
+    Generated by AI Operations Assistant
 </div>
 
 </body>
