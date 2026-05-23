@@ -593,20 +593,22 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label, color_ma
     if not labels or not values:
         return
 
-    plt.figure(figsize=(11, 6))
+    plt.figure(figsize=(7.5, 4.5), dpi=130)
 
     colors = get_colors_for_labels(labels, color_map) if color_map else DEFAULT_CHART_COLOR
     bars = plt.bar(labels, values, color=colors)
 
-    plt.title(title, fontsize=16, fontweight="bold")
-    plt.xlabel(x_label, fontsize=12)
-    plt.ylabel("Number of Risks", fontsize=12)
-    plt.xticks(rotation=30, ha="right")
+    plt.title(title, fontsize=13, fontweight="bold")
+    plt.xlabel(x_label, fontsize=10)
+    plt.ylabel("Count", fontsize=10)
+    plt.xticks(rotation=25, ha="right", fontsize=8)
+    plt.yticks(fontsize=8)
+    plt.grid(axis="y", linestyle="--", alpha=0.35)
 
     add_value_labels_to_bars(bars)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(CHARTS_DIR, filename))
+    plt.savefig(os.path.join(CHARTS_DIR, filename), bbox_inches="tight")
     plt.close()
 
 
@@ -614,7 +616,7 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
     if not labels or not values:
         return
 
-    plt.figure(figsize=(11, 6))
+    plt.figure(figsize=(7.8, 4.8), dpi=130)
 
     bars = plt.barh(
         labels,
@@ -622,14 +624,17 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
         color=colors if colors else DEFAULT_CHART_COLOR,
     )
 
-    plt.title(title, fontsize=16, fontweight="bold")
-    plt.xlabel("Number of Risks", fontsize=12)
-    plt.ylabel(y_label, fontsize=12)
+    plt.title(title, fontsize=13, fontweight="bold")
+    plt.xlabel("Count", fontsize=10)
+    plt.ylabel(y_label, fontsize=10)
+    plt.xticks(fontsize=8)
+    plt.yticks(fontsize=8)
+    plt.grid(axis="x", linestyle="--", alpha=0.35)
 
     add_value_labels_to_horizontal_bars(bars)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(CHARTS_DIR, filename))
+    plt.savefig(os.path.join(CHARTS_DIR, filename), bbox_inches="tight")
     plt.close()
 
 
@@ -651,31 +656,35 @@ def create_operational_heat_map(risks):
 
         heatmap_data.append(row)
 
-    plt.figure(figsize=(9, 6))
+    plt.figure(figsize=(6.8, 4.4), dpi=130)
     plt.imshow(heatmap_data, cmap="Reds")
 
-    plt.title("Operational Risk Heat Map", fontsize=16, fontweight="bold")
-    plt.xlabel("Due Status", fontsize=12)
-    plt.ylabel("Priority", fontsize=12)
+    plt.title("Operational Risk Heat Map", fontsize=13, fontweight="bold")
+    plt.xlabel("Due Status", fontsize=10)
+    plt.ylabel("Priority", fontsize=10)
 
-    plt.xticks(range(len(due_status_order)), due_status_order)
-    plt.yticks(range(len(priority_order)), priority_order)
+    plt.xticks(range(len(due_status_order)), due_status_order, fontsize=8)
+    plt.yticks(range(len(priority_order)), priority_order, fontsize=8)
 
     for row_index in range(len(priority_order)):
         for col_index in range(len(due_status_order)):
+            value = heatmap_data[row_index][col_index]
+            text_color = "white" if value >= 8 else "black"
+
             plt.text(
                 col_index,
                 row_index,
-                str(heatmap_data[row_index][col_index]),
+                str(value),
                 ha="center",
                 va="center",
-                fontsize=14,
+                fontsize=13,
                 fontweight="bold",
+                color=text_color,
             )
 
-    plt.colorbar(label="Number of Risks")
+    plt.colorbar(label="Risk Count")
     plt.tight_layout()
-    plt.savefig(os.path.join(CHARTS_DIR, "operational_risk_heat_map.png"))
+    plt.savefig(os.path.join(CHARTS_DIR, "operational_risk_heat_map.png"), bbox_inches="tight")
     plt.close()
 
 

@@ -116,20 +116,20 @@ h1 {
     <div class="card">
         <h2>Executive KPIs</h2>
         <table class="kpi-table">
-            <tr><td>Total Risks</td><td class="kpi-value">27</td></tr>
-            <tr><td>Critical Risks</td><td class="kpi-value">10</td></tr>
-            <tr><td>High Risks</td><td class="kpi-value">13</td></tr>
+            <tr><td>Total Risks</td><td class="kpi-value">40</td></tr>
+            <tr><td>Critical Risks</td><td class="kpi-value">17</td></tr>
+            <tr><td>High Risks</td><td class="kpi-value">20</td></tr>
             <tr><td>Overdue Risks</td><td class="kpi-value">0</td></tr>
-            <tr><td>SLA Compliance</td><td class="kpi-value">92.6%</td></tr>
+            <tr><td>SLA Compliance</td><td class="kpi-value">95.0%</td></tr>
         </table>
     </div>
 
     <div class="card">
         <h2>Executive Summary</h2>
         <p><strong>Highest Risk:</strong><br>RISK-003 - NO MFA FOR VPN</p>
-        <p><strong>Average Severity:</strong> 7.63</p>
-        <p><strong>Most Common Category:</strong><br>Authentication</p>
-        <p><strong>Average Active Risk Age:</strong> 2.8 days</p>
+        <p><strong>Average Severity:</strong> 8.25</p>
+        <p><strong>Most Common Category:</strong><br>Infrastructure</p>
+        <p><strong>Average Active Risk Age:</strong> 2.3 days</p>
     </div>
 
     <div class="card chart-card">
@@ -202,6 +202,33 @@ h1 {
 </tr>
 
 <tr>
+<td>RISK-022</td>
+<td>OPEN S3 STORAGE BUCKET</td>
+<td class="priority-critical">10</td>
+<td>OPEN</td>
+<td>Cloud Operations</td>
+<td>2026-05-23</td>
+</tr>
+
+<tr>
+<td>RISK-026</td>
+<td>UNPATCHED DOMAIN CONTROLLER</td>
+<td class="priority-critical">10</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-24</td>
+</tr>
+
+<tr>
+<td>RISK-037</td>
+<td>NO NETWORK SEGMENTATION</td>
+<td class="priority-critical">10</td>
+<td>OPEN</td>
+<td>Network Operations</td>
+<td>2026-06-02</td>
+</tr>
+
+<tr>
 <td>RISK-001</td>
 <td>WEAK PASSWORD POLICY</td>
 <td class="priority-critical">9</td>
@@ -265,21 +292,57 @@ h1 {
 </tr>
 
 <tr>
-<td>RISK-023</td>
-<td>PUBLIC RDP PORT EXPOSED</td>
-<td class="priority-critical">9</td>
-<td>OPEN</td>
-<td>Infrastructure Team</td>
-<td>2026-05-25</td>
-</tr>
-
-<tr>
-<td>RISK-026</td>
-<td>UNSUPPORTED OPERATING SYSTEM</td>
+<td>RISK-021</td>
+<td>DISABLED EDR AGENT</td>
 <td class="priority-critical">9</td>
 <td>OPEN</td>
 <td>Security Team</td>
+<td>2026-05-24</td>
+</tr>
+
+<tr>
+<td>RISK-023</td>
+<td>PRIVILEGE ESCALATION FINDING</td>
+<td class="priority-critical">9</td>
+<td>IN PROGRESS</td>
+<td>Infrastructure Team</td>
 <td>2026-05-27</td>
+</tr>
+
+<tr>
+<td>RISK-025</td>
+<td>FAILED DISASTER RECOVERY TEST</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-06-07</td>
+</tr>
+
+<tr>
+<td>RISK-030</td>
+<td>SUSPICIOUS POWERSHELL ACTIVITY</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>SOC Analyst</td>
+<td>2026-05-23</td>
+</tr>
+
+<tr>
+<td>RISK-036</td>
+<td>UNMONITORED PRIVILEGED ACCESS</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Identity Team</td>
+<td>2026-05-30</td>
+</tr>
+
+<tr>
+<td>RISK-040</td>
+<td>FAILED CLOUD COMPLIANCE AUDIT</td>
+<td class="priority-critical">9</td>
+<td>OPEN</td>
+<td>Cloud Operations</td>
+<td>2026-06-05</td>
 </tr>
 
 <tr>
@@ -329,7 +392,7 @@ h1 {
 
 <tr>
 <td>RISK-014</td>
-<td>EXPOSED TEST ENVIRONMENT </td>
+<td>EXPOSED TEST ENVIRONMENT</td>
 <td class="priority-high">8</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
@@ -365,7 +428,7 @@ h1 {
 
 <tr>
 <td>RISK-020</td>
-<td>EXPOSED BACKUP SHARE</td>
+<td>FAILED BACKUP VALIDATION</td>
 <td class="priority-high">8</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
@@ -374,11 +437,47 @@ h1 {
 
 <tr>
 <td>RISK-024</td>
-<td>EXPIRED SSL CERTIFICATE</td>
+<td>CRITICAL SIEM ALERTS UNREVIEWED</td>
 <td class="priority-high">8</td>
 <td>OPEN</td>
+<td>SOC Analyst</td>
+<td>2026-05-23</td>
+</tr>
+
+<tr>
+<td>RISK-031</td>
+<td>NO EMAIL DLP CONTROLS</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Compliance Team</td>
+<td>2026-06-18</td>
+</tr>
+
+<tr>
+<td>RISK-033</td>
+<td>DEFAULT SWITCH CREDENTIALS</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Network Operations</td>
+<td>2026-05-29</td>
+</tr>
+
+<tr>
+<td>RISK-038</td>
+<td>INACTIVE MFA ENROLLMENT</td>
+<td class="priority-high">8</td>
+<td>IN PROGRESS</td>
 <td>Security Team</td>
-<td>2026-05-25</td>
+<td>2026-06-06</td>
+</tr>
+
+<tr>
+<td>RISK-039</td>
+<td>OPEN ADMINISTRATIVE SHARE</td>
+<td class="priority-high">8</td>
+<td>OPEN</td>
+<td>Infrastructure Team</td>
+<td>2026-05-28</td>
 </tr>
 
 <tr>
@@ -400,21 +499,39 @@ h1 {
 </tr>
 
 <tr>
-<td>RISK-025</td>
-<td>SHARED ADMIN ACCOUNT</td>
-<td class="priority-moderate">6</td>
+<td>RISK-029</td>
+<td>UNRESTRICTED USB STORAGE</td>
+<td class="priority-high">7</td>
 <td>OPEN</td>
-<td>Network Operations</td>
-<td>2026-05-25</td>
+<td>Help Desk</td>
+<td>2026-06-09</td>
 </tr>
 
 <tr>
-<td>RISK-022</td>
-<td>TEST 1</td>
-<td class="priority-moderate">1</td>
+<td>RISK-028</td>
+<td>SHADOW IT APPLICATION DISCOVERED</td>
+<td class="priority-moderate">6</td>
 <td>OPEN</td>
-<td>Network Operations</td>
-<td>2026-06-01</td>
+<td>Compliance Team</td>
+<td>2026-06-14</td>
+</tr>
+
+<tr>
+<td>RISK-032</td>
+<td>MISSING LOG RETENTION POLICY</td>
+<td class="priority-moderate">6</td>
+<td>IN PROGRESS</td>
+<td>Compliance Team</td>
+<td>2026-06-21</td>
+</tr>
+
+<tr>
+<td>RISK-035</td>
+<td>FAILED VULNERABILITY SCAN AGENT</td>
+<td class="priority-moderate">6</td>
+<td>OPEN</td>
+<td>SOC Analyst</td>
+<td>2026-06-11</td>
 </tr>
 
             </tbody>
