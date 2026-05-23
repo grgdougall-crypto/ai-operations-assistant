@@ -23,11 +23,17 @@
 
 ![Risk Distribution by Priority](charts/risks_by_priority.png)
 
+![Risk Priority Share](charts/risk_priority_donut.png)
+
 ![Risk Lifecycle Status Overview](charts/risks_by_status.png)
 
-![Risk Distribution by Category](charts/risks_by_category.png)
+![Risk Status Share](charts/risk_status_donut.png)
 
 ![Open Risk Workload by Owner](charts/risks_by_owner.png)
+
+![Owner Workload Share](charts/owner_workload_donut.png)
+
+![Risk Distribution by Category](charts/risks_by_category.png)
 
 ![SLA Due Status Overview](charts/risks_by_due_status.png)
 
@@ -87,42 +93,3 @@
 | RISK-028 | SHADOW IT APPLICATION DISCOVERED | MODERATE | 6 | Governance | OPEN | Compliance Team | 2026-05-22 13:10:00 | 2026-06-14 | ON TRACK | 1 | 22 | Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted. |
 | RISK-032 | MISSING LOG RETENTION POLICY | MODERATE | 6 | Compliance | IN PROGRESS | Compliance Team | 2026-05-22 17:05:00 | 2026-06-21 | ON TRACK | 1 | 29 | Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted. |
 | RISK-035 | FAILED VULNERABILITY SCAN AGENT | MODERATE | 6 | Security Operations | OPEN | SOC Analyst | 2026-05-22 19:10:00 | 2026-06-11 | ON TRACK | 1 | 19 | Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted. |
-
-## Category Summary
-
-- Authentication: 7
-- Network: 5
-- Security Awareness: 1
-- Endpoint Security: 4
-- Infrastructure: 9
-- Data Protection: 2
-- Backup and Recovery: 3
-- Cloud Security: 2
-- Security Operations: 3
-- User Access: 1
-- Governance: 1
-- Compliance: 1
-- Identity and Access: 1
-
-## Status Summary
-
-- OPEN: 31
-- IN PROGRESS: 7
-- MITIGATED: 1
-- CLOSED: 1
-
-## Owner Summary
-
-- Security Team: 10
-- Network Operations: 5
-- Help Desk: 2
-- Infrastructure Team: 12
-- Compliance Team: 4
-- Cloud Operations: 2
-- SOC Analyst: 3
-- Identity Team: 2
-
-## Due Status Summary
-
-- ON TRACK: 38
-- NOT ACTIVE: 2

@@ -74,10 +74,6 @@ h1 {
     object-fit: contain;
 }
 
-.full {
-    grid-column: span 3;
-}
-
 .risk-register {
     grid-column: span 3;
     height: 315px;
@@ -166,23 +162,23 @@ h1 {
     </div>
 
     <div class="card chart-card">
-        <h2>Risk Distribution</h2>
+        <h2>Risk Priority Share</h2>
         <div class="card-content">
-            <img src="charts/risks_by_priority.png">
+            <img src="charts/risk_priority_donut.png">
         </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Lifecycle Status</h2>
+        <h2>Risk Status Share</h2>
         <div class="card-content">
-            <img src="charts/risks_by_status.png">
+            <img src="charts/risk_status_donut.png">
         </div>
     </div>
 
     <div class="card chart-card">
-        <h2>SLA Due Status</h2>
+        <h2>Owner Workload Share</h2>
         <div class="card-content">
-            <img src="charts/risks_by_due_status.png">
+            <img src="charts/owner_workload_donut.png">
         </div>
     </div>
 
@@ -201,16 +197,30 @@ h1 {
     </div>
 
     <div class="card chart-card">
-        <h2>Risks by Category</h2>
+        <h2>SLA Due Status</h2>
         <div class="card-content">
-            <img src="charts/risks_by_category.png">
+            <img src="charts/risks_by_due_status.png">
         </div>
     </div>
 
     <div class="card chart-card">
-        <h2>Owner Workload</h2>
+        <h2>Open Risk Aging</h2>
         <div class="card-content">
-            <img src="charts/risks_by_owner.png">
+            <img src="charts/open_risk_aging_distribution.png">
+        </div>
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risks Created by Date</h2>
+        <div class="card-content">
+            <img src="charts/risks_created_by_date.png">
+        </div>
+    </div>
+
+    <div class="card chart-card">
+        <h2>Risks by Category</h2>
+        <div class="card-content">
+            <img src="charts/risks_by_category.png">
         </div>
     </div>
 

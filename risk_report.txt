@@ -501,37 +501,3 @@ Critical Risks Overdue: 0
 Risks Due Within 7 Days: 17
 Oldest Open Risk: RISK-001 (8 days open)
 
-=== Category Summary ===
-Authentication: 7
-Network: 5
-Security Awareness: 1
-Endpoint Security: 4
-Infrastructure: 9
-Data Protection: 2
-Backup and Recovery: 3
-Cloud Security: 2
-Security Operations: 3
-User Access: 1
-Governance: 1
-Compliance: 1
-Identity and Access: 1
-
-=== Status Summary ===
-OPEN: 31
-IN PROGRESS: 7
-MITIGATED: 1
-CLOSED: 1
-
-=== Owner Summary ===
-Security Team: 10
-Network Operations: 5
-Help Desk: 2
-Infrastructure Team: 12
-Compliance Team: 4
-Cloud Operations: 2
-SOC Analyst: 3
-Identity Team: 2
-
-=== Due Status Summary ===
-ON TRACK: 38
-NOT ACTIVE: 2

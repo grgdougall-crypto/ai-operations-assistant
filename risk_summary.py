@@ -23,6 +23,11 @@ CATEGORIES = [
     "Infrastructure",
     "User Access",
     "Physical Security",
+    "Cloud Security",
+    "Security Operations",
+    "Governance",
+    "Compliance",
+    "Identity and Access",
 ]
 
 STATUSES = [
@@ -41,6 +46,8 @@ OWNERS = [
     "Help Desk",
     "SOC Analyst",
     "Compliance Team",
+    "Cloud Operations",
+    "Identity Team",
 ]
 
 DUE_DATE_OPTIONS = [1, 3, 5, 7, 10, 14, 30]
@@ -86,7 +93,7 @@ RECOMMENDATION_LIBRARY = [
         "recommendation": "Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts.",
     },
     {
-        "keywords": ["laptop", "endpoint", "workstation", "device"],
+        "keywords": ["laptop", "endpoint", "workstation", "device", "edr"],
         "recommendation": "Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management.",
     },
     {
@@ -165,7 +172,6 @@ def save_risks_to_csv(risks):
     with open(CSV_FILE, mode="w", newline="") as file:
         fieldnames = ["id", "name", "severity", "category", "status", "owner", "timestamp", "due_date"]
         writer = csv.DictWriter(file, fieldnames=fieldnames)
-
         writer.writeheader()
 
         for risk in risks:
@@ -218,14 +224,12 @@ def determine_due_status(due_date, status):
 def calculate_days_open(timestamp):
     created_date = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S").date()
     today = date.today()
-
     return (today - created_date).days
 
 
 def calculate_days_until_due(due_date):
     due_date_object = datetime.strptime(due_date, "%Y-%m-%d").date()
     today = date.today()
-
     return (due_date_object - today).days
 
 
@@ -380,7 +384,6 @@ def find_risk_by_id(risks, risk_id):
 
 def update_risk_status(risks):
     print("\n=== Update Risk Status ===")
-
     risk_id = input("Enter Risk ID: ").upper()
     risk = find_risk_by_id(risks, risk_id)
 
@@ -390,18 +393,14 @@ def update_risk_status(risks):
 
     print(f"\nCurrent Risk: {risk['id']} - {risk['name']}")
     print(f"Current Status: {risk['status']}")
-
     new_status = choose_status()
     risk["status"] = new_status
-
     save_risks_to_csv(risks)
-
     print(f"\n{risk['id']} status updated to {new_status}.")
 
 
 def update_risk_owner(risks):
     print("\n=== Update Risk Owner ===")
-
     risk_id = input("Enter Risk ID: ").upper()
     risk = find_risk_by_id(risks, risk_id)
 
@@ -411,18 +410,14 @@ def update_risk_owner(risks):
 
     print(f"\nCurrent Risk: {risk['id']} - {risk['name']}")
     print(f"Current Owner: {risk['owner']}")
-
     new_owner = choose_owner()
     risk["owner"] = new_owner
-
     save_risks_to_csv(risks)
-
     print(f"\n{risk['id']} owner updated to {new_owner}.")
 
 
 def close_risk(risks):
     print("\n=== Close Risk ===")
-
     risk_id = input("Enter Risk ID to close: ").upper()
     risk = find_risk_by_id(risks, risk_id)
 
@@ -443,63 +438,36 @@ def close_risk(risks):
 
 def show_critical_risks(risks):
     print("\n=== Critical Risks ===")
-
     enrich_risks(risks)
-
-    critical_risks = [
-        risk for risk in risks
-        if risk["priority"] == "CRITICAL"
-    ]
-
+    critical_risks = [risk for risk in risks if risk["priority"] == "CRITICAL"]
     display_risks(critical_risks)
 
 
 def show_overdue_risks(risks):
     print("\n=== Overdue Risks ===")
-
     enrich_risks(risks)
-
-    overdue_risks = [
-        risk for risk in risks
-        if risk["due_status"] == "OVERDUE"
-    ]
-
+    overdue_risks = [risk for risk in risks if risk["due_status"] == "OVERDUE"]
     display_risks(overdue_risks)
 
 
 def filter_by_status(risks):
     print("\n=== Filter by Status ===")
     selected_status = choose_status()
-
-    filtered_risks = [
-        risk for risk in risks
-        if risk["status"] == selected_status
-    ]
-
+    filtered_risks = [risk for risk in risks if risk["status"] == selected_status]
     display_risks(filtered_risks)
 
 
 def filter_by_owner(risks):
     print("\n=== Filter by Owner ===")
     selected_owner = choose_owner()
-
-    filtered_risks = [
-        risk for risk in risks
-        if risk["owner"] == selected_owner
-    ]
-
+    filtered_risks = [risk for risk in risks if risk["owner"] == selected_owner]
     display_risks(filtered_risks)
 
 
 def filter_by_category(risks):
     print("\n=== Filter by Category ===")
     selected_category = choose_category()
-
-    filtered_risks = [
-        risk for risk in risks
-        if risk["category"] == selected_category
-    ]
-
+    filtered_risks = [risk for risk in risks if risk["category"] == selected_category]
     display_risks(filtered_risks)
 
 
@@ -594,11 +562,10 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label, color_ma
         return
 
     plt.figure(figsize=(5.8, 3.4), dpi=125)
-
     colors = get_colors_for_labels(labels, color_map) if color_map else DEFAULT_CHART_COLOR
     bars = plt.bar(labels, values, color=colors)
 
-    plt.title(title, fontsize=8, fontweight="bold")
+    plt.title(title, fontsize=11, fontweight="bold")
     plt.xlabel(x_label, fontsize=8)
     plt.ylabel("Count", fontsize=8)
     plt.xticks(rotation=25, ha="right", fontsize=8)
@@ -606,7 +573,6 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label, color_ma
     plt.grid(axis="y", linestyle="--", alpha=0.35)
 
     add_value_labels_to_bars(bars)
-
     plt.tight_layout()
     plt.savefig(os.path.join(CHARTS_DIR, filename), bbox_inches="tight")
     plt.close()
@@ -617,14 +583,9 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
         return
 
     plt.figure(figsize=(6.0, 3.6), dpi=125)
+    bars = plt.barh(labels, values, color=colors if colors else DEFAULT_CHART_COLOR)
 
-    bars = plt.barh(
-        labels,
-        values,
-        color=colors if colors else DEFAULT_CHART_COLOR,
-    )
-
-    plt.title(title, fontsize=8, fontweight="bold")
+    plt.title(title, fontsize=11, fontweight="bold")
     plt.xlabel("Count", fontsize=8)
     plt.ylabel(y_label, fontsize=8)
     plt.xticks(fontsize=8)
@@ -632,7 +593,33 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
     plt.grid(axis="x", linestyle="--", alpha=0.35)
 
     add_value_labels_to_horizontal_bars(bars)
+    plt.tight_layout()
+    plt.savefig(os.path.join(CHARTS_DIR, filename), bbox_inches="tight")
+    plt.close()
 
+
+def create_donut_chart(title, labels, values, filename, color_map=None):
+    if not labels or not values:
+        return
+
+    colors = get_colors_for_labels(labels, color_map) if color_map else None
+    plt.figure(figsize=(4.8, 3.4), dpi=125)
+
+    plt.pie(
+        values,
+        labels=labels,
+        autopct="%1.0f%%",
+        startangle=90,
+        colors=colors,
+        textprops={"fontsize": 8},
+        pctdistance=0.78,
+    )
+
+    centre_circle = plt.Circle((0, 0), 0.52, fc="white")
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
+
+    plt.title(title, fontsize=11, fontweight="bold")
     plt.tight_layout()
     plt.savefig(os.path.join(CHARTS_DIR, filename), bbox_inches="tight")
     plt.close()
@@ -641,7 +628,6 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
 def create_operational_heat_map(risks):
     priority_order = ["CRITICAL", "HIGH", "MODERATE"]
     due_status_order = ["OVERDUE", "ON TRACK", "NOT ACTIVE"]
-
     heatmap_data = []
 
     for priority in priority_order:
@@ -659,10 +645,9 @@ def create_operational_heat_map(risks):
     plt.figure(figsize=(5.4, 3.4), dpi=125)
     plt.imshow(heatmap_data, cmap="Reds")
 
-    plt.title("Operational Risk Heat Map", fontsize=8, fontweight="bold")
+    plt.title("Operational Risk Heat Map", fontsize=11, fontweight="bold")
     plt.xlabel("Due Status", fontsize=8)
     plt.ylabel("Priority", fontsize=8)
-
     plt.xticks(range(len(due_status_order)), due_status_order, fontsize=8)
     plt.yticks(range(len(priority_order)), priority_order, fontsize=8)
 
@@ -689,15 +674,8 @@ def create_operational_heat_map(risks):
 
 
 def create_trend_analytics_charts(risks):
-    active_risks = [
-        risk for risk in risks
-        if risk["status"] in ACTIVE_STATUSES
-    ]
-
-    inactive_risks = [
-        risk for risk in risks
-        if risk["status"] in INACTIVE_STATUSES
-    ]
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
+    inactive_risks = [risk for risk in risks if risk["status"] in INACTIVE_STATUSES]
 
     create_vertical_bar_chart(
         "Active vs Inactive Risk Workload",
@@ -773,12 +751,28 @@ def generate_charts(risks):
         PRIORITY_COLORS,
     )
 
+    create_donut_chart(
+        "Risk Priority Share",
+        list(priority_counts.keys()),
+        list(priority_counts.values()),
+        "risk_priority_donut.png",
+        PRIORITY_COLORS,
+    )
+
     create_vertical_bar_chart(
         "Risk Lifecycle Status Overview",
         list(status_counts.keys()),
         list(status_counts.values()),
         "risks_by_status.png",
         "Risk Status",
+        STATUS_COLORS,
+    )
+
+    create_donut_chart(
+        "Risk Status Share",
+        list(status_counts.keys()),
+        list(status_counts.values()),
+        "risk_status_donut.png",
         STATUS_COLORS,
     )
 
@@ -798,6 +792,13 @@ def generate_charts(risks):
         "Owner",
     )
 
+    create_donut_chart(
+        "Owner Workload Share",
+        list(owner_counts.keys()),
+        list(owner_counts.values()),
+        "owner_workload_donut.png",
+    )
+
     create_vertical_bar_chart(
         "SLA Due Status Overview",
         list(due_status_counts.keys()),
@@ -810,10 +811,7 @@ def generate_charts(risks):
     top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
     top_risk_labels = [f"{risk['id']} - {risk['name'][:25]}" for risk in top_risks]
     top_risk_values = [risk["severity"] for risk in top_risks]
-    top_risk_colors = [
-        PRIORITY_COLORS.get(risk["priority"], DEFAULT_CHART_COLOR)
-        for risk in top_risks
-    ]
+    top_risk_colors = [PRIORITY_COLORS.get(risk["priority"], DEFAULT_CHART_COLOR) for risk in top_risks]
 
     create_horizontal_bar_chart(
         "Top 5 Highest Severity Risks",
@@ -847,15 +845,8 @@ def calculate_report_metrics(risks):
         if 0 <= risk["days_until_due"] <= 7 and risk["status"] not in INACTIVE_STATUSES
     )
 
-    active_risks = [
-        risk for risk in risks
-        if risk["status"] in ACTIVE_STATUSES
-    ]
-
-    inactive_risks = [
-        risk for risk in risks
-        if risk["status"] in INACTIVE_STATUSES
-    ]
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
+    inactive_risks = [risk for risk in risks if risk["status"] in INACTIVE_STATUSES]
 
     active_count = len(active_risks)
     inactive_count = len(inactive_risks)
@@ -951,22 +942,6 @@ def write_txt_report(risks, metrics):
         else:
             report.write("Oldest Open Risk: None\n\n")
 
-        report.write("=== Category Summary ===\n")
-        for category, count in metrics["category_counts"].items():
-            report.write(f"{category}: {count}\n")
-
-        report.write("\n=== Status Summary ===\n")
-        for status, count in metrics["status_counts"].items():
-            report.write(f"{status}: {count}\n")
-
-        report.write("\n=== Owner Summary ===\n")
-        for owner, count in metrics["owner_counts"].items():
-            report.write(f"{owner}: {count}\n")
-
-        report.write("\n=== Due Status Summary ===\n")
-        for due_status, count in metrics["due_status_counts"].items():
-            report.write(f"{due_status}: {count}\n")
-
 
 def write_md_report(risks, metrics):
     sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
@@ -974,7 +949,6 @@ def write_md_report(risks, metrics):
 
     with open(MD_REPORT, mode="w") as report:
         report.write("# AI Operations Risk Report\n\n")
-
         report.write("## Executive KPI Dashboard\n\n")
         report.write("| KPI | Value |\n")
         report.write("|---|---:|\n")
@@ -998,9 +972,12 @@ def write_md_report(risks, metrics):
 
         report.write("## Dashboard Charts\n\n")
         report.write("![Risk Distribution by Priority](charts/risks_by_priority.png)\n\n")
+        report.write("![Risk Priority Share](charts/risk_priority_donut.png)\n\n")
         report.write("![Risk Lifecycle Status Overview](charts/risks_by_status.png)\n\n")
-        report.write("![Risk Distribution by Category](charts/risks_by_category.png)\n\n")
+        report.write("![Risk Status Share](charts/risk_status_donut.png)\n\n")
         report.write("![Open Risk Workload by Owner](charts/risks_by_owner.png)\n\n")
+        report.write("![Owner Workload Share](charts/owner_workload_donut.png)\n\n")
+        report.write("![Risk Distribution by Category](charts/risks_by_category.png)\n\n")
         report.write("![SLA Due Status Overview](charts/risks_by_due_status.png)\n\n")
         report.write("![Top 5 Highest Severity Risks](charts/top_5_risks.png)\n\n")
         report.write("![Operational Risk Heat Map](charts/operational_risk_heat_map.png)\n\n")
@@ -1023,31 +1000,10 @@ def write_md_report(risks, metrics):
                 f"{risk['days_until_due']} | {risk['recommendation']} |\n"
             )
 
-        report.write("\n## Category Summary\n\n")
-        for category, count in metrics["category_counts"].items():
-            report.write(f"- {category}: {count}\n")
-
-        report.write("\n## Status Summary\n\n")
-        for status, count in metrics["status_counts"].items():
-            report.write(f"- {status}: {count}\n")
-
-        report.write("\n## Owner Summary\n\n")
-        for owner, count in metrics["owner_counts"].items():
-            report.write(f"- {owner}: {count}\n")
-
-        report.write("\n## Due Status Summary\n\n")
-        for due_status, count in metrics["due_status_counts"].items():
-            report.write(f"- {due_status}: {count}\n")
-
 
 def build_html_risk_rows(risks):
     rows = ""
-
-    active_risks = [
-        risk for risk in risks
-        if risk["status"] in ACTIVE_STATUSES
-    ]
-
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
     sorted_active_risks = sorted(active_risks, key=lambda risk: risk["severity"], reverse=True)
 
     for risk in sorted_active_risks:
@@ -1116,7 +1072,6 @@ def generate_reports(risks):
 
     enrich_risks(risks)
     generate_charts(risks)
-
     metrics = calculate_report_metrics(risks)
 
     write_txt_report(risks, metrics)
@@ -1147,7 +1102,6 @@ def main():
 
     while True:
         show_menu()
-
         choice = input("\nEnter menu option: ")
 
         if choice == "1":
