@@ -1,5 +1,21 @@
 # AI Operations Risk Report
 
+## Dashboard Charts
+
+![Risks by Priority](charts/risks_by_priority.png)
+
+![Risks by Status](charts/risks_by_status.png)
+
+![Risks by Category](charts/risks_by_category.png)
+
+![Risks by Owner](charts/risks_by_owner.png)
+
+![Risks by Due Status](charts/risks_by_due_status.png)
+
+![Top 5 Risks](charts/top_5_risks.png)
+
+## Risk Detail Table
+
 | ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |
 |----|------|----------|----------|----------|--------|-------|------------|----------|------------|-----------|----------------|----------------|
 | RISK-003 | NO MFA FOR VPN | CRITICAL | 10 | Authentication | OPEN | Security Team | 2026-05-16 08:45:00 | 2026-05-30 | ON TRACK | 6 | 8 | Require MFA for VPN, remote access, privileged accounts, and cloud applications. Review access logs and disable accounts that no longer require remote access. |

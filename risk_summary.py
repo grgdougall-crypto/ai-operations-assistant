@@ -1,9 +1,12 @@
 import csv
+import os
 from datetime import datetime, date, timedelta
+import matplotlib.pyplot as plt
 
 CSV_FILE = "risks.csv"
 TXT_REPORT = "risk_report.txt"
 MD_REPORT = "risk_report.md"
+CHARTS_DIR = "charts"
 
 categories = [
     "Authentication",
@@ -38,80 +41,64 @@ owners = [
 
 due_date_options = [1, 3, 5, 7, 10, 14, 30]
 
-
 recommendation_library = [
     {
-        "name": "MFA / Remote Access",
         "keywords": ["mfa", "multi-factor", "2fa", "vpn", "remote access"],
         "recommendation": "Require MFA for VPN, remote access, privileged accounts, and cloud applications. Review access logs and disable accounts that no longer require remote access."
     },
     {
-        "name": "Weak Passwords",
         "keywords": ["password", "weak password", "credential", "login"],
         "recommendation": "Enforce stronger password policies, require password length and complexity, enable account lockout protections, and review failed login activity."
     },
     {
-        "name": "Firewall Exposure",
         "keywords": ["firewall", "open port", "rule", "inbound"],
         "recommendation": "Review firewall rules, remove unnecessary inbound access, restrict management ports, document approved exceptions, and verify firmware is current."
     },
     {
-        "name": "RDP Exposure",
         "keywords": ["rdp", "remote desktop", "3389"],
         "recommendation": "Disable public RDP exposure, restrict access through VPN or jump hosts, enforce MFA, and limit access to approved administrative users."
     },
     {
-        "name": "Phishing",
         "keywords": ["phishing", "email", "social engineering"],
         "recommendation": "Provide phishing awareness training, enable email filtering, review reported messages, and run targeted simulations for high-risk user groups."
     },
     {
-        "name": "Backup Risk",
         "keywords": ["backup", "restore", "backup share", "recovery"],
         "recommendation": "Verify backup integrity, restrict backup share permissions, perform a documented test restore, and confirm backups are protected from ransomware."
     },
     {
-        "name": "Database Exposure",
         "keywords": ["database", "sql", "data exposure", "db"],
         "recommendation": "Restrict database access, review user permissions, disable public exposure, enforce encryption, and monitor for unauthorized queries."
     },
     {
-        "name": "Cloud Misconfiguration",
         "keywords": ["cloud", "s3", "azure", "storage bucket", "cloud storage"],
         "recommendation": "Review cloud permissions, disable public access where not required, enforce least privilege, enable logging, and validate configuration baselines."
     },
     {
-        "name": "Admin Account Risk",
         "keywords": ["admin", "administrator", "privileged", "local admin", "shared admin"],
         "recommendation": "Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts."
     },
     {
-        "name": "Endpoint Security",
         "keywords": ["laptop", "endpoint", "workstation", "device"],
         "recommendation": "Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management."
     },
     {
-        "name": "API Exposure",
         "keywords": ["api", "endpoint", "token", "key"],
         "recommendation": "Review API authentication, rotate exposed keys or tokens, restrict public access, validate rate limiting, and monitor API activity logs."
     },
     {
-        "name": "SSL / Certificate",
         "keywords": ["ssl", "tls", "certificate", "cert"],
         "recommendation": "Renew expired certificates, verify TLS configuration, remove weak protocols, and document certificate ownership and renewal dates."
     },
     {
-        "name": "Unsupported Systems",
         "keywords": ["unsupported", "legacy", "operating system", "end of life", "eol"],
         "recommendation": "Upgrade unsupported systems, isolate legacy assets, apply compensating controls, and create a retirement or replacement plan."
     },
     {
-        "name": "Monitoring Gap",
         "keywords": ["monitoring", "logging", "logs", "siem", "alert"],
         "recommendation": "Enable centralized logging, configure alerting for high-risk events, review monitoring coverage, and validate that alerts are assigned to an owner."
     },
     {
-        "name": "Encryption Weakness",
         "keywords": ["encryption", "unencrypted", "weak encryption", "plaintext"],
         "recommendation": "Enable strong encryption, remove weak protocols, protect sensitive data at rest and in transit, and verify encryption settings through policy review."
     }
@@ -523,6 +510,104 @@ def show_filter_menu(risks):
             print("\nInvalid option. Please choose 1-7.")
 
 
+def get_count_dictionary(risks, key):
+    counts = {}
+
+    for risk in risks:
+        value = risk[key]
+        counts[value] = counts.get(value, 0) + 1
+
+    return counts
+
+
+def create_bar_chart(title, labels, values, filename):
+    if not labels or not values:
+        return
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(labels, values)
+    plt.title(title)
+    plt.xlabel("Category")
+    plt.ylabel("Count")
+    plt.xticks(rotation=35, ha="right")
+    plt.tight_layout()
+    plt.savefig(os.path.join(CHARTS_DIR, filename))
+    plt.close()
+
+
+def create_horizontal_bar_chart(title, labels, values, filename):
+    if not labels or not values:
+        return
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(labels, values)
+    plt.title(title)
+    plt.xlabel("Count")
+    plt.ylabel("Risk")
+    plt.tight_layout()
+    plt.savefig(os.path.join(CHARTS_DIR, filename))
+    plt.close()
+
+
+def generate_charts(risks):
+    if not os.path.exists(CHARTS_DIR):
+        os.makedirs(CHARTS_DIR)
+
+    enrich_risks(risks)
+
+    priority_counts = get_count_dictionary(risks, "priority")
+    status_counts = get_count_dictionary(risks, "status")
+    category_counts = get_count_dictionary(risks, "category")
+    owner_counts = get_count_dictionary(risks, "owner")
+    due_status_counts = get_count_dictionary(risks, "due_status")
+
+    create_bar_chart(
+        "Risks by Priority",
+        list(priority_counts.keys()),
+        list(priority_counts.values()),
+        "risks_by_priority.png"
+    )
+
+    create_bar_chart(
+        "Risks by Status",
+        list(status_counts.keys()),
+        list(status_counts.values()),
+        "risks_by_status.png"
+    )
+
+    create_bar_chart(
+        "Risks by Category",
+        list(category_counts.keys()),
+        list(category_counts.values()),
+        "risks_by_category.png"
+    )
+
+    create_bar_chart(
+        "Risks by Owner",
+        list(owner_counts.keys()),
+        list(owner_counts.values()),
+        "risks_by_owner.png"
+    )
+
+    create_bar_chart(
+        "Risks by Due Status",
+        list(due_status_counts.keys()),
+        list(due_status_counts.values()),
+        "risks_by_due_status.png"
+    )
+
+    top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
+    top_risk_labels = [risk["id"] for risk in top_risks]
+    top_risk_values = [risk["severity"] for risk in top_risks]
+
+    create_horizontal_bar_chart(
+        "Top 5 Risks by Severity",
+        top_risk_labels,
+        top_risk_values,
+        "top_5_risks.png"
+    )
+
+
 def generate_reports(risks):
     print("\n=== Generating Reports ===")
 
@@ -531,6 +616,7 @@ def generate_reports(risks):
         return
 
     enrich_risks(risks)
+    generate_charts(risks)
 
     sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
 
@@ -564,16 +650,10 @@ def generate_reports(risks):
     average_severity = sum(risk["severity"] for risk in risks) / len(risks)
     highest_risk = max(risks, key=lambda risk: risk["severity"])
 
-    category_counts = {}
-    status_counts = {}
-    owner_counts = {}
-    due_status_counts = {}
-
-    for risk in risks:
-        category_counts[risk["category"]] = category_counts.get(risk["category"], 0) + 1
-        status_counts[risk["status"]] = status_counts.get(risk["status"], 0) + 1
-        owner_counts[risk["owner"]] = owner_counts.get(risk["owner"], 0) + 1
-        due_status_counts[risk["due_status"]] = due_status_counts.get(risk["due_status"], 0) + 1
+    category_counts = get_count_dictionary(risks, "category")
+    status_counts = get_count_dictionary(risks, "status")
+    owner_counts = get_count_dictionary(risks, "owner")
+    due_status_counts = get_count_dictionary(risks, "due_status")
 
     with open(TXT_REPORT, mode="w") as report:
         report.write("AI Operations Risk Report\n")
@@ -629,6 +709,15 @@ def generate_reports(risks):
     with open(MD_REPORT, mode="w") as report:
         report.write("# AI Operations Risk Report\n\n")
 
+        report.write("## Dashboard Charts\n\n")
+        report.write("![Risks by Priority](charts/risks_by_priority.png)\n\n")
+        report.write("![Risks by Status](charts/risks_by_status.png)\n\n")
+        report.write("![Risks by Category](charts/risks_by_category.png)\n\n")
+        report.write("![Risks by Owner](charts/risks_by_owner.png)\n\n")
+        report.write("![Risks by Due Status](charts/risks_by_due_status.png)\n\n")
+        report.write("![Top 5 Risks](charts/top_5_risks.png)\n\n")
+
+        report.write("## Risk Detail Table\n\n")
         report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
         report.write("|----|------|----------|----------|----------|--------|-------|------------|----------|------------|-----------|----------------|----------------|\n")
 
@@ -675,9 +764,10 @@ def generate_reports(risks):
         for due_status, count in due_status_counts.items():
             report.write(f"- {due_status}: {count}\n")
 
-    print("Reports generated successfully.")
+    print("Reports and charts generated successfully.")
     print(f"- {TXT_REPORT}")
     print(f"- {MD_REPORT}")
+    print(f"- {CHARTS_DIR}/")
 
 
 def show_menu():
