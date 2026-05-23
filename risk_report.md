@@ -1,18 +1,30 @@
 # AI Operations Risk Report
 
+## Executive Dashboard
+
+- Total Risks: 27
+- Critical Risks: 10
+- High Risks: 13
+- Moderate Risks: 4
+- Average Severity: 7.63
+- Highest Risk: RISK-003 - NO MFA FOR VPN
+- Overdue Risks: 0
+- On Track Risks: 25
+- Risks Due Within 7 Days: 11
+
 ## Dashboard Charts
 
-![Risks by Priority](charts/risks_by_priority.png)
+![Risk Distribution by Priority](charts/risks_by_priority.png)
 
-![Risks by Status](charts/risks_by_status.png)
+![Risk Lifecycle Status Overview](charts/risks_by_status.png)
 
-![Risks by Category](charts/risks_by_category.png)
+![Risk Distribution by Category](charts/risks_by_category.png)
 
-![Risks by Owner](charts/risks_by_owner.png)
+![Open Risk Workload by Owner](charts/risks_by_owner.png)
 
-![Risks by Due Status](charts/risks_by_due_status.png)
+![SLA Due Status Overview](charts/risks_by_due_status.png)
 
-![Top 5 Risks](charts/top_5_risks.png)
+![Top 5 Highest Severity Risks](charts/top_5_risks.png)
 
 ## Risk Detail Table
 
@@ -42,24 +54,9 @@
 | RISK-011 | MISSING ENDPOINT MONITORING | HIGH | 7 | Endpoint Security | OPEN | Security Team | 2026-05-21 22:05:00 | 2026-06-20 | ON TRACK | 1 | 29 | Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management. |
 | RISK-017 | EXPIRED SSL CERTIFICATE | HIGH | 7 | Infrastructure | OPEN | Infrastructure Team | 2026-05-21 22:55:00 | 2026-05-25 | ON TRACK | 1 | 3 | Renew expired certificates, verify TLS configuration, remove weak protocols, and document certificate ownership and renewal dates. |
 | RISK-025 | SHARED ADMIN ACCOUNT | MODERATE | 6 | User Access | OPEN | Network Operations | 2026-05-22 16:27:36 | 2026-05-25 | ON TRACK | 0 | 3 | Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts. |
+| RISK-027 | TEST 2 | MODERATE | 5 | Incident Response | MITIGATED | SOC Analyst | 2026-05-22 17:16:55 | 2026-06-01 | NOT ACTIVE | 0 | 10 | Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted. |
 | RISK-021 | TEST | MODERATE | 1 | Authentication | CLOSED | SOC Analyst | 2026-05-21 23:47:33 | 2026-05-22 | NOT ACTIVE | 1 | 0 | Review the risk, validate business impact, assign an owner, document remediation steps, and track progress until the risk is reduced or formally accepted. |
 | RISK-022 | TEST 1 | MODERATE | 1 | Backup and Recovery | OPEN | Network Operations | 2026-05-22 16:19:37 | 2026-06-01 | ON TRACK | 0 | 10 | Verify backup integrity, restrict backup share permissions, perform a documented test restore, and confirm backups are protected from ransomware. |
-
-## Executive Summary
-
-- Critical Risks: 10
-- High Risks: 13
-- Moderate Risks: 3
-- Average Severity: 7.73
-- Highest Risk: RISK-003 - NO MFA FOR VPN
-- Overdue Risks: 0
-- On Track Risks: 25
-
-## SLA Summary
-
-- Critical Risks Overdue: 0
-- Risks Due Within 7 Days: 11
-- Oldest Open Risk: RISK-001 (7 days open)
 
 ## Category Summary
 
@@ -71,12 +68,14 @@
 - Data Protection: 1
 - Backup and Recovery: 3
 - User Access: 1
+- Incident Response: 1
 
 ## Status Summary
 
 - OPEN: 21
 - IN PROGRESS: 4
 - CLOSED: 1
+- MITIGATED: 1
 
 ## Owner Summary
 
@@ -85,9 +84,9 @@
 - Help Desk: 1
 - Infrastructure Team: 9
 - Compliance Team: 1
-- SOC Analyst: 1
+- SOC Analyst: 2
 
 ## Due Status Summary
 
 - ON TRACK: 25
-- NOT ACTIVE: 1
+- NOT ACTIVE: 2

@@ -135,14 +135,8 @@ def save_risks_to_csv(risks):
         writer = csv.writer(file)
 
         writer.writerow([
-            "id",
-            "name",
-            "severity",
-            "category",
-            "status",
-            "owner",
-            "timestamp",
-            "due_date"
+            "id", "name", "severity", "category",
+            "status", "owner", "timestamp", "due_date"
         ])
 
         for risk in risks:
@@ -520,30 +514,66 @@ def get_count_dictionary(risks, key):
     return counts
 
 
-def create_bar_chart(title, labels, values, filename):
+def add_value_labels_to_bars(bars):
+    for bar in bars:
+        height = bar.get_height()
+
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            height + 0.2,
+            str(int(height)),
+            ha="center",
+            fontsize=11
+        )
+
+
+def add_value_labels_to_horizontal_bars(bars):
+    for bar in bars:
+        width = bar.get_width()
+
+        plt.text(
+            width + 0.2,
+            bar.get_y() + bar.get_height() / 2,
+            str(int(width)),
+            va="center",
+            fontsize=11
+        )
+
+
+def create_vertical_bar_chart(title, labels, values, filename, x_label):
     if not labels or not values:
         return
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(labels, values)
-    plt.title(title)
-    plt.xlabel("Category")
-    plt.ylabel("Count")
-    plt.xticks(rotation=35, ha="right")
+    plt.figure(figsize=(11, 6))
+
+    bars = plt.bar(labels, values)
+
+    plt.title(title, fontsize=16, fontweight="bold")
+    plt.xlabel(x_label, fontsize=12)
+    plt.ylabel("Number of Risks", fontsize=12)
+    plt.xticks(rotation=30, ha="right")
+
+    add_value_labels_to_bars(bars)
+
     plt.tight_layout()
     plt.savefig(os.path.join(CHARTS_DIR, filename))
     plt.close()
 
 
-def create_horizontal_bar_chart(title, labels, values, filename):
+def create_horizontal_bar_chart(title, labels, values, filename, y_label):
     if not labels or not values:
         return
 
-    plt.figure(figsize=(10, 6))
-    plt.barh(labels, values)
-    plt.title(title)
-    plt.xlabel("Count")
-    plt.ylabel("Risk")
+    plt.figure(figsize=(11, 6))
+
+    bars = plt.barh(labels, values)
+
+    plt.title(title, fontsize=16, fontweight="bold")
+    plt.xlabel("Number of Risks", fontsize=12)
+    plt.ylabel(y_label, fontsize=12)
+
+    add_value_labels_to_horizontal_bars(bars)
+
     plt.tight_layout()
     plt.savefig(os.path.join(CHARTS_DIR, filename))
     plt.close()
@@ -561,50 +591,59 @@ def generate_charts(risks):
     owner_counts = get_count_dictionary(risks, "owner")
     due_status_counts = get_count_dictionary(risks, "due_status")
 
-    create_bar_chart(
-        "Risks by Priority",
+    create_vertical_bar_chart(
+        "Risk Distribution by Priority",
         list(priority_counts.keys()),
         list(priority_counts.values()),
-        "risks_by_priority.png"
+        "risks_by_priority.png",
+        "Priority Level"
     )
 
-    create_bar_chart(
-        "Risks by Status",
+    create_vertical_bar_chart(
+        "Risk Lifecycle Status Overview",
         list(status_counts.keys()),
         list(status_counts.values()),
-        "risks_by_status.png"
+        "risks_by_status.png",
+        "Risk Status"
     )
 
-    create_bar_chart(
-        "Risks by Category",
+    create_horizontal_bar_chart(
+        "Risk Distribution by Category",
         list(category_counts.keys()),
         list(category_counts.values()),
-        "risks_by_category.png"
+        "risks_by_category.png",
+        "Category"
     )
 
-    create_bar_chart(
-        "Risks by Owner",
+    create_horizontal_bar_chart(
+        "Open Risk Workload by Owner",
         list(owner_counts.keys()),
         list(owner_counts.values()),
-        "risks_by_owner.png"
+        "risks_by_owner.png",
+        "Owner"
     )
 
-    create_bar_chart(
-        "Risks by Due Status",
+    create_vertical_bar_chart(
+        "SLA Due Status Overview",
         list(due_status_counts.keys()),
         list(due_status_counts.values()),
-        "risks_by_due_status.png"
+        "risks_by_due_status.png",
+        "Due Status"
     )
 
     top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
-    top_risk_labels = [risk["id"] for risk in top_risks]
+    top_risk_labels = [
+        f"{risk['id']} - {risk['name'][:25]}"
+        for risk in top_risks
+    ]
     top_risk_values = [risk["severity"] for risk in top_risks]
 
     create_horizontal_bar_chart(
-        "Top 5 Risks by Severity",
+        "Top 5 Highest Severity Risks",
         top_risk_labels,
         top_risk_values,
-        "top_5_risks.png"
+        "top_5_risks.png",
+        "Risk"
     )
 
 
@@ -625,6 +664,7 @@ def generate_reports(risks):
     moderate_count = sum(1 for risk in risks if risk["priority"] == "MODERATE")
     overdue_count = sum(1 for risk in risks if risk["due_status"] == "OVERDUE")
     on_track_count = sum(1 for risk in risks if risk["due_status"] == "ON TRACK")
+    total_risks = len(risks)
 
     critical_overdue_count = sum(
         1 for risk in risks
@@ -673,6 +713,7 @@ def generate_reports(risks):
             report.write(f"Recommendation: {risk['recommendation']}\n\n")
 
         report.write("=== Executive Summary ===\n")
+        report.write(f"Total Risks: {total_risks}\n")
         report.write(f"Critical Risks: {critical_count}\n")
         report.write(f"High Risks: {high_count}\n")
         report.write(f"Moderate Risks: {moderate_count}\n")
@@ -709,13 +750,24 @@ def generate_reports(risks):
     with open(MD_REPORT, mode="w") as report:
         report.write("# AI Operations Risk Report\n\n")
 
+        report.write("## Executive Dashboard\n\n")
+        report.write(f"- Total Risks: {total_risks}\n")
+        report.write(f"- Critical Risks: {critical_count}\n")
+        report.write(f"- High Risks: {high_count}\n")
+        report.write(f"- Moderate Risks: {moderate_count}\n")
+        report.write(f"- Average Severity: {average_severity:.2f}\n")
+        report.write(f"- Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
+        report.write(f"- Overdue Risks: {overdue_count}\n")
+        report.write(f"- On Track Risks: {on_track_count}\n")
+        report.write(f"- Risks Due Within 7 Days: {due_soon_count}\n\n")
+
         report.write("## Dashboard Charts\n\n")
-        report.write("![Risks by Priority](charts/risks_by_priority.png)\n\n")
-        report.write("![Risks by Status](charts/risks_by_status.png)\n\n")
-        report.write("![Risks by Category](charts/risks_by_category.png)\n\n")
-        report.write("![Risks by Owner](charts/risks_by_owner.png)\n\n")
-        report.write("![Risks by Due Status](charts/risks_by_due_status.png)\n\n")
-        report.write("![Top 5 Risks](charts/top_5_risks.png)\n\n")
+        report.write("![Risk Distribution by Priority](charts/risks_by_priority.png)\n\n")
+        report.write("![Risk Lifecycle Status Overview](charts/risks_by_status.png)\n\n")
+        report.write("![Risk Distribution by Category](charts/risks_by_category.png)\n\n")
+        report.write("![Open Risk Workload by Owner](charts/risks_by_owner.png)\n\n")
+        report.write("![SLA Due Status Overview](charts/risks_by_due_status.png)\n\n")
+        report.write("![Top 5 Highest Severity Risks](charts/top_5_risks.png)\n\n")
 
         report.write("## Risk Detail Table\n\n")
         report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
@@ -729,24 +781,6 @@ def generate_reports(risks):
                 f"{risk['due_status']} | {risk['days_open']} | "
                 f"{risk['days_until_due']} | {risk['recommendation']} |\n"
             )
-
-        report.write("\n## Executive Summary\n\n")
-        report.write(f"- Critical Risks: {critical_count}\n")
-        report.write(f"- High Risks: {high_count}\n")
-        report.write(f"- Moderate Risks: {moderate_count}\n")
-        report.write(f"- Average Severity: {average_severity:.2f}\n")
-        report.write(f"- Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
-        report.write(f"- Overdue Risks: {overdue_count}\n")
-        report.write(f"- On Track Risks: {on_track_count}\n")
-
-        report.write("\n## SLA Summary\n\n")
-        report.write(f"- Critical Risks Overdue: {critical_overdue_count}\n")
-        report.write(f"- Risks Due Within 7 Days: {due_soon_count}\n")
-
-        if oldest_open_risk:
-            report.write(f"- Oldest Open Risk: {oldest_open_risk['id']} ({oldest_open_risk['days_open']} days open)\n")
-        else:
-            report.write("- Oldest Open Risk: None\n")
 
         report.write("\n## Category Summary\n\n")
         for category, count in category_counts.items():
