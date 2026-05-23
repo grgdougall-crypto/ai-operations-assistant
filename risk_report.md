@@ -1,5 +1,9 @@
 # AI Operations Risk Report
 
+## AI-Style Executive Narrative
+
+The current operational risk portfolio contains 40 tracked risks, including 17 critical risks, 20 high risks, and 0 overdue items. The highest-severity item is RISK-003 - NO MFA FOR VPN. SLA compliance is currently strong. There are no overdue active risks in the current queue. There are 17 risks due within the next 7 days. The active portfolio includes 17 critical risks that should remain visible to leadership. The most common risk category is Infrastructure, and the largest current owner workload is assigned to Infrastructure Team. Recommended focus should remain on critical risks, due-soon items, overloaded owners, and recurring categories that may indicate systemic control gaps.
+
 ## Executive KPI Dashboard
 
 | KPI | Value |
@@ -21,33 +25,21 @@
 
 ## Dashboard Charts
 
-![Risk Distribution by Priority](charts/risks_by_priority.png)
+![risk_priority_donut.png](charts/risk_priority_donut.png)
 
-![Risk Priority Share](charts/risk_priority_donut.png)
+![risk_status_donut.png](charts/risk_status_donut.png)
 
-![Risk Lifecycle Status Overview](charts/risks_by_status.png)
+![owner_workload_donut.png](charts/owner_workload_donut.png)
 
-![Risk Status Share](charts/risk_status_donut.png)
+![operational_risk_heat_map.png](charts/operational_risk_heat_map.png)
 
-![Open Risk Workload by Owner](charts/risks_by_owner.png)
+![top_5_risks.png](charts/top_5_risks.png)
 
-![Owner Workload Share](charts/owner_workload_donut.png)
+![risks_by_due_status.png](charts/risks_by_due_status.png)
 
-![Risk Distribution by Category](charts/risks_by_category.png)
+![open_risk_aging_distribution.png](charts/open_risk_aging_distribution.png)
 
-![SLA Due Status Overview](charts/risks_by_due_status.png)
-
-![Top 5 Highest Severity Risks](charts/top_5_risks.png)
-
-![Operational Risk Heat Map](charts/operational_risk_heat_map.png)
-
-## Trend Analytics
-
-![Active vs Inactive Risk Workload](charts/active_vs_inactive_risks.png)
-
-![Open Risk Aging Distribution](charts/open_risk_aging_distribution.png)
-
-![Risks Created by Date](charts/risks_created_by_date.png)
+![risks_by_category.png](charts/risks_by_category.png)
 
 ## Risk Detail Table
 

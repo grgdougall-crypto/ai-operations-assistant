@@ -4,7 +4,6 @@ from datetime import datetime, date, timedelta
 
 import matplotlib.pyplot as plt
 
-
 CSV_FILE = "risks.csv"
 TXT_REPORT = "risk_report.txt"
 MD_REPORT = "risk_report.md"
@@ -51,7 +50,6 @@ OWNERS = [
 ]
 
 DUE_DATE_OPTIONS = [1, 3, 5, 7, 10, 14, 30]
-
 ACTIVE_STATUSES = ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
 INACTIVE_STATUSES = ["CLOSED", "MITIGATED", "ACCEPTED"]
 
@@ -378,7 +376,6 @@ def find_risk_by_id(risks, risk_id):
     for risk in risks:
         if risk["id"].upper() == risk_id.upper():
             return risk
-
     return None
 
 
@@ -439,36 +436,31 @@ def close_risk(risks):
 def show_critical_risks(risks):
     print("\n=== Critical Risks ===")
     enrich_risks(risks)
-    critical_risks = [risk for risk in risks if risk["priority"] == "CRITICAL"]
-    display_risks(critical_risks)
+    display_risks([risk for risk in risks if risk["priority"] == "CRITICAL"])
 
 
 def show_overdue_risks(risks):
     print("\n=== Overdue Risks ===")
     enrich_risks(risks)
-    overdue_risks = [risk for risk in risks if risk["due_status"] == "OVERDUE"]
-    display_risks(overdue_risks)
+    display_risks([risk for risk in risks if risk["due_status"] == "OVERDUE"])
 
 
 def filter_by_status(risks):
     print("\n=== Filter by Status ===")
     selected_status = choose_status()
-    filtered_risks = [risk for risk in risks if risk["status"] == selected_status]
-    display_risks(filtered_risks)
+    display_risks([risk for risk in risks if risk["status"] == selected_status])
 
 
 def filter_by_owner(risks):
     print("\n=== Filter by Owner ===")
     selected_owner = choose_owner()
-    filtered_risks = [risk for risk in risks if risk["owner"] == selected_owner]
-    display_risks(filtered_risks)
+    display_risks([risk for risk in risks if risk["owner"] == selected_owner])
 
 
 def filter_by_category(risks):
     print("\n=== Filter by Category ===")
     selected_category = choose_category()
-    filtered_risks = [risk for risk in risks if risk["category"] == selected_category]
-    display_risks(filtered_risks)
+    display_risks([risk for risk in risks if risk["category"] == selected_category])
 
 
 def search_by_keyword(risks):
@@ -519,11 +511,9 @@ def show_filter_menu(risks):
 
 def get_count_dictionary(risks, key):
     counts = {}
-
     for risk in risks:
         value = risk[key]
         counts[value] = counts.get(value, 0) + 1
-
     return counts
 
 
@@ -534,7 +524,6 @@ def get_colors_for_labels(labels, color_map):
 def add_value_labels_to_bars(bars):
     for bar in bars:
         height = bar.get_height()
-
         plt.text(
             bar.get_x() + bar.get_width() / 2,
             height + 0.08,
@@ -547,7 +536,6 @@ def add_value_labels_to_bars(bars):
 def add_value_labels_to_horizontal_bars(bars):
     for bar in bars:
         width = bar.get_width()
-
         plt.text(
             width + 0.08,
             bar.get_y() + bar.get_height() / 2,
@@ -632,14 +620,12 @@ def create_operational_heat_map(risks):
 
     for priority in priority_order:
         row = []
-
         for due_status in due_status_order:
             count = sum(
                 1 for risk in risks
                 if risk["priority"] == priority and risk["due_status"] == due_status
             )
             row.append(count)
-
         heatmap_data.append(row)
 
     plt.figure(figsize=(5.4, 3.4), dpi=125)
@@ -655,7 +641,6 @@ def create_operational_heat_map(risks):
         for col_index in range(len(due_status_order)):
             value = heatmap_data[row_index][col_index]
             text_color = "white" if value >= 8 else "black"
-
             plt.text(
                 col_index,
                 row_index,
@@ -808,7 +793,18 @@ def generate_charts(risks):
         DUE_STATUS_COLORS,
     )
 
-    top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
+    top_risks = sorted(
+        risks,
+        key=lambda risk: (
+            risk["severity"],
+            -risk["days_until_due"],
+            risk["days_open"],
+        ),
+        reverse=True,
+    )[:5]
+
+    top_risks.reverse()
+
     top_risk_labels = [f"{risk['id']} - {risk['name'][:25]}" for risk in top_risks]
     top_risk_values = [risk["severity"] for risk in top_risks]
     top_risk_colors = [PRIORITY_COLORS.get(risk["priority"], DEFAULT_CHART_COLOR) for risk in top_risks]
@@ -835,10 +831,7 @@ def calculate_report_metrics(risks):
     moderate_count = sum(1 for risk in risks if risk["priority"] == "MODERATE")
     overdue_count = sum(1 for risk in risks if risk["due_status"] == "OVERDUE")
     on_track_count = sum(1 for risk in risks if risk["due_status"] == "ON TRACK")
-    critical_overdue_count = sum(
-        1 for risk in risks
-        if risk["priority"] == "CRITICAL" and risk["due_status"] == "OVERDUE"
-    )
+    critical_overdue_count = sum(1 for risk in risks if risk["priority"] == "CRITICAL" and risk["due_status"] == "OVERDUE")
 
     due_soon_count = sum(
         1 for risk in risks
@@ -893,131 +886,67 @@ def calculate_report_metrics(risks):
     }
 
 
-def write_txt_report(risks, metrics):
-    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+def generate_executive_narrative(risks, metrics):
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
 
-    with open(TXT_REPORT, mode="w") as report:
-        report.write("AI Operations Risk Report\n")
-        report.write("=========================\n\n")
+    due_soon_risks = [risk for risk in active_risks if 0 <= risk["days_until_due"] <= 7]
+    overdue_risks = [risk for risk in active_risks if risk["due_status"] == "OVERDUE"]
+    critical_risks = [risk for risk in active_risks if risk["priority"] == "CRITICAL"]
 
-        for risk in sorted_risks:
-            report.write(f"[{risk['priority']}] {risk['id']} - {risk['name']}\n")
-            report.write(f"Severity: {risk['severity']}\n")
-            report.write(f"Category: {risk['category']}\n")
-            report.write(f"Status: {risk['status']}\n")
-            report.write(f"Owner: {risk['owner']}\n")
-            report.write(f"Timestamp: {risk['timestamp']}\n")
-            report.write(f"Due Date: {risk['due_date']}\n")
-            report.write(f"Due Status: {risk['due_status']}\n")
-            report.write(f"Days Open: {risk['days_open']}\n")
-            report.write(f"Days Until Due: {risk['days_until_due']}\n")
-            report.write(f"Recommendation: {risk['recommendation']}\n\n")
-
-        report.write("=== Executive Summary ===\n")
-        report.write(f"Total Risks: {metrics['total_risks']}\n")
-        report.write(f"Critical Risks: {metrics['critical_count']}\n")
-        report.write(f"High Risks: {metrics['high_count']}\n")
-        report.write(f"Moderate Risks: {metrics['moderate_count']}\n")
-        report.write(f"Average Severity: {metrics['average_severity']:.2f}\n")
-
-        highest_risk = metrics["highest_risk"]
-        if highest_risk:
-            report.write(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
-
-        report.write(f"Overdue Risks: {metrics['overdue_count']}\n")
-        report.write(f"On Track Risks: {metrics['on_track_count']}\n")
-        report.write(f"SLA Compliance: {metrics['sla_compliance']:.1f}%\n")
-        report.write(f"Active Risks: {metrics['active_count']}\n")
-        report.write(f"Inactive Risks: {metrics['inactive_count']}\n")
-        report.write(f"Average Days Open - Active Risks: {metrics['average_days_open_active']:.1f}\n")
-        report.write(f"Most Common Risk Category: {metrics['most_common_category']}\n\n")
-
-        report.write("=== SLA Summary ===\n")
-        report.write(f"Critical Risks Overdue: {metrics['critical_overdue_count']}\n")
-        report.write(f"Risks Due Within 7 Days: {metrics['due_soon_count']}\n")
-
-        oldest_open_risk = metrics["oldest_open_risk"]
-        if oldest_open_risk:
-            report.write(f"Oldest Open Risk: {oldest_open_risk['id']} ({oldest_open_risk['days_open']} days open)\n\n")
-        else:
-            report.write("Oldest Open Risk: None\n\n")
-
-
-def write_md_report(risks, metrics):
-    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
     highest_risk = metrics["highest_risk"]
+    highest_risk_text = "No high-severity item identified"
+    if highest_risk:
+        highest_risk_text = f"{highest_risk['id']} - {highest_risk['name']}"
 
-    with open(MD_REPORT, mode="w") as report:
-        report.write("# AI Operations Risk Report\n\n")
-        report.write("## Executive KPI Dashboard\n\n")
-        report.write("| KPI | Value |\n")
-        report.write("|---|---:|\n")
-        report.write(f"| Total Risks | {metrics['total_risks']} |\n")
-        report.write(f"| Critical Risks | {metrics['critical_count']} |\n")
-        report.write(f"| High Risks | {metrics['high_count']} |\n")
-        report.write(f"| Moderate Risks | {metrics['moderate_count']} |\n")
-        report.write(f"| Overdue Risks | {metrics['overdue_count']} |\n")
-        report.write(f"| On Track Risks | {metrics['on_track_count']} |\n")
-        report.write(f"| Risks Due Within 7 Days | {metrics['due_soon_count']} |\n")
-        report.write(f"| SLA Compliance | {metrics['sla_compliance']:.1f}% |\n")
-        report.write(f"| Average Severity | {metrics['average_severity']:.2f} |\n")
+    top_owner = "No owner concentration identified"
+    if metrics["owner_counts"]:
+        top_owner = max(metrics["owner_counts"], key=metrics["owner_counts"].get)
 
-        if highest_risk:
-            report.write(f"| Highest Risk | {highest_risk['id']} - {highest_risk['name']} |\n")
+    top_category = metrics["most_common_category"]
 
-        report.write(f"| Active Risks | {metrics['active_count']} |\n")
-        report.write(f"| Inactive Risks | {metrics['inactive_count']} |\n")
-        report.write(f"| Average Days Open - Active Risks | {metrics['average_days_open_active']:.1f} |\n")
-        report.write(f"| Most Common Risk Category | {metrics['most_common_category']} |\n\n")
+    if metrics["sla_compliance"] >= 90:
+        sla_statement = "SLA compliance is currently strong."
+    elif metrics["sla_compliance"] >= 75:
+        sla_statement = "SLA compliance is acceptable but should be watched closely."
+    else:
+        sla_statement = "SLA compliance is below the preferred threshold and should be treated as an operational concern."
 
-        report.write("## Dashboard Charts\n\n")
-        report.write("![Risk Distribution by Priority](charts/risks_by_priority.png)\n\n")
-        report.write("![Risk Priority Share](charts/risk_priority_donut.png)\n\n")
-        report.write("![Risk Lifecycle Status Overview](charts/risks_by_status.png)\n\n")
-        report.write("![Risk Status Share](charts/risk_status_donut.png)\n\n")
-        report.write("![Open Risk Workload by Owner](charts/risks_by_owner.png)\n\n")
-        report.write("![Owner Workload Share](charts/owner_workload_donut.png)\n\n")
-        report.write("![Risk Distribution by Category](charts/risks_by_category.png)\n\n")
-        report.write("![SLA Due Status Overview](charts/risks_by_due_status.png)\n\n")
-        report.write("![Top 5 Highest Severity Risks](charts/top_5_risks.png)\n\n")
-        report.write("![Operational Risk Heat Map](charts/operational_risk_heat_map.png)\n\n")
+    if overdue_risks:
+        overdue_statement = f"There are {len(overdue_risks)} overdue active risks requiring immediate review."
+    else:
+        overdue_statement = "There are no overdue active risks in the current queue."
 
-        report.write("## Trend Analytics\n\n")
-        report.write("![Active vs Inactive Risk Workload](charts/active_vs_inactive_risks.png)\n\n")
-        report.write("![Open Risk Aging Distribution](charts/open_risk_aging_distribution.png)\n\n")
-        report.write("![Risks Created by Date](charts/risks_created_by_date.png)\n\n")
+    if due_soon_risks:
+        due_soon_statement = f"There are {len(due_soon_risks)} risks due within the next 7 days."
+    else:
+        due_soon_statement = "No active risks are due within the next 7 days."
 
-        report.write("## Risk Detail Table\n\n")
-        report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
-        report.write("|----|------|----------|----------|----------|--------|-------|------------|----------|------------|-----------|----------------|----------------|\n")
+    if critical_risks:
+        critical_statement = f"The active portfolio includes {len(critical_risks)} critical risks that should remain visible to leadership."
+    else:
+        critical_statement = "There are no active critical risks currently requiring leadership escalation."
 
-        for risk in sorted_risks:
-            report.write(
-                f"| {risk['id']} | {risk['name']} | {risk['priority']} | "
-                f"{risk['severity']} | {risk['category']} | {risk['status']} | "
-                f"{risk['owner']} | {risk['timestamp']} | {risk['due_date']} | "
-                f"{risk['due_status']} | {risk['days_open']} | "
-                f"{risk['days_until_due']} | {risk['recommendation']} |\n"
-            )
+    narrative = (
+        f"The current operational risk portfolio contains {metrics['total_risks']} tracked risks, "
+        f"including {metrics['critical_count']} critical risks, {metrics['high_count']} high risks, "
+        f"and {metrics['overdue_count']} overdue items. The highest-severity item is {highest_risk_text}. "
+        f"{sla_statement} {overdue_statement} {due_soon_statement} {critical_statement} "
+        f"The most common risk category is {top_category}, and the largest current owner workload is assigned to {top_owner}. "
+        f"Recommended focus should remain on critical risks, due-soon items, overloaded owners, and recurring categories that may indicate systemic control gaps."
+    )
+
+    return narrative
+
+
+def build_html_narrative(narrative):
+    return f"<p>{narrative}</p>"
 
 
 def build_risk_forecast_widget(risks, metrics):
     active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
-
-    due_soon = [
-        risk for risk in active_risks
-        if 0 <= risk["days_until_due"] <= 7
-    ]
-
-    critical_active = [
-        risk for risk in active_risks
-        if risk["priority"] == "CRITICAL"
-    ]
-
-    aging_risks = [
-        risk for risk in active_risks
-        if risk["days_open"] >= 7
-    ]
+    due_soon = [risk for risk in active_risks if 0 <= risk["days_until_due"] <= 7]
+    critical_active = [risk for risk in active_risks if risk["priority"] == "CRITICAL"]
+    aging_risks = [risk for risk in active_risks if risk["days_open"] >= 7]
 
     if metrics["sla_compliance"] >= 90:
         sla_outlook = "Stable"
@@ -1053,13 +982,9 @@ def build_risk_forecast_widget(risks, metrics):
 
 def build_executive_action_queue(risks):
     active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
-
     priority_risks = sorted(
         active_risks,
-        key=lambda risk: (
-            risk["severity"],
-            -risk["days_until_due"],
-        ),
+        key=lambda risk: (risk["severity"], -risk["days_until_due"], risk["days_open"]),
         reverse=True,
     )[:5]
 
@@ -1116,6 +1041,109 @@ def build_html_risk_rows(risks):
     return rows
 
 
+def write_txt_report(risks, metrics):
+    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+    executive_narrative = generate_executive_narrative(risks, metrics)
+
+    with open(TXT_REPORT, mode="w") as report:
+        report.write("AI Operations Risk Report\n")
+        report.write("=========================\n\n")
+        report.write("=== AI-Style Executive Narrative ===\n")
+        report.write(executive_narrative + "\n\n")
+
+        for risk in sorted_risks:
+            report.write(f"[{risk['priority']}] {risk['id']} - {risk['name']}\n")
+            report.write(f"Severity: {risk['severity']}\n")
+            report.write(f"Category: {risk['category']}\n")
+            report.write(f"Status: {risk['status']}\n")
+            report.write(f"Owner: {risk['owner']}\n")
+            report.write(f"Timestamp: {risk['timestamp']}\n")
+            report.write(f"Due Date: {risk['due_date']}\n")
+            report.write(f"Due Status: {risk['due_status']}\n")
+            report.write(f"Days Open: {risk['days_open']}\n")
+            report.write(f"Days Until Due: {risk['days_until_due']}\n")
+            report.write(f"Recommendation: {risk['recommendation']}\n\n")
+
+        report.write("=== Executive Summary ===\n")
+        report.write(f"Total Risks: {metrics['total_risks']}\n")
+        report.write(f"Critical Risks: {metrics['critical_count']}\n")
+        report.write(f"High Risks: {metrics['high_count']}\n")
+        report.write(f"Moderate Risks: {metrics['moderate_count']}\n")
+        report.write(f"Average Severity: {metrics['average_severity']:.2f}\n")
+
+        highest_risk = metrics["highest_risk"]
+        if highest_risk:
+            report.write(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
+
+        report.write(f"Overdue Risks: {metrics['overdue_count']}\n")
+        report.write(f"On Track Risks: {metrics['on_track_count']}\n")
+        report.write(f"SLA Compliance: {metrics['sla_compliance']:.1f}%\n")
+        report.write(f"Active Risks: {metrics['active_count']}\n")
+        report.write(f"Inactive Risks: {metrics['inactive_count']}\n")
+        report.write(f"Average Days Open - Active Risks: {metrics['average_days_open_active']:.1f}\n")
+        report.write(f"Most Common Risk Category: {metrics['most_common_category']}\n\n")
+
+
+def write_md_report(risks, metrics):
+    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+    highest_risk = metrics["highest_risk"]
+    executive_narrative = generate_executive_narrative(risks, metrics)
+
+    with open(MD_REPORT, mode="w") as report:
+        report.write("# AI Operations Risk Report\n\n")
+        report.write("## AI-Style Executive Narrative\n\n")
+        report.write(executive_narrative + "\n\n")
+
+        report.write("## Executive KPI Dashboard\n\n")
+        report.write("| KPI | Value |\n")
+        report.write("|---|---:|\n")
+        report.write(f"| Total Risks | {metrics['total_risks']} |\n")
+        report.write(f"| Critical Risks | {metrics['critical_count']} |\n")
+        report.write(f"| High Risks | {metrics['high_count']} |\n")
+        report.write(f"| Moderate Risks | {metrics['moderate_count']} |\n")
+        report.write(f"| Overdue Risks | {metrics['overdue_count']} |\n")
+        report.write(f"| On Track Risks | {metrics['on_track_count']} |\n")
+        report.write(f"| Risks Due Within 7 Days | {metrics['due_soon_count']} |\n")
+        report.write(f"| SLA Compliance | {metrics['sla_compliance']:.1f}% |\n")
+        report.write(f"| Average Severity | {metrics['average_severity']:.2f} |\n")
+
+        if highest_risk:
+            report.write(f"| Highest Risk | {highest_risk['id']} - {highest_risk['name']} |\n")
+
+        report.write(f"| Active Risks | {metrics['active_count']} |\n")
+        report.write(f"| Inactive Risks | {metrics['inactive_count']} |\n")
+        report.write(f"| Average Days Open - Active Risks | {metrics['average_days_open_active']:.1f} |\n")
+        report.write(f"| Most Common Risk Category | {metrics['most_common_category']} |\n\n")
+
+        report.write("## Dashboard Charts\n\n")
+        chart_files = [
+            "risk_priority_donut.png",
+            "risk_status_donut.png",
+            "owner_workload_donut.png",
+            "operational_risk_heat_map.png",
+            "top_5_risks.png",
+            "risks_by_due_status.png",
+            "open_risk_aging_distribution.png",
+            "risks_by_category.png",
+        ]
+
+        for chart_file in chart_files:
+            report.write(f"![{chart_file}](charts/{chart_file})\n\n")
+
+        report.write("## Risk Detail Table\n\n")
+        report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
+        report.write("|----|------|----------|----------|----------|--------|-------|------------|----------|------------|-----------|----------------|----------------|\n")
+
+        for risk in sorted_risks:
+            report.write(
+                f"| {risk['id']} | {risk['name']} | {risk['priority']} | "
+                f"{risk['severity']} | {risk['category']} | {risk['status']} | "
+                f"{risk['owner']} | {risk['timestamp']} | {risk['due_date']} | "
+                f"{risk['due_status']} | {risk['days_open']} | "
+                f"{risk['days_until_due']} | {risk['recommendation']} |\n"
+            )
+
+
 def write_html_dashboard(risks, metrics):
     if not os.path.exists(TEMPLATE_FILE):
         print("HTML template not found. Skipping dashboard.html generation.")
@@ -1124,9 +1152,10 @@ def write_html_dashboard(risks, metrics):
 
     highest_risk = metrics["highest_risk"]
     highest_risk_text = "None"
-
     if highest_risk:
         highest_risk_text = f"{highest_risk['id']} - {highest_risk['name']}"
+
+    executive_narrative = generate_executive_narrative(risks, metrics)
 
     with open(TEMPLATE_FILE, mode="r", encoding="utf-8") as template_file:
         html = template_file.read()
@@ -1144,6 +1173,7 @@ def write_html_dashboard(risks, metrics):
         "{{RISK_ROWS}}": build_html_risk_rows(risks),
         "{{RISK_FORECAST}}": build_risk_forecast_widget(risks, metrics),
         "{{EXECUTIVE_ACTION_QUEUE}}": build_executive_action_queue(risks),
+        "{{EXECUTIVE_NARRATIVE}}": build_html_narrative(executive_narrative),
     }
 
     for placeholder, value in replacements.items():

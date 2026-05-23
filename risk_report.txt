@@ -1,6 +1,9 @@
 AI Operations Risk Report
 =========================
 
+=== AI-Style Executive Narrative ===
+The current operational risk portfolio contains 40 tracked risks, including 17 critical risks, 20 high risks, and 0 overdue items. The highest-severity item is RISK-003 - NO MFA FOR VPN. SLA compliance is currently strong. There are no overdue active risks in the current queue. There are 17 risks due within the next 7 days. The active portfolio includes 17 critical risks that should remain visible to leadership. The most common risk category is Infrastructure, and the largest current owner workload is assigned to Infrastructure Team. Recommended focus should remain on critical risks, due-soon items, overloaded owners, and recurring categories that may indicate systemic control gaps.
+
 [CRITICAL] RISK-003 - NO MFA FOR VPN
 Severity: 10
 Category: Authentication
@@ -495,9 +498,4 @@ Active Risks: 38
 Inactive Risks: 2
 Average Days Open - Active Risks: 2.3
 Most Common Risk Category: Infrastructure
-
-=== SLA Summary ===
-Critical Risks Overdue: 0
-Risks Due Within 7 Days: 17
-Oldest Open Risk: RISK-001 (8 days open)
 
