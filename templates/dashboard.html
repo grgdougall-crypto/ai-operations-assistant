@@ -34,38 +34,168 @@
     <div class="panel">
         <h2>Live Risks from SQLite Database</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Severity</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Owner</th>
-                    <th>Due Date</th>
-                </tr>
-            </thead>
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="Search risks..." onkeyup="filterTable()">
 
-            <tbody>
-                {% for risk in risks %}
-                <tr>
-                    <td>{{ risk["id"] }}</td>
-                    <td>{{ risk["name"] }}</td>
+            <select id="severityFilter" onchange="filterTable()">
+                <option value="">All Severities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="moderate">Moderate</option>
+            </select>
 
-                    <td class="{% if risk['severity'] >= 9 %}critical{% elif risk['severity'] >= 7 %}high{% else %}moderate{% endif %}">
-                        {{ risk["severity"] }}
-                    </td>
+            <select id="statusFilter" onchange="filterTable()">
+                <option value="">All Statuses</option>
+                <option value="OPEN">Open</option>
+                <option value="IN PROGRESS">In Progress</option>
+                <option value="PENDING REVIEW">Pending Review</option>
+                <option value="MITIGATED">Mitigated</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="CLOSED">Closed</option>
+            </select>
 
-                    <td>{{ risk["category"] }}</td>
-                    <td>{{ risk["status"] }}</td>
-                    <td>{{ risk["owner"] }}</td>
-                    <td>{{ risk["due_date"] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <select id="ownerFilter" onchange="filterTable()">
+                <option value="">All Owners</option>
+                <option value="Security Team">Security Team</option>
+                <option value="Network Operations">Network Operations</option>
+                <option value="Infrastructure Team">Infrastructure Team</option>
+                <option value="Help Desk">Help Desk</option>
+                <option value="SOC Analyst">SOC Analyst</option>
+                <option value="Compliance Team">Compliance Team</option>
+                <option value="Cloud Operations">Cloud Operations</option>
+                <option value="Identity Team">Identity Team</option>
+            </select>
+
+            <select id="categoryFilter" onchange="filterTable()">
+                <option value="">All Categories</option>
+                <option value="Authentication">Authentication</option>
+                <option value="Network">Network</option>
+                <option value="Endpoint Security">Endpoint Security</option>
+                <option value="Data Protection">Data Protection</option>
+                <option value="Backup and Recovery">Backup and Recovery</option>
+                <option value="Incident Response">Incident Response</option>
+                <option value="Security Awareness">Security Awareness</option>
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="User Access">User Access</option>
+                <option value="Physical Security">Physical Security</option>
+                <option value="Cloud Security">Cloud Security</option>
+                <option value="Security Operations">Security Operations</option>
+                <option value="Governance">Governance</option>
+                <option value="Compliance">Compliance</option>
+                <option value="Identity and Access">Identity and Access</option>
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <table id="riskTable" data-sort-direction="desc">
+                <thead>
+                    <tr>
+                        <th>ID ↕</th>
+                        <th>Name ↕</th>
+                        <th>Severity ↕</th>
+                        <th>Category ↕</th>
+                        <th>Status ↕</th>
+                        <th>Owner ↕</th>
+                        <th>Due Date ↕</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for risk in risks %}
+                    <tr
+                        data-severity-level="{% if risk['severity'] >= 9 %}critical{% elif risk['severity'] >= 7 %}high{% else %}moderate{% endif %}"
+                        data-status="{{ risk['status'] }}"
+                        data-owner="{{ risk['owner'] }}"
+                        data-category="{{ risk['category'] }}"
+                    >
+                        <td>{{ risk["id"] }}</td>
+                        <td>{{ risk["name"] }}</td>
+
+                        <td class="{% if risk['severity'] >= 9 %}critical{% elif risk['severity'] >= 7 %}high{% else %}moderate{% endif %}">
+                            {{ risk["severity"] }}
+                        </td>
+
+                        <td>{{ risk["category"] }}</td>
+                        <td>{{ risk["status"] }}</td>
+                        <td>{{ risk["owner"] }}</td>
+                        <td>{{ risk["due_date"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+
+<script>
+function filterTable() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const severityValue = document.getElementById("severityFilter").value.toLowerCase();
+    const statusValue = document.getElementById("statusFilter").value.toLowerCase();
+    const ownerValue = document.getElementById("ownerFilter").value.toLowerCase();
+    const categoryValue = document.getElementById("categoryFilter").value.toLowerCase();
+
+    const rows = document.querySelectorAll("#riskTable tbody tr");
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        const rowSeverity = row.getAttribute("data-severity-level").toLowerCase();
+        const rowStatus = row.getAttribute("data-status").toLowerCase();
+        const rowOwner = row.getAttribute("data-owner").toLowerCase();
+        const rowCategory = row.getAttribute("data-category").toLowerCase();
+
+        const matchesSearch = rowText.includes(searchValue);
+        const matchesSeverity = severityValue === "" || rowSeverity === severityValue;
+        const matchesStatus = statusValue === "" || rowStatus === statusValue;
+        const matchesOwner = ownerValue === "" || rowOwner === ownerValue;
+        const matchesCategory = categoryValue === "" || rowCategory === categoryValue;
+
+        row.style.display =
+            matchesSearch &&
+            matchesSeverity &&
+            matchesStatus &&
+            matchesOwner &&
+            matchesCategory
+            ? ""
+            : "none";
+    });
+}
+
+function sortTable(columnIndex) {
+    const table = document.getElementById("riskTable");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const ascending = table.getAttribute("data-sort-direction") !== "asc";
+
+    rows.sort((a, b) => {
+        const aText = a.cells[columnIndex].textContent.trim();
+        const bText = b.cells[columnIndex].textContent.trim();
+        const aNum = parseFloat(aText);
+        const bNum = parseFloat(bText);
+
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+            return ascending ? aNum - bNum : bNum - aNum;
+        }
+
+        return ascending
+            ? aText.localeCompare(bText)
+            : bText.localeCompare(aText);
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+    table.setAttribute("data-sort-direction", ascending ? "asc" : "desc");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const headers = document.querySelectorAll("#riskTable th");
+
+    headers.forEach((header, index) => {
+        header.style.cursor = "pointer";
+        header.addEventListener("click", () => {
+            sortTable(index);
+        });
+    });
+});
+</script>
 
 </body>
 </html>
