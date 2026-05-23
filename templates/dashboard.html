@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Operations Risk Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <h1>AI Operations Risk Platform</h1>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Total Risks</div>
+            <div class="kpi-value">{{ kpis.total_risks }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Critical Risks</div>
+            <div class="kpi-value critical">{{ kpis.critical_risks }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">High Risks</div>
+            <div class="kpi-value high">{{ kpis.high_risks }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Open Risks</div>
+            <div class="kpi-value">{{ kpis.open_risks }}</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Live Risks from SQLite Database</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Severity</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for risk in risks %}
+                <tr>
+                    <td>{{ risk["id"] }}</td>
+                    <td>{{ risk["name"] }}</td>
+
+                    <td class="{% if risk['severity'] >= 9 %}critical{% elif risk['severity'] >= 7 %}high{% else %}moderate{% endif %}">
+                        {{ risk["severity"] }}
+                    </td>
+
+                    <td>{{ risk["category"] }}</td>
+                    <td>{{ risk["status"] }}</td>
+                    <td>{{ risk["owner"] }}</td>
+                    <td>{{ risk["due_date"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
