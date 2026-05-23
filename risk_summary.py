@@ -104,7 +104,6 @@ recommendation_library = [
     }
 ]
 
-
 priority_colors = {
     "CRITICAL": "red",
     "HIGH": "orange",
@@ -767,6 +766,11 @@ def generate_reports(risks):
     on_track_count = sum(1 for risk in risks if risk["due_status"] == "ON TRACK")
     total_risks = len(risks)
 
+    if total_risks > 0:
+        sla_compliance = (on_track_count / total_risks) * 100
+    else:
+        sla_compliance = 0
+
     critical_overdue_count = sum(
         1 for risk in risks
         if risk["priority"] == "CRITICAL" and risk["due_status"] == "OVERDUE"
@@ -821,7 +825,8 @@ def generate_reports(risks):
         report.write(f"Average Severity: {average_severity:.2f}\n")
         report.write(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
         report.write(f"Overdue Risks: {overdue_count}\n")
-        report.write(f"On Track Risks: {on_track_count}\n\n")
+        report.write(f"On Track Risks: {on_track_count}\n")
+        report.write(f"SLA Compliance: {sla_compliance:.1f}%\n\n")
 
         report.write("=== SLA Summary ===\n")
         report.write(f"Critical Risks Overdue: {critical_overdue_count}\n")
@@ -851,16 +856,19 @@ def generate_reports(risks):
     with open(MD_REPORT, mode="w") as report:
         report.write("# AI Operations Risk Report\n\n")
 
-        report.write("## Executive Dashboard\n\n")
-        report.write(f"- Total Risks: {total_risks}\n")
-        report.write(f"- Critical Risks: {critical_count}\n")
-        report.write(f"- High Risks: {high_count}\n")
-        report.write(f"- Moderate Risks: {moderate_count}\n")
-        report.write(f"- Average Severity: {average_severity:.2f}\n")
-        report.write(f"- Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
-        report.write(f"- Overdue Risks: {overdue_count}\n")
-        report.write(f"- On Track Risks: {on_track_count}\n")
-        report.write(f"- Risks Due Within 7 Days: {due_soon_count}\n\n")
+        report.write("## Executive KPI Dashboard\n\n")
+        report.write("| KPI | Value |\n")
+        report.write("|---|---:|\n")
+        report.write(f"| Total Risks | {total_risks} |\n")
+        report.write(f"| Critical Risks | {critical_count} |\n")
+        report.write(f"| High Risks | {high_count} |\n")
+        report.write(f"| Moderate Risks | {moderate_count} |\n")
+        report.write(f"| Overdue Risks | {overdue_count} |\n")
+        report.write(f"| On Track Risks | {on_track_count} |\n")
+        report.write(f"| Risks Due Within 7 Days | {due_soon_count} |\n")
+        report.write(f"| SLA Compliance | {sla_compliance:.1f}% |\n")
+        report.write(f"| Average Severity | {average_severity:.2f} |\n")
+        report.write(f"| Highest Risk | {highest_risk['id']} - {highest_risk['name']} |\n\n")
 
         report.write("## Dashboard Charts\n\n")
         report.write("![Risk Distribution by Priority](charts/risks_by_priority.png)\n\n")
