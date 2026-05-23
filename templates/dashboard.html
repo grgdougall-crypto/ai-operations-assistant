@@ -31,6 +31,58 @@
         </div>
     </div>
 
+    <div class="panel form-panel">
+        <h2>Add New Risk</h2>
+
+        <form class="risk-form" action="{{ url_for('add_risk') }}" method="POST">
+            <div class="form-group wide-field">
+                <label for="name">Risk Name</label>
+                <input type="text" id="name" name="name" placeholder="Example: Unpatched VPN appliance" required>
+            </div>
+
+            <div class="form-group">
+                <label for="severity">Severity</label>
+                <input type="number" id="severity" name="severity" min="1" max="10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    {% for status in statuses %}
+                    <option value="{{ status }}">{{ status }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="owner">Owner</label>
+                <select id="owner" name="owner" required>
+                    {% for owner in owners %}
+                    <option value="{{ owner }}">{{ owner }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="due_date">Due Date</label>
+                <input type="date" id="due_date" name="due_date" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Add Risk</button>
+            </div>
+        </form>
+    </div>
+
     <div class="panel">
         <h2>Live Risks from SQLite Database</h2>
 
@@ -46,43 +98,23 @@
 
             <select id="statusFilter" onchange="filterTable()">
                 <option value="">All Statuses</option>
-                <option value="OPEN">Open</option>
-                <option value="IN PROGRESS">In Progress</option>
-                <option value="PENDING REVIEW">Pending Review</option>
-                <option value="MITIGATED">Mitigated</option>
-                <option value="ACCEPTED">Accepted</option>
-                <option value="CLOSED">Closed</option>
+                {% for status in statuses %}
+                <option value="{{ status }}">{{ status }}</option>
+                {% endfor %}
             </select>
 
             <select id="ownerFilter" onchange="filterTable()">
                 <option value="">All Owners</option>
-                <option value="Security Team">Security Team</option>
-                <option value="Network Operations">Network Operations</option>
-                <option value="Infrastructure Team">Infrastructure Team</option>
-                <option value="Help Desk">Help Desk</option>
-                <option value="SOC Analyst">SOC Analyst</option>
-                <option value="Compliance Team">Compliance Team</option>
-                <option value="Cloud Operations">Cloud Operations</option>
-                <option value="Identity Team">Identity Team</option>
+                {% for owner in owners %}
+                <option value="{{ owner }}">{{ owner }}</option>
+                {% endfor %}
             </select>
 
             <select id="categoryFilter" onchange="filterTable()">
                 <option value="">All Categories</option>
-                <option value="Authentication">Authentication</option>
-                <option value="Network">Network</option>
-                <option value="Endpoint Security">Endpoint Security</option>
-                <option value="Data Protection">Data Protection</option>
-                <option value="Backup and Recovery">Backup and Recovery</option>
-                <option value="Incident Response">Incident Response</option>
-                <option value="Security Awareness">Security Awareness</option>
-                <option value="Infrastructure">Infrastructure</option>
-                <option value="User Access">User Access</option>
-                <option value="Physical Security">Physical Security</option>
-                <option value="Cloud Security">Cloud Security</option>
-                <option value="Security Operations">Security Operations</option>
-                <option value="Governance">Governance</option>
-                <option value="Compliance">Compliance</option>
-                <option value="Identity and Access">Identity and Access</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
             </select>
         </div>
 

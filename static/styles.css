@@ -42,6 +42,7 @@ h1 {
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
 }
 
 .panel h2 {
@@ -50,6 +51,53 @@ h1 {
     font-size: 15px;
     padding: 10px;
     margin: 0;
+}
+
+.form-panel {
+    margin-bottom: 20px;
+}
+
+.risk-form {
+    display: grid;
+    grid-template-columns: 2fr 0.6fr 1.2fr 1.1fr 1.2fr 1fr auto;
+    gap: 10px;
+    padding: 14px;
+    align-items: end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border: 1px solid #cfd8e3;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+}
+
+.form-actions button {
+    padding: 9px 14px;
+    background: #202938;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.form-actions button:hover {
+    background: #334155;
 }
 
 .filter-bar {
@@ -117,6 +165,20 @@ tr:nth-child(even) {
 .moderate {
     color: #ca8a04;
     font-weight: bold;
+}
+
+@media (max-width: 1100px) {
+    .risk-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-actions {
+        grid-column: span 2;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
 }
 
 @media (max-width: 900px) {
