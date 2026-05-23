@@ -26,6 +26,8 @@
 
 ![Top 5 Highest Severity Risks](charts/top_5_risks.png)
 
+![Operational Risk Heat Map](charts/operational_risk_heat_map.png)
+
 ## Risk Detail Table
 
 | ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |

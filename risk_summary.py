@@ -105,6 +105,31 @@ recommendation_library = [
 ]
 
 
+priority_colors = {
+    "CRITICAL": "red",
+    "HIGH": "orange",
+    "MODERATE": "gold",
+    "LOW": "green"
+}
+
+status_colors = {
+    "OPEN": "royalblue",
+    "IN PROGRESS": "purple",
+    "PENDING REVIEW": "gray",
+    "MITIGATED": "green",
+    "ACCEPTED": "teal",
+    "CLOSED": "darkgreen"
+}
+
+due_status_colors = {
+    "OVERDUE": "red",
+    "ON TRACK": "green",
+    "NOT ACTIVE": "gray"
+}
+
+default_chart_color = "steelblue"
+
+
 def load_risks():
     risks = []
 
@@ -135,8 +160,14 @@ def save_risks_to_csv(risks):
         writer = csv.writer(file)
 
         writer.writerow([
-            "id", "name", "severity", "category",
-            "status", "owner", "timestamp", "due_date"
+            "id",
+            "name",
+            "severity",
+            "category",
+            "status",
+            "owner",
+            "timestamp",
+            "due_date"
         ])
 
         for risk in risks:
@@ -514,31 +545,6 @@ def get_count_dictionary(risks, key):
     return counts
 
 
-priority_colors = {
-    "CRITICAL": "red",
-    "HIGH": "orange",
-    "MODERATE": "gold",
-    "LOW": "green"
-}
-
-status_colors = {
-    "OPEN": "royalblue",
-    "IN PROGRESS": "purple",
-    "PENDING REVIEW": "gray",
-    "MITIGATED": "green",
-    "ACCEPTED": "teal",
-    "CLOSED": "darkgreen"
-}
-
-due_status_colors = {
-    "OVERDUE": "red",
-    "ON TRACK": "green",
-    "NOT ACTIVE": "gray"
-}
-
-default_chart_color = "steelblue"
-
-
 def get_colors_for_labels(labels, color_map):
     colors = []
 
@@ -617,6 +623,52 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
     plt.close()
 
 
+def create_operational_heat_map(risks):
+    priority_order = ["CRITICAL", "HIGH", "MODERATE"]
+    due_status_order = ["OVERDUE", "ON TRACK", "NOT ACTIVE"]
+
+    heatmap_data = []
+
+    for priority in priority_order:
+        row = []
+
+        for due_status in due_status_order:
+            count = sum(
+                1 for risk in risks
+                if risk["priority"] == priority and risk["due_status"] == due_status
+            )
+            row.append(count)
+
+        heatmap_data.append(row)
+
+    plt.figure(figsize=(9, 6))
+    plt.imshow(heatmap_data, cmap="Reds")
+
+    plt.title("Operational Risk Heat Map", fontsize=16, fontweight="bold")
+    plt.xlabel("Due Status", fontsize=12)
+    plt.ylabel("Priority", fontsize=12)
+
+    plt.xticks(range(len(due_status_order)), due_status_order)
+    plt.yticks(range(len(priority_order)), priority_order)
+
+    for row_index in range(len(priority_order)):
+        for col_index in range(len(due_status_order)):
+            plt.text(
+                col_index,
+                row_index,
+                str(heatmap_data[row_index][col_index]),
+                ha="center",
+                va="center",
+                fontsize=14,
+                fontweight="bold"
+            )
+
+    plt.colorbar(label="Number of Risks")
+    plt.tight_layout()
+    plt.savefig(os.path.join(CHARTS_DIR, "operational_risk_heat_map.png"))
+    plt.close()
+
+
 def generate_charts(risks):
     if not os.path.exists(CHARTS_DIR):
         os.makedirs(CHARTS_DIR)
@@ -692,6 +744,9 @@ def generate_charts(risks):
         "Risk",
         top_risk_colors
     )
+
+    create_operational_heat_map(risks)
+
 
 def generate_reports(risks):
     print("\n=== Generating Reports ===")
@@ -814,6 +869,7 @@ def generate_reports(risks):
         report.write("![Open Risk Workload by Owner](charts/risks_by_owner.png)\n\n")
         report.write("![SLA Due Status Overview](charts/risks_by_due_status.png)\n\n")
         report.write("![Top 5 Highest Severity Risks](charts/top_5_risks.png)\n\n")
+        report.write("![Operational Risk Heat Map](charts/operational_risk_heat_map.png)\n\n")
 
         report.write("## Risk Detail Table\n\n")
         report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
