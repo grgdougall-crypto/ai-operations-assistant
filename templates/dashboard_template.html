@@ -387,15 +387,15 @@ h1 {
                 <table class="risk-table" id="riskTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Priority</th>
-                            <th>Severity</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Owner</th>
-                            <th>Due Date</th>
-                        </tr>
+    <th>ID ↕</th>
+    <th>Name ↕</th>
+    <th>Priority ↕</th>
+    <th>Severity ↕</th>
+    <th>Category ↕</th>
+    <th>Status ↕</th>
+    <th>Owner ↕</th>
+    <th>Due Date ↕</th>
+</tr>
                     </thead>
                     <tbody>
                         {{RISK_ROWS}}
@@ -511,6 +511,62 @@ function filterTable() {
             : "none";
     });
 }
+
+function sortTable(columnIndex) {
+
+    const table = document.getElementById("riskTable");
+    const tbody = table.querySelector("tbody");
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    const ascending =
+        table.getAttribute("data-sort-direction") !== "asc";
+
+    rows.sort((a, b) => {
+
+        const aText =
+            a.cells[columnIndex].textContent.trim();
+
+        const bText =
+            b.cells[columnIndex].textContent.trim();
+
+        const aNum = parseFloat(aText);
+        const bNum = parseFloat(bText);
+
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+
+            return ascending
+                ? aNum - bNum
+                : bNum - aNum;
+        }
+
+        return ascending
+            ? aText.localeCompare(bText)
+            : bText.localeCompare(aText);
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+
+    table.setAttribute(
+        "data-sort-direction",
+        ascending ? "asc" : "desc"
+    );
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const headers =
+        document.querySelectorAll("#riskTable th");
+
+    headers.forEach((header, index) => {
+
+        header.style.cursor = "pointer";
+
+        header.addEventListener("click", () => {
+            sortTable(index);
+        });
+    });
+});
 </script>
 
 </body>
