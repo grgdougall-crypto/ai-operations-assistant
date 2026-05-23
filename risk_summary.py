@@ -1,14 +1,16 @@
 import csv
 import os
 from datetime import datetime, date, timedelta
+
 import matplotlib.pyplot as plt
+
 
 CSV_FILE = "risks.csv"
 TXT_REPORT = "risk_report.txt"
 MD_REPORT = "risk_report.md"
 CHARTS_DIR = "charts"
 
-categories = [
+CATEGORIES = [
     "Authentication",
     "Network",
     "Endpoint Security",
@@ -18,122 +20,125 @@ categories = [
     "Security Awareness",
     "Infrastructure",
     "User Access",
-    "Physical Security"
+    "Physical Security",
 ]
 
-statuses = [
+STATUSES = [
     "OPEN",
     "IN PROGRESS",
     "PENDING REVIEW",
     "MITIGATED",
     "ACCEPTED",
-    "CLOSED"
+    "CLOSED",
 ]
 
-owners = [
+OWNERS = [
     "Security Team",
     "Network Operations",
     "Infrastructure Team",
     "Help Desk",
     "SOC Analyst",
-    "Compliance Team"
+    "Compliance Team",
 ]
 
-due_date_options = [1, 3, 5, 7, 10, 14, 30]
+DUE_DATE_OPTIONS = [1, 3, 5, 7, 10, 14, 30]
 
-recommendation_library = [
+ACTIVE_STATUSES = ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
+INACTIVE_STATUSES = ["CLOSED", "MITIGATED", "ACCEPTED"]
+
+RECOMMENDATION_LIBRARY = [
     {
         "keywords": ["mfa", "multi-factor", "2fa", "vpn", "remote access"],
-        "recommendation": "Require MFA for VPN, remote access, privileged accounts, and cloud applications. Review access logs and disable accounts that no longer require remote access."
+        "recommendation": "Require MFA for VPN, remote access, privileged accounts, and cloud applications. Review access logs and disable accounts that no longer require remote access.",
     },
     {
         "keywords": ["password", "weak password", "credential", "login"],
-        "recommendation": "Enforce stronger password policies, require password length and complexity, enable account lockout protections, and review failed login activity."
+        "recommendation": "Enforce stronger password policies, require password length and complexity, enable account lockout protections, and review failed login activity.",
     },
     {
         "keywords": ["firewall", "open port", "rule", "inbound"],
-        "recommendation": "Review firewall rules, remove unnecessary inbound access, restrict management ports, document approved exceptions, and verify firmware is current."
+        "recommendation": "Review firewall rules, remove unnecessary inbound access, restrict management ports, document approved exceptions, and verify firmware is current.",
     },
     {
         "keywords": ["rdp", "remote desktop", "3389"],
-        "recommendation": "Disable public RDP exposure, restrict access through VPN or jump hosts, enforce MFA, and limit access to approved administrative users."
+        "recommendation": "Disable public RDP exposure, restrict access through VPN or jump hosts, enforce MFA, and limit access to approved administrative users.",
     },
     {
         "keywords": ["phishing", "email", "social engineering"],
-        "recommendation": "Provide phishing awareness training, enable email filtering, review reported messages, and run targeted simulations for high-risk user groups."
+        "recommendation": "Provide phishing awareness training, enable email filtering, review reported messages, and run targeted simulations for high-risk user groups.",
     },
     {
         "keywords": ["backup", "restore", "backup share", "recovery"],
-        "recommendation": "Verify backup integrity, restrict backup share permissions, perform a documented test restore, and confirm backups are protected from ransomware."
+        "recommendation": "Verify backup integrity, restrict backup share permissions, perform a documented test restore, and confirm backups are protected from ransomware.",
     },
     {
         "keywords": ["database", "sql", "data exposure", "db"],
-        "recommendation": "Restrict database access, review user permissions, disable public exposure, enforce encryption, and monitor for unauthorized queries."
+        "recommendation": "Restrict database access, review user permissions, disable public exposure, enforce encryption, and monitor for unauthorized queries.",
     },
     {
         "keywords": ["cloud", "s3", "azure", "storage bucket", "cloud storage"],
-        "recommendation": "Review cloud permissions, disable public access where not required, enforce least privilege, enable logging, and validate configuration baselines."
+        "recommendation": "Review cloud permissions, disable public access where not required, enforce least privilege, enable logging, and validate configuration baselines.",
     },
     {
         "keywords": ["admin", "administrator", "privileged", "local admin", "shared admin"],
-        "recommendation": "Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts."
+        "recommendation": "Review privileged access, remove unnecessary admin rights, rotate credentials, enforce MFA, and replace shared admin accounts with named accounts.",
     },
     {
         "keywords": ["laptop", "endpoint", "workstation", "device"],
-        "recommendation": "Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management."
+        "recommendation": "Verify endpoint protection, enable full-disk encryption, confirm patch compliance, and ensure the device is enrolled in centralized management.",
     },
     {
         "keywords": ["api", "endpoint", "token", "key"],
-        "recommendation": "Review API authentication, rotate exposed keys or tokens, restrict public access, validate rate limiting, and monitor API activity logs."
+        "recommendation": "Review API authentication, rotate exposed keys or tokens, restrict public access, validate rate limiting, and monitor API activity logs.",
     },
     {
         "keywords": ["ssl", "tls", "certificate", "cert"],
-        "recommendation": "Renew expired certificates, verify TLS configuration, remove weak protocols, and document certificate ownership and renewal dates."
+        "recommendation": "Renew expired certificates, verify TLS configuration, remove weak protocols, and document certificate ownership and renewal dates.",
     },
     {
         "keywords": ["unsupported", "legacy", "operating system", "end of life", "eol"],
-        "recommendation": "Upgrade unsupported systems, isolate legacy assets, apply compensating controls, and create a retirement or replacement plan."
+        "recommendation": "Upgrade unsupported systems, isolate legacy assets, apply compensating controls, and create a retirement or replacement plan.",
     },
     {
         "keywords": ["monitoring", "logging", "logs", "siem", "alert"],
-        "recommendation": "Enable centralized logging, configure alerting for high-risk events, review monitoring coverage, and validate that alerts are assigned to an owner."
+        "recommendation": "Enable centralized logging, configure alerting for high-risk events, review monitoring coverage, and validate that alerts are assigned to an owner.",
     },
     {
         "keywords": ["encryption", "unencrypted", "weak encryption", "plaintext"],
-        "recommendation": "Enable strong encryption, remove weak protocols, protect sensitive data at rest and in transit, and verify encryption settings through policy review."
-    }
+        "recommendation": "Enable strong encryption, remove weak protocols, protect sensitive data at rest and in transit, and verify encryption settings through policy review.",
+    },
 ]
 
-priority_colors = {
+PRIORITY_COLORS = {
     "CRITICAL": "red",
     "HIGH": "orange",
     "MODERATE": "gold",
-    "LOW": "green"
+    "LOW": "green",
 }
 
-status_colors = {
+STATUS_COLORS = {
     "OPEN": "royalblue",
     "IN PROGRESS": "purple",
     "PENDING REVIEW": "gray",
     "MITIGATED": "green",
     "ACCEPTED": "teal",
-    "CLOSED": "darkgreen"
+    "CLOSED": "darkgreen",
 }
 
-due_status_colors = {
+DUE_STATUS_COLORS = {
     "OVERDUE": "red",
     "ON TRACK": "green",
-    "NOT ACTIVE": "gray"
+    "NOT ACTIVE": "gray",
 }
 
-default_chart_color = "steelblue"
+DEFAULT_CHART_COLOR = "steelblue"
 
 
 def load_risks():
     risks = []
 
     try:
-        with open(CSV_FILE, mode="r") as file:
+        with open(CSV_FILE, mode="r", newline="") as file:
             reader = csv.DictReader(file)
 
             for row in reader:
@@ -145,7 +150,7 @@ def load_risks():
                     "status": row["status"],
                     "owner": row["owner"],
                     "timestamp": row["timestamp"],
-                    "due_date": row["due_date"]
+                    "due_date": row["due_date"],
                 })
 
     except FileNotFoundError:
@@ -156,40 +161,33 @@ def load_risks():
 
 def save_risks_to_csv(risks):
     with open(CSV_FILE, mode="w", newline="") as file:
-        writer = csv.writer(file)
+        fieldnames = ["id", "name", "severity", "category", "status", "owner", "timestamp", "due_date"]
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-        writer.writerow([
-            "id",
-            "name",
-            "severity",
-            "category",
-            "status",
-            "owner",
-            "timestamp",
-            "due_date"
-        ])
+        writer.writeheader()
 
         for risk in risks:
-            writer.writerow([
-                risk["id"],
-                risk["name"],
-                risk["severity"],
-                risk["category"],
-                risk["status"],
-                risk["owner"],
-                risk["timestamp"],
-                risk["due_date"]
-            ])
+            writer.writerow({
+                "id": risk["id"],
+                "name": risk["name"],
+                "severity": risk["severity"],
+                "category": risk["category"],
+                "status": risk["status"],
+                "owner": risk["owner"],
+                "timestamp": risk["timestamp"],
+                "due_date": risk["due_date"],
+            })
 
 
 def generate_risk_id(risks):
     highest_number = 0
 
     for risk in risks:
-        number = int(risk["id"].split("-")[1])
-
-        if number > highest_number:
-            highest_number = number
+        try:
+            number = int(risk["id"].split("-")[1])
+            highest_number = max(highest_number, number)
+        except (IndexError, ValueError):
+            continue
 
     return f"RISK-{highest_number + 1:03d}"
 
@@ -197,17 +195,16 @@ def generate_risk_id(risks):
 def determine_priority(severity):
     if severity >= 9:
         return "CRITICAL"
-    elif severity >= 7:
+    if severity >= 7:
         return "HIGH"
-    else:
-        return "MODERATE"
+    return "MODERATE"
 
 
 def determine_due_status(due_date, status):
     due_date_object = datetime.strptime(due_date, "%Y-%m-%d").date()
     today = date.today()
 
-    if status in ["CLOSED", "MITIGATED", "ACCEPTED"]:
+    if status in INACTIVE_STATUSES:
         return "NOT ACTIVE"
 
     if due_date_object < today:
@@ -232,11 +229,10 @@ def calculate_days_until_due(due_date):
 
 def recommend_action(risk_name, category):
     risk_text = f"{risk_name} {category}".lower()
-
     best_match = None
     best_score = 0
 
-    for item in recommendation_library:
+    for item in RECOMMENDATION_LIBRARY:
         score = 0
 
         for keyword in item["keywords"]:
@@ -262,61 +258,82 @@ def enrich_risks(risks):
         risk["days_until_due"] = calculate_days_until_due(risk["due_date"])
 
 
+def choose_from_menu(title, options):
+    print(f"\n{title}")
+
+    for index, option in enumerate(options, start=1):
+        print(f"{index}. {option}")
+
+    while True:
+        try:
+            choice = int(input("Enter option number: "))
+
+            if 1 <= choice <= len(options):
+                return options[choice - 1]
+
+            print(f"Please enter a number from 1 to {len(options)}.")
+
+        except ValueError:
+            print("Please enter a valid number.")
+
+
 def choose_category():
-    print("\nSelect a category:")
-
-    for index, category in enumerate(categories, start=1):
-        print(f"{index}. {category}")
-
-    choice = int(input("Enter category number: "))
-    return categories[choice - 1]
+    return choose_from_menu("Select a category:", CATEGORIES)
 
 
 def choose_status():
-    print("\nSelect a status:")
-
-    for index, status in enumerate(statuses, start=1):
-        print(f"{index}. {status}")
-
-    choice = int(input("Enter status number: "))
-    return statuses[choice - 1]
+    return choose_from_menu("Select a status:", STATUSES)
 
 
 def choose_owner():
-    print("\nSelect an owner:")
-
-    for index, owner in enumerate(owners, start=1):
-        print(f"{index}. {owner}")
-
-    choice = int(input("Enter owner number: "))
-    return owners[choice - 1]
+    return choose_from_menu("Select an owner:", OWNERS)
 
 
 def choose_due_date():
     print("\nSelect due date timeframe:")
 
-    for index, days in enumerate(due_date_options, start=1):
+    for index, days in enumerate(DUE_DATE_OPTIONS, start=1):
         print(f"{index}. {days} days")
 
-    choice = int(input("Enter due date option number: "))
-    selected_days = due_date_options[choice - 1]
-    due_date = date.today() + timedelta(days=selected_days)
+    while True:
+        try:
+            choice = int(input("Enter due date option number: "))
 
-    return due_date.strftime("%Y-%m-%d")
+            if 1 <= choice <= len(DUE_DATE_OPTIONS):
+                selected_days = DUE_DATE_OPTIONS[choice - 1]
+                due_date = date.today() + timedelta(days=selected_days)
+                return due_date.strftime("%Y-%m-%d")
+
+            print(f"Please enter a number from 1 to {len(DUE_DATE_OPTIONS)}.")
+
+        except ValueError:
+            print("Please enter a valid number.")
 
 
 def add_new_risk(risks):
     print("\n=== Add New Risk ===")
 
+    while True:
+        try:
+            severity = int(input("Enter severity level (1-10): "))
+
+            if 1 <= severity <= 10:
+                break
+
+            print("Severity must be between 1 and 10.")
+
+        except ValueError:
+            print("Please enter a valid number from 1 to 10.")
+
     new_risk = {
         "id": generate_risk_id(risks),
         "name": input("Enter a new risk name: ").upper(),
-        "severity": int(input("Enter severity level (1-10): ")),
+        "severity": severity,
         "category": choose_category(),
         "status": choose_status(),
         "owner": choose_owner(),
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "due_date": choose_due_date()
+        "due_date": choose_due_date(),
     }
 
     risks.append(new_risk)
@@ -450,7 +467,6 @@ def show_overdue_risks(risks):
 
 def filter_by_status(risks):
     print("\n=== Filter by Status ===")
-
     selected_status = choose_status()
 
     filtered_risks = [
@@ -463,7 +479,6 @@ def filter_by_status(risks):
 
 def filter_by_owner(risks):
     print("\n=== Filter by Owner ===")
-
     selected_owner = choose_owner()
 
     filtered_risks = [
@@ -476,7 +491,6 @@ def filter_by_owner(risks):
 
 def filter_by_category(risks):
     print("\n=== Filter by Category ===")
-
     selected_category = choose_category()
 
     filtered_risks = [
@@ -489,7 +503,6 @@ def filter_by_category(risks):
 
 def search_by_keyword(risks):
     print("\n=== Search Risks by Keyword ===")
-
     keyword = input("Enter keyword to search: ").lower()
 
     matching_risks = [
@@ -545,12 +558,7 @@ def get_count_dictionary(risks, key):
 
 
 def get_colors_for_labels(labels, color_map):
-    colors = []
-
-    for label in labels:
-        colors.append(color_map.get(label, default_chart_color))
-
-    return colors
+    return [color_map.get(label, DEFAULT_CHART_COLOR) for label in labels]
 
 
 def add_value_labels_to_bars(bars):
@@ -562,7 +570,7 @@ def add_value_labels_to_bars(bars):
             height + 0.2,
             str(int(height)),
             ha="center",
-            fontsize=11
+            fontsize=11,
         )
 
 
@@ -575,7 +583,7 @@ def add_value_labels_to_horizontal_bars(bars):
             bar.get_y() + bar.get_height() / 2,
             str(int(width)),
             va="center",
-            fontsize=11
+            fontsize=11,
         )
 
 
@@ -585,7 +593,7 @@ def create_vertical_bar_chart(title, labels, values, filename, x_label, color_ma
 
     plt.figure(figsize=(11, 6))
 
-    colors = get_colors_for_labels(labels, color_map) if color_map else default_chart_color
+    colors = get_colors_for_labels(labels, color_map) if color_map else DEFAULT_CHART_COLOR
     bars = plt.bar(labels, values, color=colors)
 
     plt.title(title, fontsize=16, fontweight="bold")
@@ -606,10 +614,11 @@ def create_horizontal_bar_chart(title, labels, values, filename, y_label, colors
 
     plt.figure(figsize=(11, 6))
 
-    if colors:
-        bars = plt.barh(labels, values, color=colors)
-    else:
-        bars = plt.barh(labels, values, color=default_chart_color)
+    bars = plt.barh(
+        labels,
+        values,
+        color=colors if colors else DEFAULT_CHART_COLOR,
+    )
 
     plt.title(title, fontsize=16, fontweight="bold")
     plt.xlabel("Number of Risks", fontsize=12)
@@ -659,13 +668,77 @@ def create_operational_heat_map(risks):
                 ha="center",
                 va="center",
                 fontsize=14,
-                fontweight="bold"
+                fontweight="bold",
             )
 
     plt.colorbar(label="Number of Risks")
     plt.tight_layout()
     plt.savefig(os.path.join(CHARTS_DIR, "operational_risk_heat_map.png"))
     plt.close()
+
+
+def create_trend_analytics_charts(risks):
+    active_risks = [
+        risk for risk in risks
+        if risk["status"] in ACTIVE_STATUSES
+    ]
+
+    inactive_risks = [
+        risk for risk in risks
+        if risk["status"] in INACTIVE_STATUSES
+    ]
+
+    create_vertical_bar_chart(
+        "Active vs Inactive Risk Workload",
+        ["ACTIVE", "INACTIVE"],
+        [len(active_risks), len(inactive_risks)],
+        "active_vs_inactive_risks.png",
+        "Risk Workload State",
+    )
+
+    age_buckets = {
+        "0-7 Days": 0,
+        "8-14 Days": 0,
+        "15-30 Days": 0,
+        "31+ Days": 0,
+    }
+
+    for risk in active_risks:
+        days_open = risk["days_open"]
+
+        if days_open <= 7:
+            age_buckets["0-7 Days"] += 1
+        elif days_open <= 14:
+            age_buckets["8-14 Days"] += 1
+        elif days_open <= 30:
+            age_buckets["15-30 Days"] += 1
+        else:
+            age_buckets["31+ Days"] += 1
+
+    create_vertical_bar_chart(
+        "Open Risk Aging Distribution",
+        list(age_buckets.keys()),
+        list(age_buckets.values()),
+        "open_risk_aging_distribution.png",
+        "Days Open",
+    )
+
+    created_by_date = {}
+
+    for risk in risks:
+        created_date = risk["timestamp"].split(" ")[0]
+        created_by_date[created_date] = created_by_date.get(created_date, 0) + 1
+
+    sorted_dates = sorted(created_by_date.keys())
+    sorted_counts = [created_by_date[created_date] for created_date in sorted_dates]
+
+    create_vertical_bar_chart(
+        "Risks Created by Date",
+        sorted_dates,
+        sorted_counts,
+        "risks_created_by_date.png",
+        "Created Date",
+    )
 
 
 def generate_charts(risks):
@@ -686,7 +759,7 @@ def generate_charts(risks):
         list(priority_counts.values()),
         "risks_by_priority.png",
         "Priority Level",
-        priority_colors
+        PRIORITY_COLORS,
     )
 
     create_vertical_bar_chart(
@@ -695,7 +768,7 @@ def generate_charts(risks):
         list(status_counts.values()),
         "risks_by_status.png",
         "Risk Status",
-        status_colors
+        STATUS_COLORS,
     )
 
     create_horizontal_bar_chart(
@@ -703,7 +776,7 @@ def generate_charts(risks):
         list(category_counts.keys()),
         list(category_counts.values()),
         "risks_by_category.png",
-        "Category"
+        "Category",
     )
 
     create_horizontal_bar_chart(
@@ -711,7 +784,7 @@ def generate_charts(risks):
         list(owner_counts.keys()),
         list(owner_counts.values()),
         "risks_by_owner.png",
-        "Owner"
+        "Owner",
     )
 
     create_vertical_bar_chart(
@@ -720,20 +793,16 @@ def generate_charts(risks):
         list(due_status_counts.values()),
         "risks_by_due_status.png",
         "Due Status",
-        due_status_colors
+        DUE_STATUS_COLORS,
     )
 
     top_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)[:5]
-    top_risk_labels = [
-        f"{risk['id']} - {risk['name'][:25]}"
+    top_risk_labels = [f"{risk['id']} - {risk['name'][:25]}" for risk in top_risks]
+    top_risk_values = [risk["severity"] for risk in top_risks]
+    top_risk_colors = [
+        PRIORITY_COLORS.get(risk["priority"], DEFAULT_CHART_COLOR)
         for risk in top_risks
     ]
-    top_risk_values = [risk["severity"] for risk in top_risks]
-
-    top_risk_colors = []
-
-    for risk in top_risks:
-        top_risk_colors.append(priority_colors.get(risk["priority"], default_chart_color))
 
     create_horizontal_bar_chart(
         "Top 5 Highest Severity Risks",
@@ -741,36 +810,22 @@ def generate_charts(risks):
         top_risk_values,
         "top_5_risks.png",
         "Risk",
-        top_risk_colors
+        top_risk_colors,
     )
 
     create_operational_heat_map(risks)
+    create_trend_analytics_charts(risks)
 
 
-def generate_reports(risks):
-    print("\n=== Generating Reports ===")
-
-    if not risks:
-        print("No risks available to report.")
-        return
-
+def calculate_report_metrics(risks):
     enrich_risks(risks)
-    generate_charts(risks)
 
-    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
-
+    total_risks = len(risks)
     critical_count = sum(1 for risk in risks if risk["priority"] == "CRITICAL")
     high_count = sum(1 for risk in risks if risk["priority"] == "HIGH")
     moderate_count = sum(1 for risk in risks if risk["priority"] == "MODERATE")
     overdue_count = sum(1 for risk in risks if risk["due_status"] == "OVERDUE")
     on_track_count = sum(1 for risk in risks if risk["due_status"] == "ON TRACK")
-    total_risks = len(risks)
-
-    if total_risks > 0:
-        sla_compliance = (on_track_count / total_risks) * 100
-    else:
-        sla_compliance = 0
-
     critical_overdue_count = sum(
         1 for risk in risks
         if risk["priority"] == "CRITICAL" and risk["due_status"] == "OVERDUE"
@@ -778,27 +833,66 @@ def generate_reports(risks):
 
     due_soon_count = sum(
         1 for risk in risks
-        if 0 <= risk["days_until_due"] <= 7
-        and risk["status"] not in ["CLOSED", "MITIGATED", "ACCEPTED"]
+        if 0 <= risk["days_until_due"] <= 7 and risk["status"] not in INACTIVE_STATUSES
     )
 
-    open_risks = [
+    active_risks = [
         risk for risk in risks
-        if risk["status"] in ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
+        if risk["status"] in ACTIVE_STATUSES
     ]
 
-    oldest_open_risk = None
+    inactive_risks = [
+        risk for risk in risks
+        if risk["status"] in INACTIVE_STATUSES
+    ]
 
-    if open_risks:
-        oldest_open_risk = max(open_risks, key=lambda risk: risk["days_open"])
+    active_count = len(active_risks)
+    inactive_count = len(inactive_risks)
 
-    average_severity = sum(risk["severity"] for risk in risks) / len(risks)
-    highest_risk = max(risks, key=lambda risk: risk["severity"])
+    if active_risks:
+        average_days_open_active = sum(risk["days_open"] for risk in active_risks) / len(active_risks)
+        oldest_open_risk = max(active_risks, key=lambda risk: risk["days_open"])
+    else:
+        average_days_open_active = 0
+        oldest_open_risk = None
+
+    average_severity = sum(risk["severity"] for risk in risks) / total_risks if total_risks else 0
+    highest_risk = max(risks, key=lambda risk: risk["severity"]) if risks else None
+    sla_compliance = (on_track_count / total_risks) * 100 if total_risks else 0
 
     category_counts = get_count_dictionary(risks, "category")
     status_counts = get_count_dictionary(risks, "status")
     owner_counts = get_count_dictionary(risks, "owner")
     due_status_counts = get_count_dictionary(risks, "due_status")
+
+    most_common_category = max(category_counts, key=category_counts.get) if category_counts else "None"
+
+    return {
+        "total_risks": total_risks,
+        "critical_count": critical_count,
+        "high_count": high_count,
+        "moderate_count": moderate_count,
+        "overdue_count": overdue_count,
+        "on_track_count": on_track_count,
+        "critical_overdue_count": critical_overdue_count,
+        "due_soon_count": due_soon_count,
+        "active_count": active_count,
+        "inactive_count": inactive_count,
+        "average_days_open_active": average_days_open_active,
+        "oldest_open_risk": oldest_open_risk,
+        "average_severity": average_severity,
+        "highest_risk": highest_risk,
+        "sla_compliance": sla_compliance,
+        "category_counts": category_counts,
+        "status_counts": status_counts,
+        "owner_counts": owner_counts,
+        "due_status_counts": due_status_counts,
+        "most_common_category": most_common_category,
+    }
+
+
+def write_txt_report(risks, metrics):
+    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
 
     with open(TXT_REPORT, mode="w") as report:
         report.write("AI Operations Risk Report\n")
@@ -818,40 +912,54 @@ def generate_reports(risks):
             report.write(f"Recommendation: {risk['recommendation']}\n\n")
 
         report.write("=== Executive Summary ===\n")
-        report.write(f"Total Risks: {total_risks}\n")
-        report.write(f"Critical Risks: {critical_count}\n")
-        report.write(f"High Risks: {high_count}\n")
-        report.write(f"Moderate Risks: {moderate_count}\n")
-        report.write(f"Average Severity: {average_severity:.2f}\n")
-        report.write(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
-        report.write(f"Overdue Risks: {overdue_count}\n")
-        report.write(f"On Track Risks: {on_track_count}\n")
-        report.write(f"SLA Compliance: {sla_compliance:.1f}%\n\n")
+        report.write(f"Total Risks: {metrics['total_risks']}\n")
+        report.write(f"Critical Risks: {metrics['critical_count']}\n")
+        report.write(f"High Risks: {metrics['high_count']}\n")
+        report.write(f"Moderate Risks: {metrics['moderate_count']}\n")
+        report.write(f"Average Severity: {metrics['average_severity']:.2f}\n")
+
+        highest_risk = metrics["highest_risk"]
+        if highest_risk:
+            report.write(f"Highest Risk: {highest_risk['id']} - {highest_risk['name']}\n")
+
+        report.write(f"Overdue Risks: {metrics['overdue_count']}\n")
+        report.write(f"On Track Risks: {metrics['on_track_count']}\n")
+        report.write(f"SLA Compliance: {metrics['sla_compliance']:.1f}%\n")
+        report.write(f"Active Risks: {metrics['active_count']}\n")
+        report.write(f"Inactive Risks: {metrics['inactive_count']}\n")
+        report.write(f"Average Days Open - Active Risks: {metrics['average_days_open_active']:.1f}\n")
+        report.write(f"Most Common Risk Category: {metrics['most_common_category']}\n\n")
 
         report.write("=== SLA Summary ===\n")
-        report.write(f"Critical Risks Overdue: {critical_overdue_count}\n")
-        report.write(f"Risks Due Within 7 Days: {due_soon_count}\n")
+        report.write(f"Critical Risks Overdue: {metrics['critical_overdue_count']}\n")
+        report.write(f"Risks Due Within 7 Days: {metrics['due_soon_count']}\n")
 
+        oldest_open_risk = metrics["oldest_open_risk"]
         if oldest_open_risk:
             report.write(f"Oldest Open Risk: {oldest_open_risk['id']} ({oldest_open_risk['days_open']} days open)\n\n")
         else:
             report.write("Oldest Open Risk: None\n\n")
 
         report.write("=== Category Summary ===\n")
-        for category, count in category_counts.items():
+        for category, count in metrics["category_counts"].items():
             report.write(f"{category}: {count}\n")
 
         report.write("\n=== Status Summary ===\n")
-        for status, count in status_counts.items():
+        for status, count in metrics["status_counts"].items():
             report.write(f"{status}: {count}\n")
 
         report.write("\n=== Owner Summary ===\n")
-        for owner, count in owner_counts.items():
+        for owner, count in metrics["owner_counts"].items():
             report.write(f"{owner}: {count}\n")
 
         report.write("\n=== Due Status Summary ===\n")
-        for due_status, count in due_status_counts.items():
+        for due_status, count in metrics["due_status_counts"].items():
             report.write(f"{due_status}: {count}\n")
+
+
+def write_md_report(risks, metrics):
+    sorted_risks = sorted(risks, key=lambda risk: risk["severity"], reverse=True)
+    highest_risk = metrics["highest_risk"]
 
     with open(MD_REPORT, mode="w") as report:
         report.write("# AI Operations Risk Report\n\n")
@@ -859,16 +967,23 @@ def generate_reports(risks):
         report.write("## Executive KPI Dashboard\n\n")
         report.write("| KPI | Value |\n")
         report.write("|---|---:|\n")
-        report.write(f"| Total Risks | {total_risks} |\n")
-        report.write(f"| Critical Risks | {critical_count} |\n")
-        report.write(f"| High Risks | {high_count} |\n")
-        report.write(f"| Moderate Risks | {moderate_count} |\n")
-        report.write(f"| Overdue Risks | {overdue_count} |\n")
-        report.write(f"| On Track Risks | {on_track_count} |\n")
-        report.write(f"| Risks Due Within 7 Days | {due_soon_count} |\n")
-        report.write(f"| SLA Compliance | {sla_compliance:.1f}% |\n")
-        report.write(f"| Average Severity | {average_severity:.2f} |\n")
-        report.write(f"| Highest Risk | {highest_risk['id']} - {highest_risk['name']} |\n\n")
+        report.write(f"| Total Risks | {metrics['total_risks']} |\n")
+        report.write(f"| Critical Risks | {metrics['critical_count']} |\n")
+        report.write(f"| High Risks | {metrics['high_count']} |\n")
+        report.write(f"| Moderate Risks | {metrics['moderate_count']} |\n")
+        report.write(f"| Overdue Risks | {metrics['overdue_count']} |\n")
+        report.write(f"| On Track Risks | {metrics['on_track_count']} |\n")
+        report.write(f"| Risks Due Within 7 Days | {metrics['due_soon_count']} |\n")
+        report.write(f"| SLA Compliance | {metrics['sla_compliance']:.1f}% |\n")
+        report.write(f"| Average Severity | {metrics['average_severity']:.2f} |\n")
+
+        if highest_risk:
+            report.write(f"| Highest Risk | {highest_risk['id']} - {highest_risk['name']} |\n")
+
+        report.write(f"| Active Risks | {metrics['active_count']} |\n")
+        report.write(f"| Inactive Risks | {metrics['inactive_count']} |\n")
+        report.write(f"| Average Days Open - Active Risks | {metrics['average_days_open_active']:.1f} |\n")
+        report.write(f"| Most Common Risk Category | {metrics['most_common_category']} |\n\n")
 
         report.write("## Dashboard Charts\n\n")
         report.write("![Risk Distribution by Priority](charts/risks_by_priority.png)\n\n")
@@ -878,6 +993,11 @@ def generate_reports(risks):
         report.write("![SLA Due Status Overview](charts/risks_by_due_status.png)\n\n")
         report.write("![Top 5 Highest Severity Risks](charts/top_5_risks.png)\n\n")
         report.write("![Operational Risk Heat Map](charts/operational_risk_heat_map.png)\n\n")
+
+        report.write("## Trend Analytics\n\n")
+        report.write("![Active vs Inactive Risk Workload](charts/active_vs_inactive_risks.png)\n\n")
+        report.write("![Open Risk Aging Distribution](charts/open_risk_aging_distribution.png)\n\n")
+        report.write("![Risks Created by Date](charts/risks_created_by_date.png)\n\n")
 
         report.write("## Risk Detail Table\n\n")
         report.write("| ID | Risk | Priority | Severity | Category | Status | Owner | Timestamp | Due Date | Due Status | Days Open | Days Until Due | Recommendation |\n")
@@ -893,20 +1013,36 @@ def generate_reports(risks):
             )
 
         report.write("\n## Category Summary\n\n")
-        for category, count in category_counts.items():
+        for category, count in metrics["category_counts"].items():
             report.write(f"- {category}: {count}\n")
 
         report.write("\n## Status Summary\n\n")
-        for status, count in status_counts.items():
+        for status, count in metrics["status_counts"].items():
             report.write(f"- {status}: {count}\n")
 
         report.write("\n## Owner Summary\n\n")
-        for owner, count in owner_counts.items():
+        for owner, count in metrics["owner_counts"].items():
             report.write(f"- {owner}: {count}\n")
 
         report.write("\n## Due Status Summary\n\n")
-        for due_status, count in due_status_counts.items():
+        for due_status, count in metrics["due_status_counts"].items():
             report.write(f"- {due_status}: {count}\n")
+
+
+def generate_reports(risks):
+    print("\n=== Generating Reports ===")
+
+    if not risks:
+        print("No risks available to report.")
+        return
+
+    enrich_risks(risks)
+    generate_charts(risks)
+
+    metrics = calculate_report_metrics(risks)
+
+    write_txt_report(risks, metrics)
+    write_md_report(risks, metrics)
 
     print("Reports and charts generated successfully.")
     print(f"- {TXT_REPORT}")
@@ -955,4 +1091,5 @@ def main():
             print("\nInvalid option. Please choose 1-8.")
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -335,6 +335,10 @@ Highest Risk: RISK-003 - NO MFA FOR VPN
 Overdue Risks: 0
 On Track Risks: 25
 SLA Compliance: 92.6%
+Active Risks: 25
+Inactive Risks: 2
+Average Days Open - Active Risks: 2.8
+Most Common Risk Category: Authentication
 
 === SLA Summary ===
 Critical Risks Overdue: 0

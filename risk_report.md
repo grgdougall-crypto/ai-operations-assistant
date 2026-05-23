@@ -14,6 +14,10 @@
 | SLA Compliance | 92.6% |
 | Average Severity | 7.63 |
 | Highest Risk | RISK-003 - NO MFA FOR VPN |
+| Active Risks | 25 |
+| Inactive Risks | 2 |
+| Average Days Open - Active Risks | 2.8 |
+| Most Common Risk Category | Authentication |
 
 ## Dashboard Charts
 
@@ -30,6 +34,14 @@
 ![Top 5 Highest Severity Risks](charts/top_5_risks.png)
 
 ![Operational Risk Heat Map](charts/operational_risk_heat_map.png)
+
+## Trend Analytics
+
+![Active vs Inactive Risk Workload](charts/active_vs_inactive_risks.png)
+
+![Open Risk Aging Distribution](charts/open_risk_aging_distribution.png)
+
+![Risks Created by Date](charts/risks_created_by_date.png)
 
 ## Risk Detail Table
 
