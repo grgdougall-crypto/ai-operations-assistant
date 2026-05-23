@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,6 +48,10 @@ h1 {
     overflow: hidden;
 }
 
+.scroll-content {
+    overflow-y: auto;
+}
+
 .kpi-table {
     width: 100%;
     border-collapse: collapse;
@@ -76,11 +81,26 @@ h1 {
 
 .risk-register {
     grid-column: span 3;
-    height: 315px;
+    height: 390px;
+}
+
+.filter-bar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.filter-bar input,
+.filter-bar select {
+    padding: 6px;
+    border: 1px solid #cfd8e3;
+    border-radius: 4px;
+    font-size: 12px;
 }
 
 .table-wrap {
-    height: 265px;
+    height: 305px;
     overflow-y: auto;
 }
 
@@ -121,6 +141,88 @@ h1 {
 .priority-moderate {
     color: #ca8a04;
     font-weight: bold;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.forecast-item {
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f8fafc;
+}
+
+.forecast-label {
+    display: block;
+    font-size: 11px;
+    color: #475569;
+}
+
+.forecast-value {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.forecast-good {
+    color: #15803d;
+}
+
+.forecast-watch {
+    color: #ca8a04;
+}
+
+.forecast-risk {
+    color: #b91c1c;
+}
+
+.action-queue {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 11px;
+}
+
+.action-queue li {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 7px 0;
+}
+
+.queue-risk {
+    display: block;
+    font-weight: bold;
+}
+
+.queue-meta {
+    display: block;
+    color: #475569;
+    margin-top: 2px;
+}
+
+.queue-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    color: white;
+    font-size: 10px;
+}
+
+.badge-critical {
+    background: #b91c1c;
+}
+
+.badge-high {
+    background: #c2410c;
+}
+
+.badge-moderate {
+    background: #ca8a04;
 }
 
 .footer-note {
@@ -211,387 +313,673 @@ h1 {
     </div>
 
     <div class="card chart-card">
-        <h2>Risks Created by Date</h2>
-        <div class="card-content">
-            <img src="charts/risks_created_by_date.png">
-        </div>
-    </div>
-
-    <div class="card chart-card">
         <h2>Risks by Category</h2>
         <div class="card-content">
             <img src="charts/risks_by_category.png">
         </div>
     </div>
 
+    <div class="card">
+        <h2>Risk Trend Forecast</h2>
+        <div class="card-content">
+            
+<div class="forecast-grid">
+    <div class="forecast-item">
+        <span class="forecast-label">SLA Outlook</span>
+        <span class="forecast-value forecast-good">Stable</span>
+    </div>
+    <div class="forecast-item">
+        <span class="forecast-label">Due Within 7 Days</span>
+        <span class="forecast-value">17</span>
+    </div>
+    <div class="forecast-item">
+        <span class="forecast-label">Active Critical Risks</span>
+        <span class="forecast-value forecast-risk">17</span>
+    </div>
+    <div class="forecast-item">
+        <span class="forecast-label">Aging Risks 7+ Days</span>
+        <span class="forecast-value forecast-watch">3</span>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Executive Action Queue</h2>
+        <div class="card-content scroll-content">
+            <ul class="action-queue">
+<li>
+    <span class="queue-risk">RISK-022 - OPEN S3 STORAGE BUCKET</span>
+    <span class="queue-meta">Owner: Cloud Operations | Due: 2026-05-23</span>
+    <span class="queue-badge badge-critical">CRITICAL</span>
+</li>
+
+<li>
+    <span class="queue-risk">RISK-026 - UNPATCHED DOMAIN CONTROLLER</span>
+    <span class="queue-meta">Owner: Infrastructure Team | Due: 2026-05-24</span>
+    <span class="queue-badge badge-critical">CRITICAL</span>
+</li>
+
+<li>
+    <span class="queue-risk">RISK-003 - NO MFA FOR VPN</span>
+    <span class="queue-meta">Owner: Security Team | Due: 2026-05-30</span>
+    <span class="queue-badge badge-critical">CRITICAL</span>
+</li>
+
+<li>
+    <span class="queue-risk">RISK-037 - NO NETWORK SEGMENTATION</span>
+    <span class="queue-meta">Owner: Network Operations | Due: 2026-06-02</span>
+    <span class="queue-badge badge-critical">CRITICAL</span>
+</li>
+
+<li>
+    <span class="queue-risk">RISK-030 - SUSPICIOUS POWERSHELL ACTIVITY</span>
+    <span class="queue-meta">Owner: SOC Analyst | Due: 2026-05-23</span>
+    <span class="queue-badge badge-critical">CRITICAL</span>
+</li>
+</ul>
+        </div>
+    </div>
+
     <div class="card risk-register">
-        <h2>Active Risk Register</h2>
-        <div class="card-content table-wrap">
-            <table class="risk-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Severity</th>
-                        <th>Status</th>
-                        <th>Owner</th>
-                        <th>Due Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-<tr>
+        <h2>Interactive Active Risk Register</h2>
+        <div class="card-content">
+
+            <div class="filter-bar">
+                <input type="text" id="searchInput" placeholder="Search risks..." onkeyup="filterTable()">
+
+                <select id="priorityFilter" onchange="filterTable()">
+                    <option value="">All Priorities</option>
+                    <option value="CRITICAL">Critical</option>
+                    <option value="HIGH">High</option>
+                    <option value="MODERATE">Moderate</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterTable()">
+                    <option value="">All Statuses</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN PROGRESS">In Progress</option>
+                    <option value="PENDING REVIEW">Pending Review</option>
+                </select>
+
+                <select id="ownerFilter" onchange="filterTable()">
+                    <option value="">All Owners</option>
+                    <option value="Security Team">Security Team</option>
+                    <option value="Network Operations">Network Operations</option>
+                    <option value="Infrastructure Team">Infrastructure Team</option>
+                    <option value="Help Desk">Help Desk</option>
+                    <option value="SOC Analyst">SOC Analyst</option>
+                    <option value="Compliance Team">Compliance Team</option>
+                    <option value="Cloud Operations">Cloud Operations</option>
+                    <option value="Identity Team">Identity Team</option>
+                </select>
+
+                <select id="categoryFilter" onchange="filterTable()">
+                    <option value="">All Categories</option>
+                    <option value="Authentication">Authentication</option>
+                    <option value="Network">Network</option>
+                    <option value="Endpoint Security">Endpoint Security</option>
+                    <option value="Data Protection">Data Protection</option>
+                    <option value="Backup and Recovery">Backup and Recovery</option>
+                    <option value="Infrastructure">Infrastructure</option>
+                    <option value="Cloud Security">Cloud Security</option>
+                    <option value="Security Operations">Security Operations</option>
+                    <option value="User Access">User Access</option>
+                    <option value="Compliance">Compliance</option>
+                    <option value="Governance">Governance</option>
+                    <option value="Identity and Access">Identity and Access</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table class="risk-table" id="riskTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Priority</th>
+                            <th>Severity</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Authentication">
 <td>RISK-003</td>
 <td>NO MFA FOR VPN</td>
-<td class="priority-critical">10</td>
+<td class="priority-critical">CRITICAL</td>
+<td>10</td>
+<td>Authentication</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-05-30</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Cloud Operations" data-category="Cloud Security">
 <td>RISK-022</td>
 <td>OPEN S3 STORAGE BUCKET</td>
-<td class="priority-critical">10</td>
+<td class="priority-critical">CRITICAL</td>
+<td>10</td>
+<td>Cloud Security</td>
 <td>OPEN</td>
 <td>Cloud Operations</td>
 <td>2026-05-23</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-026</td>
 <td>UNPATCHED DOMAIN CONTROLLER</td>
-<td class="priority-critical">10</td>
+<td class="priority-critical">CRITICAL</td>
+<td>10</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-24</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Network Operations" data-category="Network">
 <td>RISK-037</td>
 <td>NO NETWORK SEGMENTATION</td>
-<td class="priority-critical">10</td>
+<td class="priority-critical">CRITICAL</td>
+<td>10</td>
+<td>Network</td>
 <td>OPEN</td>
 <td>Network Operations</td>
 <td>2026-06-02</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Authentication">
 <td>RISK-001</td>
 <td>WEAK PASSWORD POLICY</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Authentication</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-06-01</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Security Awareness">
 <td>RISK-004</td>
 <td>PHISHING CAMPAIGN EXPOSURE</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Security Awareness</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-06-10</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="IN PROGRESS" data-owner="Network Operations" data-category="Network">
 <td>RISK-005</td>
 <td>EXPOSED RDP PORT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Network</td>
 <td>IN PROGRESS</td>
 <td>Network Operations</td>
 <td>2026-05-28</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Authentication">
 <td>RISK-007</td>
 <td>SHARED ADMIN ACCOUNT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Authentication</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-05-29</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-008</td>
 <td>EXPOSED DATABASE PORT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-27</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="IN PROGRESS" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-013</td>
 <td>UNSUPPORTED OPERATING SYSTEM</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Infrastructure</td>
 <td>IN PROGRESS</td>
 <td>Infrastructure Team</td>
 <td>2026-06-15</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Authentication">
 <td>RISK-018</td>
 <td>UNMANAGED LOCAL ADMIN ACCOUNT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Authentication</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-05-28</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Security Team" data-category="Endpoint Security">
 <td>RISK-021</td>
 <td>DISABLED EDR AGENT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Endpoint Security</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-05-24</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="IN PROGRESS" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-023</td>
 <td>PRIVILEGE ESCALATION FINDING</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Infrastructure</td>
 <td>IN PROGRESS</td>
 <td>Infrastructure Team</td>
 <td>2026-05-27</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Infrastructure Team" data-category="Backup and Recovery">
 <td>RISK-025</td>
 <td>FAILED DISASTER RECOVERY TEST</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Backup and Recovery</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-06-07</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="SOC Analyst" data-category="Security Operations">
 <td>RISK-030</td>
 <td>SUSPICIOUS POWERSHELL ACTIVITY</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Security Operations</td>
 <td>OPEN</td>
 <td>SOC Analyst</td>
 <td>2026-05-23</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Identity Team" data-category="Identity and Access">
 <td>RISK-036</td>
 <td>UNMONITORED PRIVILEGED ACCESS</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Identity and Access</td>
 <td>OPEN</td>
 <td>Identity Team</td>
 <td>2026-05-30</td>
 </tr>
 
-<tr>
+<tr data-priority="CRITICAL" data-status="OPEN" data-owner="Cloud Operations" data-category="Cloud Security">
 <td>RISK-040</td>
 <td>FAILED CLOUD COMPLIANCE AUDIT</td>
-<td class="priority-critical">9</td>
+<td class="priority-critical">CRITICAL</td>
+<td>9</td>
+<td>Cloud Security</td>
 <td>OPEN</td>
 <td>Cloud Operations</td>
 <td>2026-06-05</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="IN PROGRESS" data-owner="Network Operations" data-category="Network">
 <td>RISK-002</td>
 <td>OUTDATED FIREWALL FIRMWARE</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Network</td>
 <td>IN PROGRESS</td>
 <td>Network Operations</td>
 <td>2026-06-05</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Help Desk" data-category="Endpoint Security">
 <td>RISK-006</td>
 <td>UNENCRYPTED LAPTOP</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Endpoint Security</td>
 <td>OPEN</td>
 <td>Help Desk</td>
 <td>2026-06-12</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-009</td>
 <td>INSECURE API ENDPOINT</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-06-08</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="IN PROGRESS" data-owner="Network Operations" data-category="Network">
 <td>RISK-010</td>
 <td>LEGACY VPN APPLIANCE</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Network</td>
 <td>IN PROGRESS</td>
 <td>Network Operations</td>
 <td>2026-06-15</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Compliance Team" data-category="Data Protection">
 <td>RISK-012</td>
 <td>UNAUTHORIZED CLOUD STORAGE</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Data Protection</td>
 <td>OPEN</td>
 <td>Compliance Team</td>
 <td>2026-06-18</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-014</td>
 <td>EXPOSED TEST ENVIRONMENT</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-06-22</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Security Team" data-category="Authentication">
 <td>RISK-015</td>
 <td>INSECURE SERVICE ACCOUNT</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Authentication</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-06-25</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-016</td>
 <td>WEAK ENCRYPTION SETTING</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-06-28</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Backup and Recovery">
 <td>RISK-019</td>
 <td>EXPOSED BACKUP SHARE</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Backup and Recovery</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-26</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Backup and Recovery">
 <td>RISK-020</td>
 <td>FAILED BACKUP VALIDATION</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Backup and Recovery</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-26</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="SOC Analyst" data-category="Security Operations">
 <td>RISK-024</td>
 <td>CRITICAL SIEM ALERTS UNREVIEWED</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Security Operations</td>
 <td>OPEN</td>
 <td>SOC Analyst</td>
 <td>2026-05-23</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Compliance Team" data-category="Data Protection">
 <td>RISK-031</td>
 <td>NO EMAIL DLP CONTROLS</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Data Protection</td>
 <td>OPEN</td>
 <td>Compliance Team</td>
 <td>2026-06-18</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Network Operations" data-category="Network">
 <td>RISK-033</td>
 <td>DEFAULT SWITCH CREDENTIALS</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Network</td>
 <td>OPEN</td>
 <td>Network Operations</td>
 <td>2026-05-29</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="IN PROGRESS" data-owner="Security Team" data-category="Authentication">
 <td>RISK-038</td>
 <td>INACTIVE MFA ENROLLMENT</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Authentication</td>
 <td>IN PROGRESS</td>
 <td>Security Team</td>
 <td>2026-06-06</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-039</td>
 <td>OPEN ADMINISTRATIVE SHARE</td>
-<td class="priority-high">8</td>
+<td class="priority-high">HIGH</td>
+<td>8</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-28</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Security Team" data-category="Endpoint Security">
 <td>RISK-011</td>
 <td>MISSING ENDPOINT MONITORING</td>
-<td class="priority-high">7</td>
+<td class="priority-high">HIGH</td>
+<td>7</td>
+<td>Endpoint Security</td>
 <td>OPEN</td>
 <td>Security Team</td>
 <td>2026-06-20</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Infrastructure Team" data-category="Infrastructure">
 <td>RISK-017</td>
 <td>EXPIRED SSL CERTIFICATE</td>
-<td class="priority-high">7</td>
+<td class="priority-high">HIGH</td>
+<td>7</td>
+<td>Infrastructure</td>
 <td>OPEN</td>
 <td>Infrastructure Team</td>
 <td>2026-05-25</td>
 </tr>
 
-<tr>
+<tr data-priority="HIGH" data-status="OPEN" data-owner="Help Desk" data-category="Endpoint Security">
 <td>RISK-029</td>
 <td>UNRESTRICTED USB STORAGE</td>
-<td class="priority-high">7</td>
+<td class="priority-high">HIGH</td>
+<td>7</td>
+<td>Endpoint Security</td>
 <td>OPEN</td>
 <td>Help Desk</td>
 <td>2026-06-09</td>
 </tr>
 
-<tr>
+<tr data-priority="MODERATE" data-status="OPEN" data-owner="Compliance Team" data-category="Governance">
 <td>RISK-028</td>
 <td>SHADOW IT APPLICATION DISCOVERED</td>
-<td class="priority-moderate">6</td>
+<td class="priority-moderate">MODERATE</td>
+<td>6</td>
+<td>Governance</td>
 <td>OPEN</td>
 <td>Compliance Team</td>
 <td>2026-06-14</td>
 </tr>
 
-<tr>
+<tr data-priority="MODERATE" data-status="IN PROGRESS" data-owner="Compliance Team" data-category="Compliance">
 <td>RISK-032</td>
 <td>MISSING LOG RETENTION POLICY</td>
-<td class="priority-moderate">6</td>
+<td class="priority-moderate">MODERATE</td>
+<td>6</td>
+<td>Compliance</td>
 <td>IN PROGRESS</td>
 <td>Compliance Team</td>
 <td>2026-06-21</td>
 </tr>
 
-<tr>
+<tr data-priority="MODERATE" data-status="OPEN" data-owner="SOC Analyst" data-category="Security Operations">
 <td>RISK-035</td>
 <td>FAILED VULNERABILITY SCAN AGENT</td>
-<td class="priority-moderate">6</td>
+<td class="priority-moderate">MODERATE</td>
+<td>6</td>
+<td>Security Operations</td>
 <td>OPEN</td>
 <td>SOC Analyst</td>
 <td>2026-06-11</td>
 </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
 </div>
 
+<!-- PYTHON CHART FIX FOR TOP 5 RISKS -->
+<!-- Replace your current Top 5 Risks chart block in risk_summary.py with this full section -->
+<!--
+# =========================
+# TOP 5 HIGHEST RISKS CHART
+# =========================
+
+plt.figure(figsize=(10, 5))
+
+active_risks = [risk for risk in risks if risk["status"] != "CLOSED"]
+
+top_risks = sorted(
+    active_risks,
+    key=lambda x: x["severity"],
+    reverse=True
+)[:5]
+
+# Reverse so highest severity appears at top visually
+# in horizontal bar chart
+
+top_risks.reverse()
+
+risk_names = [
+    f"{risk['id']} - {risk['name']}"
+    for risk in top_risks
+]
+
+risk_scores = [risk["severity"] for risk in top_risks]
+
+bar_colors = []
+
+for score in risk_scores:
+    if score >= 9:
+        bar_colors.append("red")
+    elif score >= 7:
+        bar_colors.append("orange")
+    else:
+        bar_colors.append("gold")
+
+bars = plt.barh(risk_names, risk_scores, color=bar_colors)
+
+plt.xlabel("Count")
+plt.ylabel("Risk")
+plt.title("Top 5 Highest Severity Risks")
+
+for bar in bars:
+    width = bar.get_width()
+    plt.text(
+        width + 0.1,
+        bar.get_y() + bar.get_height() / 2,
+        f"{int(width)}",
+        va="center"
+    )
+
+plt.tight_layout()
+
+plt.savefig(
+    "charts/top_5_risks.png",
+    bbox_inches="tight"
+)
+
+plt.close()
+-->
+
 <div class="footer-note">
     Generated by AI Operations Assistant
 </div>
 
+<script>
+function filterTable() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const priorityValue = document.getElementById("priorityFilter").value.toLowerCase();
+    const statusValue = document.getElementById("statusFilter").value.toLowerCase();
+    const ownerValue = document.getElementById("ownerFilter").value.toLowerCase();
+    const categoryValue = document.getElementById("categoryFilter").value.toLowerCase();
+
+    const rows = document.querySelectorAll("#riskTable tbody tr");
+
+    rows.forEach(row => {
+        const cells = row.getElementsByTagName("td");
+
+        const rowText = row.textContent.toLowerCase();
+        const rowPriority = cells[2].textContent.toLowerCase();
+        const rowCategory = cells[4].textContent.toLowerCase();
+        const rowStatus = cells[5].textContent.toLowerCase();
+        const rowOwner = cells[6].textContent.toLowerCase();
+
+        const matchesSearch = rowText.includes(searchValue);
+        const matchesPriority = priorityValue === "" || rowPriority === priorityValue;
+        const matchesStatus = statusValue === "" || rowStatus === statusValue;
+        const matchesOwner = ownerValue === "" || rowOwner === ownerValue;
+        const matchesCategory = categoryValue === "" || rowCategory === categoryValue;
+
+        row.style.display =
+            matchesSearch &&
+            matchesPriority &&
+            matchesStatus &&
+            matchesOwner &&
+            matchesCategory
+            ? ""
+            : "none";
+    });
+}
+</script>
+
 </body>
 </html>
+```

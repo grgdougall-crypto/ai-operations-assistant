@@ -1001,6 +1001,92 @@ def write_md_report(risks, metrics):
             )
 
 
+def build_risk_forecast_widget(risks, metrics):
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
+
+    due_soon = [
+        risk for risk in active_risks
+        if 0 <= risk["days_until_due"] <= 7
+    ]
+
+    critical_active = [
+        risk for risk in active_risks
+        if risk["priority"] == "CRITICAL"
+    ]
+
+    aging_risks = [
+        risk for risk in active_risks
+        if risk["days_open"] >= 7
+    ]
+
+    if metrics["sla_compliance"] >= 90:
+        sla_outlook = "Stable"
+        sla_class = "forecast-good"
+    elif metrics["sla_compliance"] >= 75:
+        sla_outlook = "Watch"
+        sla_class = "forecast-watch"
+    else:
+        sla_outlook = "At Risk"
+        sla_class = "forecast-risk"
+
+    return f"""
+<div class=\"forecast-grid\">
+    <div class=\"forecast-item\">
+        <span class=\"forecast-label\">SLA Outlook</span>
+        <span class=\"forecast-value {sla_class}\">{sla_outlook}</span>
+    </div>
+    <div class=\"forecast-item\">
+        <span class=\"forecast-label\">Due Within 7 Days</span>
+        <span class=\"forecast-value\">{len(due_soon)}</span>
+    </div>
+    <div class=\"forecast-item\">
+        <span class=\"forecast-label\">Active Critical Risks</span>
+        <span class=\"forecast-value forecast-risk\">{len(critical_active)}</span>
+    </div>
+    <div class=\"forecast-item\">
+        <span class=\"forecast-label\">Aging Risks 7+ Days</span>
+        <span class=\"forecast-value forecast-watch\">{len(aging_risks)}</span>
+    </div>
+</div>
+"""
+
+
+def build_executive_action_queue(risks):
+    active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
+
+    priority_risks = sorted(
+        active_risks,
+        key=lambda risk: (
+            risk["severity"],
+            -risk["days_until_due"],
+        ),
+        reverse=True,
+    )[:5]
+
+    if not priority_risks:
+        return "<p>No active risks currently require executive action.</p>"
+
+    queue_items = ""
+
+    for risk in priority_risks:
+        if risk["priority"] == "CRITICAL":
+            badge_class = "badge-critical"
+        elif risk["priority"] == "HIGH":
+            badge_class = "badge-high"
+        else:
+            badge_class = "badge-moderate"
+
+        queue_items += f"""
+<li>
+    <span class=\"queue-risk\">{risk['id']} - {risk['name']}</span>
+    <span class=\"queue-meta\">Owner: {risk['owner']} | Due: {risk['due_date']}</span>
+    <span class=\"queue-badge {badge_class}\">{risk['priority']}</span>
+</li>
+"""
+
+    return f"<ul class=\"action-queue\">{queue_items}</ul>"
+
+
 def build_html_risk_rows(risks):
     rows = ""
     active_risks = [risk for risk in risks if risk["status"] in ACTIVE_STATUSES]
@@ -1015,10 +1101,12 @@ def build_html_risk_rows(risks):
             priority_class = "priority-moderate"
 
         rows += f"""
-<tr>
+<tr data-priority=\"{risk['priority']}\" data-status=\"{risk['status']}\" data-owner=\"{risk['owner']}\" data-category=\"{risk['category']}\">
 <td>{risk['id']}</td>
 <td>{risk['name']}</td>
-<td class=\"{priority_class}\">{risk['severity']}</td>
+<td class=\"{priority_class}\">{risk['priority']}</td>
+<td>{risk['severity']}</td>
+<td>{risk['category']}</td>
 <td>{risk['status']}</td>
 <td>{risk['owner']}</td>
 <td>{risk['due_date']}</td>
@@ -1054,6 +1142,8 @@ def write_html_dashboard(risks, metrics):
         "{{MOST_COMMON_CATEGORY}}": metrics["most_common_category"],
         "{{AVG_DAYS_OPEN}}": f"{metrics['average_days_open_active']:.1f}",
         "{{RISK_ROWS}}": build_html_risk_rows(risks),
+        "{{RISK_FORECAST}}": build_risk_forecast_widget(risks, metrics),
+        "{{EXECUTIVE_ACTION_QUEUE}}": build_executive_action_queue(risks),
     }
 
     for placeholder, value in replacements.items():

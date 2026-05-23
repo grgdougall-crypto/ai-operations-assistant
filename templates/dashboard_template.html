@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,6 +48,10 @@ h1 {
     overflow: hidden;
 }
 
+.scroll-content {
+    overflow-y: auto;
+}
+
 .kpi-table {
     width: 100%;
     border-collapse: collapse;
@@ -76,11 +81,26 @@ h1 {
 
 .risk-register {
     grid-column: span 3;
-    height: 315px;
+    height: 390px;
+}
+
+.filter-bar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.filter-bar input,
+.filter-bar select {
+    padding: 6px;
+    border: 1px solid #cfd8e3;
+    border-radius: 4px;
+    font-size: 12px;
 }
 
 .table-wrap {
-    height: 265px;
+    height: 305px;
     overflow-y: auto;
 }
 
@@ -121,6 +141,88 @@ h1 {
 .priority-moderate {
     color: #ca8a04;
     font-weight: bold;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.forecast-item {
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f8fafc;
+}
+
+.forecast-label {
+    display: block;
+    font-size: 11px;
+    color: #475569;
+}
+
+.forecast-value {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.forecast-good {
+    color: #15803d;
+}
+
+.forecast-watch {
+    color: #ca8a04;
+}
+
+.forecast-risk {
+    color: #b91c1c;
+}
+
+.action-queue {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 11px;
+}
+
+.action-queue li {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 7px 0;
+}
+
+.queue-risk {
+    display: block;
+    font-weight: bold;
+}
+
+.queue-meta {
+    display: block;
+    color: #475569;
+    margin-top: 2px;
+}
+
+.queue-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    color: white;
+    font-size: 10px;
+}
+
+.badge-critical {
+    background: #b91c1c;
+}
+
+.badge-high {
+    background: #c2410c;
+}
+
+.badge-moderate {
+    background: #ca8a04;
 }
 
 .footer-note {
@@ -211,45 +313,206 @@ h1 {
     </div>
 
     <div class="card chart-card">
-        <h2>Risks Created by Date</h2>
-        <div class="card-content">
-            <img src="charts/risks_created_by_date.png">
-        </div>
-    </div>
-
-    <div class="card chart-card">
         <h2>Risks by Category</h2>
         <div class="card-content">
             <img src="charts/risks_by_category.png">
         </div>
     </div>
 
+    <div class="card">
+        <h2>Risk Trend Forecast</h2>
+        <div class="card-content">
+            {{RISK_FORECAST}}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Executive Action Queue</h2>
+        <div class="card-content scroll-content">
+            {{EXECUTIVE_ACTION_QUEUE}}
+        </div>
+    </div>
+
     <div class="card risk-register">
-        <h2>Active Risk Register</h2>
-        <div class="card-content table-wrap">
-            <table class="risk-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Severity</th>
-                        <th>Status</th>
-                        <th>Owner</th>
-                        <th>Due Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{RISK_ROWS}}
-                </tbody>
-            </table>
+        <h2>Interactive Active Risk Register</h2>
+        <div class="card-content">
+
+            <div class="filter-bar">
+                <input type="text" id="searchInput" placeholder="Search risks..." onkeyup="filterTable()">
+
+                <select id="priorityFilter" onchange="filterTable()">
+                    <option value="">All Priorities</option>
+                    <option value="CRITICAL">Critical</option>
+                    <option value="HIGH">High</option>
+                    <option value="MODERATE">Moderate</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterTable()">
+                    <option value="">All Statuses</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN PROGRESS">In Progress</option>
+                    <option value="PENDING REVIEW">Pending Review</option>
+                </select>
+
+                <select id="ownerFilter" onchange="filterTable()">
+                    <option value="">All Owners</option>
+                    <option value="Security Team">Security Team</option>
+                    <option value="Network Operations">Network Operations</option>
+                    <option value="Infrastructure Team">Infrastructure Team</option>
+                    <option value="Help Desk">Help Desk</option>
+                    <option value="SOC Analyst">SOC Analyst</option>
+                    <option value="Compliance Team">Compliance Team</option>
+                    <option value="Cloud Operations">Cloud Operations</option>
+                    <option value="Identity Team">Identity Team</option>
+                </select>
+
+                <select id="categoryFilter" onchange="filterTable()">
+                    <option value="">All Categories</option>
+                    <option value="Authentication">Authentication</option>
+                    <option value="Network">Network</option>
+                    <option value="Endpoint Security">Endpoint Security</option>
+                    <option value="Data Protection">Data Protection</option>
+                    <option value="Backup and Recovery">Backup and Recovery</option>
+                    <option value="Infrastructure">Infrastructure</option>
+                    <option value="Cloud Security">Cloud Security</option>
+                    <option value="Security Operations">Security Operations</option>
+                    <option value="User Access">User Access</option>
+                    <option value="Compliance">Compliance</option>
+                    <option value="Governance">Governance</option>
+                    <option value="Identity and Access">Identity and Access</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table class="risk-table" id="riskTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Priority</th>
+                            <th>Severity</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{RISK_ROWS}}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
 </div>
 
+<!-- PYTHON CHART FIX FOR TOP 5 RISKS -->
+<!-- Replace your current Top 5 Risks chart block in risk_summary.py with this full section -->
+<!--
+# =========================
+# TOP 5 HIGHEST RISKS CHART
+# =========================
+
+plt.figure(figsize=(10, 5))
+
+active_risks = [risk for risk in risks if risk["status"] != "CLOSED"]
+
+top_risks = sorted(
+    active_risks,
+    key=lambda x: x["severity"],
+    reverse=True
+)[:5]
+
+# Reverse so highest severity appears at top visually
+# in horizontal bar chart
+
+top_risks.reverse()
+
+risk_names = [
+    f"{risk['id']} - {risk['name']}"
+    for risk in top_risks
+]
+
+risk_scores = [risk["severity"] for risk in top_risks]
+
+bar_colors = []
+
+for score in risk_scores:
+    if score >= 9:
+        bar_colors.append("red")
+    elif score >= 7:
+        bar_colors.append("orange")
+    else:
+        bar_colors.append("gold")
+
+bars = plt.barh(risk_names, risk_scores, color=bar_colors)
+
+plt.xlabel("Count")
+plt.ylabel("Risk")
+plt.title("Top 5 Highest Severity Risks")
+
+for bar in bars:
+    width = bar.get_width()
+    plt.text(
+        width + 0.1,
+        bar.get_y() + bar.get_height() / 2,
+        f"{int(width)}",
+        va="center"
+    )
+
+plt.tight_layout()
+
+plt.savefig(
+    "charts/top_5_risks.png",
+    bbox_inches="tight"
+)
+
+plt.close()
+-->
+
 <div class="footer-note">
     Generated by AI Operations Assistant
 </div>
 
+<script>
+function filterTable() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const priorityValue = document.getElementById("priorityFilter").value.toLowerCase();
+    const statusValue = document.getElementById("statusFilter").value.toLowerCase();
+    const ownerValue = document.getElementById("ownerFilter").value.toLowerCase();
+    const categoryValue = document.getElementById("categoryFilter").value.toLowerCase();
+
+    const rows = document.querySelectorAll("#riskTable tbody tr");
+
+    rows.forEach(row => {
+        const cells = row.getElementsByTagName("td");
+
+        const rowText = row.textContent.toLowerCase();
+        const rowPriority = cells[2].textContent.toLowerCase();
+        const rowCategory = cells[4].textContent.toLowerCase();
+        const rowStatus = cells[5].textContent.toLowerCase();
+        const rowOwner = cells[6].textContent.toLowerCase();
+
+        const matchesSearch = rowText.includes(searchValue);
+        const matchesPriority = priorityValue === "" || rowPriority === priorityValue;
+        const matchesStatus = statusValue === "" || rowStatus === statusValue;
+        const matchesOwner = ownerValue === "" || rowOwner === ownerValue;
+        const matchesCategory = categoryValue === "" || rowCategory === categoryValue;
+
+        row.style.display =
+            matchesSearch &&
+            matchesPriority &&
+            matchesStatus &&
+            matchesOwner &&
+            matchesCategory
+            ? ""
+            : "none";
+    });
+}
+</script>
+
 </body>
 </html>
+```
