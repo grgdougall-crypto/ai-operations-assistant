@@ -22,6 +22,44 @@
         </div>
     </div>
 
+    <div class="panel executive-summary-panel">
+        <h2>AI Executive Summary</h2>
+
+        <div class="executive-summary-content">
+            {% if latest_executive_summary %}
+                <div class="summary-meta-row">
+                    <span class="ai-source-badge source-{{ latest_executive_summary['ai_source']|default('unknown', true)|replace('_', '-')|replace(' ', '-') }}">
+                        {{ latest_executive_summary["ai_source"]|default("unknown", true)|replace("-", " ")|title }}
+                    </span>
+                    <span class="summary-timestamp">Generated {{ latest_executive_summary["generated_at"] }}</span>
+                </div>
+
+                <div class="summary-section">
+                    <h3>Summary</h3>
+                    <p>{{ latest_executive_summary["summary"] }}</p>
+                </div>
+
+                <div class="summary-section">
+                    <h3>Priority Focus</h3>
+                    <p>{{ latest_executive_summary["priority_focus"] }}</p>
+                </div>
+
+                <div class="summary-section">
+                    <h3>Business Impact</h3>
+                    <p>{{ latest_executive_summary["business_impact"] }}</p>
+                </div>
+            {% else %}
+                <p class="empty-summary-text">
+                    No executive summary has been generated yet. Use the button below to generate one from the current SQLite risk portfolio.
+                </p>
+            {% endif %}
+
+            <form action="{{ url_for('generate_executive_summary') }}" method="POST" class="summary-action-form">
+                <button type="submit">Generate Executive Summary</button>
+            </form>
+        </div>
+    </div>
+
     <div class="kpi-grid">
         <div class="kpi-card">
             <div class="kpi-title">Total Risks</div>

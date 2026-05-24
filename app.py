@@ -4,7 +4,7 @@ import sqlite3
 
 from flask import Flask, redirect, render_template, request, url_for
 
-from ai_engine import generate_ai_analysis
+from ai_engine import generate_ai_analysis, generate_ai_executive_summary
 
 app = Flask(__name__)
 
@@ -56,10 +56,6 @@ def get_db_connection():
 
 
 def ensure_database_schema():
-    """
-    Ensure required columns exist.
-    This function only updates SQLite schema. It does not call Gemini/OpenAI.
-    """
     conn = get_db_connection()
     columns = conn.execute("PRAGMA table_info(risks)").fetchall()
     column_names = [column["name"] for column in columns]
@@ -76,13 +72,23 @@ def ensure_database_schema():
         conn.execute("ALTER TABLE risks ADD COLUMN ai_source TEXT")
         conn.commit()
 
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS executive_summaries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            generated_at TEXT NOT NULL,
+            summary TEXT NOT NULL,
+            priority_focus TEXT NOT NULL,
+            business_impact TEXT NOT NULL,
+            ai_source TEXT NOT NULL
+        )
+        """
+    )
+    conn.commit()
     conn.close()
 
 
 def normalize_legacy_ai_source_labels():
-    """
-    Label older records without making AI API calls.
-    """
     conn = get_db_connection()
 
     conn.execute(
@@ -144,6 +150,54 @@ def get_risk_by_id(risk_id):
     ).fetchone()
     conn.close()
     return risk
+
+
+def get_latest_executive_summary():
+    conn = get_db_connection()
+    summary = conn.execute(
+        """
+        SELECT
+            id,
+            generated_at,
+            summary,
+            priority_focus,
+            business_impact,
+            ai_source
+        FROM executive_summaries
+        ORDER BY id DESC
+        LIMIT 1
+        """
+    ).fetchone()
+    conn.close()
+    return summary
+
+
+def save_executive_summary(summary_data):
+    conn = get_db_connection()
+    generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    conn.execute(
+        """
+        INSERT INTO executive_summaries (
+            generated_at,
+            summary,
+            priority_focus,
+            business_impact,
+            ai_source
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            generated_at,
+            summary_data["summary"],
+            summary_data["priority_focus"],
+            summary_data["business_impact"],
+            summary_data.get("source", "unknown"),
+        ),
+    )
+
+    conn.commit()
+    conn.close()
 
 
 def is_active_status(status):
@@ -265,7 +319,10 @@ def calculate_executive_analytics(risks):
         "posture": posture,
         "posture_class": posture_class,
         "executive_brief": executive_brief,
+        "total_risks": total_risks,
         "active_count": active_count,
+        "critical_count": critical_count,
+        "high_count": high_count,
         "overdue_count": overdue_count,
         "due_soon_count": due_soon_count,
         "resolution_rate": resolution_rate,
@@ -423,16 +480,31 @@ def dashboard():
     risks = get_all_risks()
     kpis = calculate_kpis(risks)
     executive = calculate_executive_analytics(risks)
+    latest_executive_summary = get_latest_executive_summary()
 
     return render_template(
         "dashboard.html",
         risks=risks,
         kpis=kpis,
         executive=executive,
+        latest_executive_summary=latest_executive_summary,
         categories=CATEGORIES,
         statuses=STATUSES,
         owners=OWNERS,
     )
+
+
+@app.route("/generate-executive-summary", methods=["POST"])
+def generate_executive_summary():
+    ensure_database_schema()
+    normalize_legacy_ai_source_labels()
+
+    risks = get_all_risks()
+    executive = calculate_executive_analytics(risks)
+    summary_data = generate_ai_executive_summary(executive)
+    save_executive_summary(summary_data)
+
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/risk/<risk_id>")

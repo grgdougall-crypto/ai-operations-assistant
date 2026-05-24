@@ -249,6 +249,41 @@ Guidelines:
 """
 
 
+def build_executive_summary_prompt(executive_data):
+    return f"""
+You are an IT/security operations leader preparing an executive risk summary.
+
+Use the following live risk metrics to create a concise leadership-ready summary.
+
+Metrics:
+- Total risks: {executive_data.get('total_risks')}
+- Active risks: {executive_data.get('active_count')}
+- Critical risks: {executive_data.get('critical_count')}
+- High risks: {executive_data.get('high_count')}
+- Overdue active risks: {executive_data.get('overdue_count')}
+- Due within 7 days: {executive_data.get('due_soon_count')}
+- Resolution rate: {executive_data.get('resolution_rate')}%
+- Average severity: {executive_data.get('average_severity')}
+- Top category: {executive_data.get('top_category')}
+- Most loaded owner: {executive_data.get('top_owner')}
+- Current posture: {executive_data.get('posture')}
+
+Return ONLY valid JSON using this exact structure:
+{{
+  "summary": "one executive paragraph summarizing current operational risk posture",
+  "priority_focus": "one concise paragraph identifying what leadership should prioritize next",
+  "business_impact": "one concise paragraph explaining operational or security impact"
+}}
+
+Guidelines:
+- Use clear executive language.
+- Keep each paragraph under 85 words.
+- Do not include markdown.
+- Do not invent facts not present in the metrics.
+- Avoid hype. Be direct and practical.
+"""
+
+
 def parse_json_response(response_text):
     cleaned_text = response_text.strip()
 
@@ -258,8 +293,13 @@ def parse_json_response(response_text):
         cleaned_text = cleaned_text.strip()
 
     try:
-        parsed = json.loads(cleaned_text)
+        return json.loads(cleaned_text)
     except json.JSONDecodeError:
+        return None
+
+
+def validate_risk_analysis(parsed):
+    if parsed is None:
         return None
 
     recommendation = parsed.get("recommendation", "").strip()
@@ -271,6 +311,24 @@ def parse_json_response(response_text):
     return {
         "recommendation": recommendation,
         "rationale": rationale,
+    }
+
+
+def validate_executive_summary(parsed):
+    if parsed is None:
+        return None
+
+    summary = parsed.get("summary", "").strip()
+    priority_focus = parsed.get("priority_focus", "").strip()
+    business_impact = parsed.get("business_impact", "").strip()
+
+    if not summary or not priority_focus or not business_impact:
+        return None
+
+    return {
+        "summary": summary,
+        "priority_focus": priority_focus,
+        "business_impact": business_impact,
     }
 
 
@@ -319,6 +377,34 @@ def generate_rule_based_analysis(name, category, severity):
     }
 
 
+def generate_rule_based_executive_summary(executive_data):
+    summary = (
+        f"The current risk portfolio contains {executive_data.get('total_risks')} tracked risks, "
+        f"including {executive_data.get('active_count')} active items. Current posture is "
+        f"{executive_data.get('posture')}, with {executive_data.get('critical_count')} critical risks, "
+        f"{executive_data.get('high_count')} high risks, and {executive_data.get('overdue_count')} overdue active risks."
+    )
+
+    priority_focus = (
+        f"Leadership should prioritize the {executive_data.get('top_category')} category and review workload assigned to "
+        f"{executive_data.get('top_owner')}. Immediate attention should focus on overdue risks, critical risks, "
+        "and remediation efforts approaching due dates."
+    )
+
+    business_impact = (
+        "If high-priority risks remain unresolved, the organization may face increased operational exposure, "
+        "slower remediation cycles, and reduced visibility into ownership and accountability. Continued tracking "
+        "helps support governance, prioritization, and remediation coordination."
+    )
+
+    return {
+        "summary": summary,
+        "priority_focus": priority_focus,
+        "business_impact": business_impact,
+        "source": "rule-based",
+    }
+
+
 def gemini_is_available():
     api_key = os.getenv("GEMINI_API_KEY")
 
@@ -340,14 +426,6 @@ def openai_is_available():
 
 
 def get_provider_order():
-    """
-    Default provider order is Gemini, then OpenAI, then rule-based fallback.
-
-    Optional overrides:
-    AI_PROVIDER=gemini  -> try Gemini only, then rule-based fallback
-    AI_PROVIDER=openai  -> try OpenAI only, then rule-based fallback
-    AI_PROVIDER=auto    -> try Gemini, then OpenAI, then rule-based fallback
-    """
     provider = os.getenv("AI_PROVIDER", "auto").lower().strip()
 
     if provider == "gemini":
@@ -359,10 +437,9 @@ def get_provider_order():
     return ["gemini", "openai"]
 
 
-def generate_gemini_analysis(name, category, severity):
+def call_gemini(prompt):
     client = genai.Client()
     model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-    prompt = build_ai_prompt(name, category, severity)
 
     response = client.models.generate_content(
         model=model,
@@ -372,19 +449,12 @@ def generate_gemini_analysis(name, category, severity):
     print("GEMINI RAW RESPONSE:")
     print(response.text)
 
-    parsed = parse_json_response(response.text)
-
-    if parsed is None:
-        raise ValueError("Gemini response was not valid JSON.")
-
-    parsed["source"] = "gemini"
-    return parsed
+    return response.text
 
 
-def generate_openai_analysis(name, category, severity):
+def call_openai(prompt):
     client = OpenAI()
     model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-    prompt = build_ai_prompt(name, category, severity)
 
     response = client.responses.create(
         model=model,
@@ -394,10 +464,52 @@ def generate_openai_analysis(name, category, severity):
     print("OPENAI RAW RESPONSE:")
     print(response.output_text)
 
-    parsed = parse_json_response(response.output_text)
+    return response.output_text
+
+
+def generate_gemini_analysis(name, category, severity):
+    prompt = build_ai_prompt(name, category, severity)
+    response_text = call_gemini(prompt)
+    parsed = validate_risk_analysis(parse_json_response(response_text))
 
     if parsed is None:
-        raise ValueError("OpenAI response was not valid JSON.")
+        raise ValueError("Gemini response was not valid risk-analysis JSON.")
+
+    parsed["source"] = "gemini"
+    return parsed
+
+
+def generate_openai_analysis(name, category, severity):
+    prompt = build_ai_prompt(name, category, severity)
+    response_text = call_openai(prompt)
+    parsed = validate_risk_analysis(parse_json_response(response_text))
+
+    if parsed is None:
+        raise ValueError("OpenAI response was not valid risk-analysis JSON.")
+
+    parsed["source"] = "openai"
+    return parsed
+
+
+def generate_gemini_executive_summary(executive_data):
+    prompt = build_executive_summary_prompt(executive_data)
+    response_text = call_gemini(prompt)
+    parsed = validate_executive_summary(parse_json_response(response_text))
+
+    if parsed is None:
+        raise ValueError("Gemini response was not valid executive-summary JSON.")
+
+    parsed["source"] = "gemini"
+    return parsed
+
+
+def generate_openai_executive_summary(executive_data):
+    prompt = build_executive_summary_prompt(executive_data)
+    response_text = call_openai(prompt)
+    parsed = validate_executive_summary(parse_json_response(response_text))
+
+    if parsed is None:
+        raise ValueError("OpenAI response was not valid executive-summary JSON.")
 
     parsed["source"] = "openai"
     return parsed
@@ -416,9 +528,8 @@ def generate_ai_analysis(name, category, severity):
             try:
                 return generate_gemini_analysis(name, category, severity)
             except Exception as error:
-                error_message = f"Gemini failed: {error}"
                 print("GEMINI ERROR:", error)
-                provider_errors.append(error_message)
+                provider_errors.append(f"Gemini failed: {error}")
                 continue
 
         if provider == "openai":
@@ -429,22 +540,63 @@ def generate_ai_analysis(name, category, severity):
             try:
                 return generate_openai_analysis(name, category, severity)
             except Exception as error:
-                error_message = f"OpenAI failed: {error}"
                 print("OPENAI ERROR:", error)
-                provider_errors.append(error_message)
+                provider_errors.append(f"OpenAI failed: {error}")
                 continue
 
     fallback = generate_rule_based_analysis(name, category, severity)
-
     fallback["rationale"] = (
         f"{fallback['rationale']} AI provider generation was unavailable, "
         "so the platform used the local rule-based recommendation engine."
     )
-
     fallback["source"] = "rule-based-fallback"
 
     if provider_errors:
         print("AI PROVIDER FAILOVER SUMMARY:")
+        for error in provider_errors:
+            print("-", error)
+
+    return fallback
+
+
+def generate_ai_executive_summary(executive_data):
+    provider_order = get_provider_order()
+    provider_errors = []
+
+    for provider in provider_order:
+        if provider == "gemini":
+            if not gemini_is_available():
+                provider_errors.append("Gemini unavailable: missing SDK or API key.")
+                continue
+
+            try:
+                return generate_gemini_executive_summary(executive_data)
+            except Exception as error:
+                print("GEMINI EXECUTIVE SUMMARY ERROR:", error)
+                provider_errors.append(f"Gemini failed: {error}")
+                continue
+
+        if provider == "openai":
+            if not openai_is_available():
+                provider_errors.append("OpenAI unavailable: missing SDK or API key.")
+                continue
+
+            try:
+                return generate_openai_executive_summary(executive_data)
+            except Exception as error:
+                print("OPENAI EXECUTIVE SUMMARY ERROR:", error)
+                provider_errors.append(f"OpenAI failed: {error}")
+                continue
+
+    fallback = generate_rule_based_executive_summary(executive_data)
+    fallback["business_impact"] = (
+        f"{fallback['business_impact']} AI provider generation was unavailable, "
+        "so the platform used the local rule-based executive summary engine."
+    )
+    fallback["source"] = "rule-based-fallback"
+
+    if provider_errors:
+        print("AI EXECUTIVE SUMMARY FAILOVER SUMMARY:")
         for error in provider_errors:
             print("-", error)
 
