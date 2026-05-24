@@ -57,12 +57,21 @@ h1 {
     margin-bottom: 20px;
 }
 
+.edit-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 .risk-form {
     display: grid;
     grid-template-columns: 2fr 0.6fr 1.2fr 1.1fr 1.2fr 1fr auto;
     gap: 10px;
     padding: 14px;
     align-items: end;
+}
+
+.edit-risk-form {
+    grid-template-columns: 2fr 0.6fr 1.2fr 1.1fr 1.2fr 1fr;
 }
 
 .form-group {
@@ -86,7 +95,8 @@ h1 {
     background: white;
 }
 
-.form-actions button {
+.form-actions button,
+.delete-button {
     padding: 9px 14px;
     background: #202938;
     color: white;
@@ -98,6 +108,47 @@ h1 {
 
 .form-actions button:hover {
     background: #334155;
+}
+
+.edit-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cancel-link,
+.edit-link {
+    display: inline-block;
+    color: #1d4ed8;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.cancel-link:hover,
+.edit-link:hover {
+    text-decoration: underline;
+}
+
+.inline-delete-form {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.delete-button {
+    background: #b91c1c;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+.delete-button:hover {
+    background: #991b1b;
+}
+
+.action-cell {
+    min-width: 130px;
+    white-space: nowrap;
 }
 
 .filter-bar {
@@ -121,6 +172,7 @@ h1 {
 .table-wrap {
     max-height: 620px;
     overflow-y: auto;
+    overflow-x: auto;
 }
 
 table {
@@ -137,6 +189,7 @@ th {
     position: sticky;
     top: 0;
     z-index: 2;
+    white-space: nowrap;
 }
 
 th:hover {
@@ -146,10 +199,36 @@ th:hover {
 td {
     padding: 9px 10px;
     border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
 }
 
 tr:nth-child(even) {
     background: #f8fafc;
+}
+
+.recommendation-cell {
+    max-width: 500px;
+    min-width: 380px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #334155;
+}
+
+.ai-block {
+    margin-bottom: 8px;
+}
+
+.ai-block p {
+    margin: 3px 0 0 0;
+}
+
+.ai-label {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #475569;
 }
 
 .critical {
@@ -168,11 +247,13 @@ tr:nth-child(even) {
 }
 
 @media (max-width: 1100px) {
-    .risk-form {
+    .risk-form,
+    .edit-risk-form {
         grid-template-columns: 1fr 1fr;
     }
 
-    .form-actions {
+    .form-actions,
+    .edit-actions {
         grid-column: span 2;
     }
 

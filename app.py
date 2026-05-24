@@ -3,6 +3,8 @@ import sqlite3
 
 from flask import Flask, redirect, render_template, request, url_for
 
+from ai_engine import generate_ai_analysis
+
 app = Flask(__name__)
 
 DATABASE = "risks.db"
@@ -52,6 +54,58 @@ def get_db_connection():
     return conn
 
 
+def ensure_database_schema():
+    conn = get_db_connection()
+    columns = conn.execute("PRAGMA table_info(risks)").fetchall()
+    column_names = [column["name"] for column in columns]
+
+    if "recommendation" not in column_names:
+        conn.execute("ALTER TABLE risks ADD COLUMN recommendation TEXT")
+        conn.commit()
+
+    if "ai_rationale" not in column_names:
+        conn.execute("ALTER TABLE risks ADD COLUMN ai_rationale TEXT")
+        conn.commit()
+
+    conn.close()
+
+
+def backfill_missing_ai_fields():
+    conn = get_db_connection()
+
+    risks = conn.execute("""
+        SELECT id, name, category, severity, recommendation, ai_rationale
+        FROM risks
+    """).fetchall()
+
+    for risk in risks:
+        needs_recommendation = risk["recommendation"] is None or risk["recommendation"].strip() == ""
+        needs_rationale = risk["ai_rationale"] is None or risk["ai_rationale"].strip() == ""
+
+        if needs_recommendation or needs_rationale:
+            ai_analysis = generate_ai_analysis(
+                name=risk["name"],
+                category=risk["category"],
+                severity=risk["severity"],
+            )
+
+            conn.execute(
+                """
+                UPDATE risks
+                SET recommendation = ?, ai_rationale = ?
+                WHERE id = ?
+                """,
+                (
+                    ai_analysis["recommendation"],
+                    ai_analysis["rationale"],
+                    risk["id"],
+                ),
+            )
+
+    conn.commit()
+    conn.close()
+
+
 def get_all_risks():
     conn = get_db_connection()
 
@@ -64,13 +118,39 @@ def get_all_risks():
             status,
             owner,
             timestamp,
-            due_date
+            due_date,
+            recommendation,
+            ai_rationale
         FROM risks
         ORDER BY severity DESC, due_date ASC
     """).fetchall()
 
     conn.close()
     return risks
+
+
+def get_risk_by_id(risk_id):
+    conn = get_db_connection()
+    risk = conn.execute(
+        """
+        SELECT
+            id,
+            name,
+            severity,
+            category,
+            status,
+            owner,
+            timestamp,
+            due_date,
+            recommendation,
+            ai_rationale
+        FROM risks
+        WHERE id = ?
+        """,
+        (risk_id,),
+    ).fetchone()
+    conn.close()
+    return risk
 
 
 def calculate_kpis(risks):
@@ -89,7 +169,6 @@ def calculate_kpis(risks):
 
 def generate_next_risk_id():
     conn = get_db_connection()
-
     rows = conn.execute("SELECT id FROM risks").fetchall()
     conn.close()
 
@@ -97,7 +176,6 @@ def generate_next_risk_id():
 
     for row in rows:
         risk_id = row["id"]
-
         try:
             number = int(risk_id.split("-")[1])
             highest_number = max(highest_number, number)
@@ -112,6 +190,7 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
 
     new_risk_id = generate_next_risk_id()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ai_analysis = generate_ai_analysis(name, category, severity)
 
     conn.execute(
         """
@@ -123,9 +202,11 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
             status,
             owner,
             timestamp,
-            due_date
+            due_date,
+            recommendation,
+            ai_rationale
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             new_risk_id,
@@ -136,6 +217,8 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
             owner,
             timestamp,
             due_date,
+            ai_analysis["recommendation"],
+            ai_analysis["rationale"],
         ),
     )
 
@@ -143,8 +226,82 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
     conn.close()
 
 
+def update_existing_risk(risk_id, name, severity, category, status, owner, due_date):
+    conn = get_db_connection()
+    ai_analysis = generate_ai_analysis(name, category, severity)
+
+    conn.execute(
+        """
+        UPDATE risks
+        SET
+            name = ?,
+            severity = ?,
+            category = ?,
+            status = ?,
+            owner = ?,
+            due_date = ?,
+            recommendation = ?,
+            ai_rationale = ?
+        WHERE id = ?
+        """,
+        (
+            name.upper(),
+            severity,
+            category,
+            status,
+            owner,
+            due_date,
+            ai_analysis["recommendation"],
+            ai_analysis["rationale"],
+            risk_id,
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def delete_existing_risk(risk_id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM risks WHERE id = ?", (risk_id,))
+    conn.commit()
+    conn.close()
+
+
+def validate_risk_form(form):
+    name = form.get("name", "").strip()
+    severity = form.get("severity", "").strip()
+    category = form.get("category", "").strip()
+    status = form.get("status", "").strip()
+    owner = form.get("owner", "").strip()
+    due_date = form.get("due_date", "").strip()
+
+    if not name or not severity or not category or not status or not owner or not due_date:
+        return None
+
+    try:
+        severity_number = int(severity)
+    except ValueError:
+        return None
+
+    if severity_number < 1 or severity_number > 10:
+        return None
+
+    return {
+        "name": name,
+        "severity": severity_number,
+        "category": category,
+        "status": status,
+        "owner": owner,
+        "due_date": due_date,
+    }
+
+
 @app.route("/")
 def dashboard():
+    ensure_database_schema()
+    backfill_missing_ai_fields()
+
     risks = get_all_risks()
     kpis = calculate_kpis(risks)
 
@@ -160,35 +317,49 @@ def dashboard():
 
 @app.route("/add", methods=["POST"])
 def add_risk():
-    name = request.form.get("name", "").strip()
-    severity = request.form.get("severity", "").strip()
-    category = request.form.get("category", "").strip()
-    status = request.form.get("status", "").strip()
-    owner = request.form.get("owner", "").strip()
-    due_date = request.form.get("due_date", "").strip()
+    ensure_database_schema()
+    form_data = validate_risk_form(request.form)
 
-    if not name or not severity or not category or not status or not owner or not due_date:
+    if form_data is None:
         return redirect(url_for("dashboard"))
 
-    try:
-        severity_number = int(severity)
-    except ValueError:
+    insert_new_risk(**form_data)
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/edit/<risk_id>", methods=["GET", "POST"])
+def edit_risk(risk_id):
+    ensure_database_schema()
+    risk = get_risk_by_id(risk_id)
+
+    if risk is None:
         return redirect(url_for("dashboard"))
 
-    if severity_number < 1 or severity_number > 10:
+    if request.method == "POST":
+        form_data = validate_risk_form(request.form)
+
+        if form_data is None:
+            return redirect(url_for("edit_risk", risk_id=risk_id))
+
+        update_existing_risk(risk_id=risk_id, **form_data)
         return redirect(url_for("dashboard"))
 
-    insert_new_risk(
-        name=name,
-        severity=severity_number,
-        category=category,
-        status=status,
-        owner=owner,
-        due_date=due_date,
+    return render_template(
+        "edit_risk.html",
+        risk=risk,
+        categories=CATEGORIES,
+        statuses=STATUSES,
+        owners=OWNERS,
     )
 
+
+@app.route("/delete/<risk_id>", methods=["POST"])
+def delete_risk(risk_id):
+    ensure_database_schema()
+    delete_existing_risk(risk_id)
     return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":
+    ensure_database_schema()
     app.run(debug=True)
