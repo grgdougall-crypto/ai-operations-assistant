@@ -55,6 +55,13 @@ def get_db_connection():
 
 
 def ensure_database_schema():
+    """
+    Ensure required columns exist.
+
+    Important:
+    This function should never call Gemini/OpenAI.
+    It only updates the local SQLite schema.
+    """
     conn = get_db_connection()
     columns = conn.execute("PRAGMA table_info(risks)").fetchall()
     column_names = [column["name"] for column in columns]
@@ -67,40 +74,29 @@ def ensure_database_schema():
         conn.execute("ALTER TABLE risks ADD COLUMN ai_rationale TEXT")
         conn.commit()
 
+    if "ai_source" not in column_names:
+        conn.execute("ALTER TABLE risks ADD COLUMN ai_source TEXT")
+        conn.commit()
+
     conn.close()
 
 
-def backfill_missing_ai_fields():
+def normalize_legacy_ai_source_labels():
+    """
+    Label older records without making any AI API calls.
+
+    This protects Gemini/OpenAI quota. Existing records that do not have
+    an ai_source value are marked as rule-based instead of being regenerated.
+    """
     conn = get_db_connection()
 
-    risks = conn.execute("""
-        SELECT id, name, category, severity, recommendation, ai_rationale
-        FROM risks
-    """).fetchall()
-
-    for risk in risks:
-        needs_recommendation = risk["recommendation"] is None or risk["recommendation"].strip() == ""
-        needs_rationale = risk["ai_rationale"] is None or risk["ai_rationale"].strip() == ""
-
-        if needs_recommendation or needs_rationale:
-            ai_analysis = generate_ai_analysis(
-                name=risk["name"],
-                category=risk["category"],
-                severity=risk["severity"],
-            )
-
-            conn.execute(
-                """
-                UPDATE risks
-                SET recommendation = ?, ai_rationale = ?
-                WHERE id = ?
-                """,
-                (
-                    ai_analysis["recommendation"],
-                    ai_analysis["rationale"],
-                    risk["id"],
-                ),
-            )
+    conn.execute(
+        """
+        UPDATE risks
+        SET ai_source = 'rule-based'
+        WHERE ai_source IS NULL OR TRIM(ai_source) = ''
+        """
+    )
 
     conn.commit()
     conn.close()
@@ -120,7 +116,8 @@ def get_all_risks():
             timestamp,
             due_date,
             recommendation,
-            ai_rationale
+            ai_rationale,
+            ai_source
         FROM risks
         ORDER BY severity DESC, due_date ASC
     """).fetchall()
@@ -143,7 +140,8 @@ def get_risk_by_id(risk_id):
             timestamp,
             due_date,
             recommendation,
-            ai_rationale
+            ai_rationale,
+            ai_source
         FROM risks
         WHERE id = ?
         """,
@@ -204,9 +202,10 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
             timestamp,
             due_date,
             recommendation,
-            ai_rationale
+            ai_rationale,
+            ai_source
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             new_risk_id,
@@ -219,6 +218,7 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
             due_date,
             ai_analysis["recommendation"],
             ai_analysis["rationale"],
+            ai_analysis.get("source", "unknown"),
         ),
     )
 
@@ -241,7 +241,8 @@ def update_existing_risk(risk_id, name, severity, category, status, owner, due_d
             owner = ?,
             due_date = ?,
             recommendation = ?,
-            ai_rationale = ?
+            ai_rationale = ?,
+            ai_source = ?
         WHERE id = ?
         """,
         (
@@ -253,6 +254,7 @@ def update_existing_risk(risk_id, name, severity, category, status, owner, due_d
             due_date,
             ai_analysis["recommendation"],
             ai_analysis["rationale"],
+            ai_analysis.get("source", "unknown"),
             risk_id,
         ),
     )
@@ -300,7 +302,7 @@ def validate_risk_form(form):
 @app.route("/")
 def dashboard():
     ensure_database_schema()
-    backfill_missing_ai_fields()
+    normalize_legacy_ai_source_labels()
 
     risks = get_all_risks()
     kpis = calculate_kpis(risks)
@@ -313,6 +315,19 @@ def dashboard():
         statuses=STATUSES,
         owners=OWNERS,
     )
+
+
+@app.route("/risk/<risk_id>")
+def risk_detail(risk_id):
+    ensure_database_schema()
+    normalize_legacy_ai_source_labels()
+
+    risk = get_risk_by_id(risk_id)
+
+    if risk is None:
+        return redirect(url_for("dashboard"))
+
+    return render_template("risk_detail.html", risk=risk)
 
 
 @app.route("/add", methods=["POST"])

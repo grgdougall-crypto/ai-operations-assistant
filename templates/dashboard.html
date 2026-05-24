@@ -143,7 +143,11 @@
                         data-category="{{ risk['category'] }}"
                     >
                         <td>{{ risk["id"] }}</td>
-                        <td>{{ risk["name"] }}</td>
+                        <td>
+                            <a class="risk-name-link" href="{{ url_for('risk_detail', risk_id=risk['id']) }}">
+                                {{ risk["name"] }}
+                            </a>
+                        </td>
 
                         <td class="{% if risk['severity'] >= 9 %}critical{% elif risk['severity'] >= 7 %}high{% else %}moderate{% endif %}">
                             {{ risk["severity"] }}
@@ -154,6 +158,13 @@
                         <td>{{ risk["owner"] }}</td>
                         <td>{{ risk["due_date"] }}</td>
                         <td class="recommendation-cell">
+                            <div class="ai-source-row">
+                                <span class="ai-source-label">AI Source</span>
+                                <span class="ai-source-badge source-{{ risk['ai_source']|default('unknown', true)|replace('_', '-')|replace(' ', '-') }}">
+                                    {{ risk["ai_source"]|default("unknown", true)|replace("-", " ")|title }}
+                                </span>
+                            </div>
+
                             <div class="ai-block">
                                 <span class="ai-label">Recommendation</span>
                                 <p>{{ risk["recommendation"] }}</p>
@@ -165,6 +176,7 @@
                             </div>
                         </td>
                         <td class="action-cell">
+                            <a class="detail-link" href="{{ url_for('risk_detail', risk_id=risk['id']) }}">View</a>
                             <a class="edit-link" href="{{ url_for('edit_risk', risk_id=risk['id']) }}">Edit</a>
 
                             <form action="{{ url_for('delete_risk', risk_id=risk['id']) }}" method="POST" class="inline-delete-form" onsubmit="return confirm('Delete this risk?');">
