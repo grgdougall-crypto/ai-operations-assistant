@@ -319,28 +319,44 @@ def generate_rule_based_analysis(name, category, severity):
     }
 
 
-def should_use_gemini():
+def gemini_is_available():
     api_key = os.getenv("GEMINI_API_KEY")
-    provider = os.getenv("AI_PROVIDER", "gemini").lower()
 
     return (
-        provider == "gemini"
-        and genai is not None
+        genai is not None
         and api_key is not None
         and api_key.strip() != ""
     )
 
 
-def should_use_openai():
+def openai_is_available():
     api_key = os.getenv("OPENAI_API_KEY")
-    provider = os.getenv("AI_PROVIDER", "gemini").lower()
 
     return (
-        provider == "openai"
-        and OpenAI is not None
+        OpenAI is not None
         and api_key is not None
         and api_key.strip() != ""
     )
+
+
+def get_provider_order():
+    """
+    Default provider order is Gemini, then OpenAI, then rule-based fallback.
+
+    Optional overrides:
+    AI_PROVIDER=gemini  -> try Gemini only, then rule-based fallback
+    AI_PROVIDER=openai  -> try OpenAI only, then rule-based fallback
+    AI_PROVIDER=auto    -> try Gemini, then OpenAI, then rule-based fallback
+    """
+    provider = os.getenv("AI_PROVIDER", "auto").lower().strip()
+
+    if provider == "gemini":
+        return ["gemini"]
+
+    if provider == "openai":
+        return ["openai"]
+
+    return ["gemini", "openai"]
 
 
 def generate_gemini_analysis(name, category, severity):
@@ -388,34 +404,48 @@ def generate_openai_analysis(name, category, severity):
 
 
 def generate_ai_analysis(name, category, severity):
-    if should_use_gemini():
-        try:
-            return generate_gemini_analysis(name, category, severity)
+    provider_order = get_provider_order()
+    provider_errors = []
 
-        except Exception as error:
-            print("GEMINI ERROR:", error)
+    for provider in provider_order:
+        if provider == "gemini":
+            if not gemini_is_available():
+                provider_errors.append("Gemini unavailable: missing SDK or API key.")
+                continue
 
-            fallback = generate_rule_based_analysis(name, category, severity)
-            fallback["rationale"] = (
-                f"{fallback['rationale']} Gemini generation was unavailable, "
-                "so the platform used the local rule-based recommendation engine."
-            )
-            fallback["source"] = "rule-based-fallback"
-            return fallback
+            try:
+                return generate_gemini_analysis(name, category, severity)
+            except Exception as error:
+                error_message = f"Gemini failed: {error}"
+                print("GEMINI ERROR:", error)
+                provider_errors.append(error_message)
+                continue
 
-    if should_use_openai():
-        try:
-            return generate_openai_analysis(name, category, severity)
+        if provider == "openai":
+            if not openai_is_available():
+                provider_errors.append("OpenAI unavailable: missing SDK or API key.")
+                continue
 
-        except Exception as error:
-            print("OPENAI ERROR:", error)
+            try:
+                return generate_openai_analysis(name, category, severity)
+            except Exception as error:
+                error_message = f"OpenAI failed: {error}"
+                print("OPENAI ERROR:", error)
+                provider_errors.append(error_message)
+                continue
 
-            fallback = generate_rule_based_analysis(name, category, severity)
-            fallback["rationale"] = (
-                f"{fallback['rationale']} OpenAI generation was unavailable, "
-                "so the platform used the local rule-based recommendation engine."
-            )
-            fallback["source"] = "rule-based-fallback"
-            return fallback
+    fallback = generate_rule_based_analysis(name, category, severity)
 
-    return generate_rule_based_analysis(name, category, severity)
+    fallback["rationale"] = (
+        f"{fallback['rationale']} AI provider generation was unavailable, "
+        "so the platform used the local rule-based recommendation engine."
+    )
+
+    fallback["source"] = "rule-based-fallback"
+
+    if provider_errors:
+        print("AI PROVIDER FAILOVER SUMMARY:")
+        for error in provider_errors:
+            print("-", error)
+
+    return fallback

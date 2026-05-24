@@ -1,4 +1,5 @@
-from datetime import datetime
+from collections import Counter
+from datetime import datetime, date
 import sqlite3
 
 from flask import Flask, redirect, render_template, request, url_for
@@ -57,10 +58,7 @@ def get_db_connection():
 def ensure_database_schema():
     """
     Ensure required columns exist.
-
-    Important:
-    This function should never call Gemini/OpenAI.
-    It only updates the local SQLite schema.
+    This function only updates SQLite schema. It does not call Gemini/OpenAI.
     """
     conn = get_db_connection()
     columns = conn.execute("PRAGMA table_info(risks)").fetchall()
@@ -83,10 +81,7 @@ def ensure_database_schema():
 
 def normalize_legacy_ai_source_labels():
     """
-    Label older records without making any AI API calls.
-
-    This protects Gemini/OpenAI quota. Existing records that do not have
-    an ai_source value are marked as rule-based instead of being regenerated.
+    Label older records without making AI API calls.
     """
     conn = get_db_connection()
 
@@ -151,6 +146,17 @@ def get_risk_by_id(risk_id):
     return risk
 
 
+def is_active_status(status):
+    return status in ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
+
+
+def parse_due_date(due_date_text):
+    try:
+        return datetime.strptime(due_date_text, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return None
+
+
 def calculate_kpis(risks):
     total_risks = len(risks)
     critical_risks = sum(1 for risk in risks if risk["severity"] >= 9)
@@ -162,6 +168,116 @@ def calculate_kpis(risks):
         "critical_risks": critical_risks,
         "high_risks": high_risks,
         "open_risks": open_risks,
+    }
+
+
+def convert_counter_to_bar_data(counter, total_count, limit=None):
+    items = counter.most_common(limit)
+    results = []
+
+    for label, count in items:
+        percent = round((count / total_count) * 100, 1) if total_count else 0
+        results.append(
+            {
+                "label": label,
+                "count": count,
+                "percent": percent,
+            }
+        )
+
+    return results
+
+
+def calculate_executive_analytics(risks):
+    today = date.today()
+    total_risks = len(risks)
+
+    active_risks = [risk for risk in risks if is_active_status(risk["status"])]
+    active_count = len(active_risks)
+
+    critical_count = sum(1 for risk in risks if risk["severity"] >= 9)
+    high_count = sum(1 for risk in risks if 7 <= risk["severity"] <= 8)
+    moderate_count = sum(1 for risk in risks if 4 <= risk["severity"] <= 6)
+    low_count = sum(1 for risk in risks if risk["severity"] <= 3)
+
+    overdue_count = 0
+    due_soon_count = 0
+
+    for risk in active_risks:
+        due_date = parse_due_date(risk["due_date"])
+
+        if due_date is None:
+            continue
+
+        days_until_due = (due_date - today).days
+
+        if days_until_due < 0:
+            overdue_count += 1
+        elif days_until_due <= 7:
+            due_soon_count += 1
+
+    closed_count = sum(1 for risk in risks if risk["status"] == "CLOSED")
+    mitigated_count = sum(1 for risk in risks if risk["status"] == "MITIGATED")
+    resolved_count = closed_count + mitigated_count
+
+    resolution_rate = round((resolved_count / total_risks) * 100, 1) if total_risks else 0
+
+    average_severity = (
+        round(sum(risk["severity"] for risk in risks) / total_risks, 1)
+        if total_risks
+        else 0
+    )
+
+    status_counter = Counter(risk["status"] for risk in risks)
+    category_counter = Counter(risk["category"] for risk in risks)
+    owner_counter = Counter(risk["owner"] for risk in active_risks)
+    ai_source_counter = Counter(risk["ai_source"] or "unknown" for risk in risks)
+
+    severity_counter = Counter()
+    severity_counter["Critical"] = critical_count
+    severity_counter["High"] = high_count
+    severity_counter["Moderate"] = moderate_count
+    severity_counter["Low"] = low_count
+
+    highest_risk = risks[0] if risks else None
+    top_category = category_counter.most_common(1)[0][0] if category_counter else "N/A"
+    top_owner = owner_counter.most_common(1)[0][0] if owner_counter else "N/A"
+
+    if critical_count > 0 or overdue_count > 0:
+        posture = "Needs Attention"
+        posture_class = "posture-risk"
+    elif high_count > 0 or due_soon_count > 0:
+        posture = "Watch"
+        posture_class = "posture-watch"
+    else:
+        posture = "Stable"
+        posture_class = "posture-stable"
+
+    executive_brief = (
+        f"Current portfolio contains {total_risks} tracked risks with "
+        f"{active_count} active items. There are {critical_count} critical risks, "
+        f"{high_count} high risks, and {overdue_count} overdue active risks. "
+        f"The most common category is {top_category}, and the most loaded "
+        f"active owner is {top_owner}."
+    )
+
+    return {
+        "posture": posture,
+        "posture_class": posture_class,
+        "executive_brief": executive_brief,
+        "active_count": active_count,
+        "overdue_count": overdue_count,
+        "due_soon_count": due_soon_count,
+        "resolution_rate": resolution_rate,
+        "average_severity": average_severity,
+        "top_category": top_category,
+        "top_owner": top_owner,
+        "highest_risk": highest_risk,
+        "severity_distribution": convert_counter_to_bar_data(severity_counter, total_risks),
+        "status_distribution": convert_counter_to_bar_data(status_counter, total_risks),
+        "category_distribution": convert_counter_to_bar_data(category_counter, total_risks, limit=6),
+        "owner_workload": convert_counter_to_bar_data(owner_counter, active_count, limit=6),
+        "ai_source_distribution": convert_counter_to_bar_data(ai_source_counter, total_risks),
     }
 
 
@@ -306,11 +422,13 @@ def dashboard():
 
     risks = get_all_risks()
     kpis = calculate_kpis(risks)
+    executive = calculate_executive_analytics(risks)
 
     return render_template(
         "dashboard.html",
         risks=risks,
         kpis=kpis,
+        executive=executive,
         categories=CATEGORIES,
         statuses=STATUSES,
         owners=OWNERS,
