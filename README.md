@@ -1,16 +1,14 @@
 # AI Operations Assistant
 
-Python-based operational risk tracking and remediation coordination platform designed to simulate real-world security and IT operations workflows.
+AI-assisted operational risk management platform built with Flask and SQLite. The application supports operational risk tracking, remediation coordination, CRUD workflows, AI-inspired remediation analysis, dynamic dashboards, reporting automation, and modular Python architecture designed for future AI integration.
 
-This project focuses on:
-- operational risk management
-- SLA tracking
+This project simulates real-world operational workflows commonly found in:
+- security operations
+- governance/risk/compliance (GRC)
 - remediation coordination
-- lifecycle management
-- reporting automation
-- governance/risk concepts
-- operational analytics
-- future AI-assisted operational workflows
+- operational governance tooling
+- IT operations management
+- AI-assisted operational platforms
 
 ---
 
@@ -18,41 +16,63 @@ This project focuses on:
 
 ## Current Capabilities
 
-- CSV-based risk tracking
-- Automatic risk ID generation
+### Operational Risk Management
+- Browser-based risk management workflows
+- Create new operational/security risks
+- Edit existing risks
+- Delete risks
+- Risk lifecycle management
+- Risk owner reassignment
+- Risk closure workflows
 - Severity-based priority calculation
 - SLA monitoring and due-date tracking
 - Risk aging metrics
+- Category and status management
+- Persistent SQLite storage
+
+### AI-Inspired Analysis Engine
+- AI-style remediation recommendations
+- AI-generated operational rationale
+- Keyword-based operational analysis
+- Category-aware recommendation logic
+- Severity-aware priority analysis
+- Modular AI analysis layer (`ai_engine.py`)
+
+### Interactive Dashboard
+- Flask web application
+- Live KPI cards
+- Dynamic filtering and sorting
+- Search functionality
+- Severity filtering
+- Status filtering
+- Owner filtering
+- Category filtering
+- Responsive operational dashboard
+
+### Reporting and Persistence
 - TXT report generation
 - Markdown report generation
-- Owner assignment workflows
-- Recommendation mapping
-- Category and status management
-- Interactive operational menu system
-- Risk lifecycle management
-- Risk status updates
-- Risk owner reassignment
-- Risk closure workflows
-- Persistent CSV rewrite/save functionality
-- Filter and search workflows
-- Keyword-based operational search
-- Critical risk visibility
-- Overdue risk tracking
+- CSV export and persistence workflows
+- SQLite database backend
+- Persistent risk storage
+- Queryable operational data
 
 ---
 
 # Operational Workflow
 
-The application currently supports the following workflow:
+The platform currently supports the following workflow:
 
 1. Add new operational/security risks
-2. View existing risks
-3. Update risk status
-4. Reassign risk ownership
-5. Close risks
-6. Filter/search operational risks
-7. Generate operational reports
-8. Persist updates to CSV storage
+2. Generate AI-inspired recommendations and rationale
+3. View operational dashboards
+4. Edit and update risks
+5. Reassign risk ownership
+6. Track remediation status
+7. Filter/search operational risks
+8. Generate operational reports
+9. Delete or close risks
+10. Persist operational data to SQLite
 
 ---
 
@@ -68,6 +88,11 @@ The application currently supports the following workflow:
 - Infrastructure
 - User Access
 - Physical Security
+- Cloud Security
+- Security Operations
+- Governance
+- Compliance
+- Identity and Access
 
 ---
 
@@ -82,6 +107,57 @@ The application currently supports the following workflow:
 - Missing MFA enforcement
 - Phishing susceptibility
 - Firewall misconfiguration
+- Unpatched VPN appliances
+- Cloud storage exposure
+- Weak endpoint protection
+
+---
+
+# AI Analysis Engine
+
+The platform includes a dedicated AI-style analysis layer located in:
+
+```text
+ai_engine.py
+```
+
+The AI engine currently provides:
+- remediation recommendations
+- operational rationale generation
+- keyword-based analysis
+- severity-aware prioritization
+- recommendation scoring logic
+
+The architecture is intentionally modular to support future integration with:
+- OpenAI APIs
+- Ollama
+- LangChain
+- local LLMs
+- Retrieval-Augmented Generation (RAG)
+- vector databases
+- automated operational workflows
+
+---
+
+# Example AI Analysis
+
+## Risk
+
+```text
+Unpatched VPN appliance exposed to internet
+```
+
+## Generated Recommendation
+
+```text
+Prioritize patching based on severity, validate the affected asset, confirm maintenance windows, apply updates, and rescan to verify remediation.
+```
+
+## Generated Rationale
+
+```text
+Critical priority: Unpatched systems increase the likelihood of exploitation, especially when vulnerabilities are public or actively targeted.
+```
 
 ---
 
@@ -112,8 +188,13 @@ Includes:
 # Technologies Used
 
 - Python
-- CSV
+- Flask
+- SQLite
+- HTML5
+- CSS3
+- JavaScript
 - Markdown
+- CSV
 - VS Code
 - Git
 - GitHub
@@ -125,11 +206,20 @@ Includes:
 ```text
 ai-operations-assistant/
 │
-├── screenshots/
+├── app.py
+├── ai_engine.py
+├── risks.db
 ├── risk_summary.py
-├── risks.csv
+├── templates/
+│   ├── dashboard.html
+│   └── edit_risk.html
+├── static/
+│   └── styles.css
+├── screenshots/
+├── charts/
 ├── risk_report.txt
 ├── risk_report.md
+├── risks.csv
 └── README.md
 ```
 
@@ -137,9 +227,17 @@ ai-operations-assistant/
 
 # Screenshots
 
-## Main Menu
+## Flask Dashboard with AI Analysis
 
-The primary operational interface for interacting with the AI Operations Assistant.
+Browser-based operational dashboard with CRUD workflows, filtering, KPI tracking, and AI-inspired analysis.
+
+![Flask Dashboard](screenshots/flask-risk-dashboard-ai-analysis.png)
+
+---
+
+## Main Menu (Legacy CLI Version)
+
+The original operational CLI interface for interacting with the AI Operations Assistant.
 
 ![Main Menu](screenshots/01_AI_Assist_Main_Menu.png)
 
@@ -197,48 +295,35 @@ Structured CSV-based operational risk storage and persistence.
 
 ---
 
-# Planned Enhancements
+# Implemented Milestones
 
-## Phase 1 — Filtering and Search
-- Filter by severity
-- Filter by owner
-- Filter by category
-- Filter by status
-- Search by keyword
-- Show overdue risks
+## Completed Features
+- CSV-based persistence
+- SQLite integration
+- Flask web application
+- CRUD operational workflows
+- Dynamic filtering and search
+- AI-inspired recommendation engine
+- AI rationale generation
+- Modular AI architecture
+- Reporting automation
+- Interactive operational dashboard
 
-## Phase 1.5 — Recommendation Library
-- Expanded recommendation mappings
-- Keyword-based remediation library
-- Category-aware remediation guidance
-- Multi-keyword scoring logic
-- Improved operational recommendations
+---
 
-## Phase 2 — Dashboard Metrics
-- Risk visualizations
-- SLA dashboards
-- Aging charts
-- Severity distributions
-- Operational metrics
+# Future Roadmap
 
-## Phase 3 — SQLite Integration
-- Replace CSV backend
-- Queryable data storage
-- Improved scalability
-- Faster filtering/search
-
-## Phase 4 — Web Interface
-- Streamlit dashboard
-- Browser-based workflows
-- Interactive reporting
-- Operational UI improvements
-
-## Phase 5 — AI-Assisted Operations
-- AI-generated remediation recommendations
-- Intelligent prioritization
-- SLA escalation suggestions
-- Risk trend analysis
-- Operational coordination assistance
+## Planned Enhancements
+- Dynamic chart generation from SQLite
+- Executive summary generation
+- Risk aging and SLA dashboards
+- Authentication and role-based access
+- REST API endpoints
+- OpenAI integration
+- Automated ticket workflows
+- Email alerting and escalation
+- Operational trend analysis
+- Cloud deployment
 
 ---
 
@@ -249,16 +334,34 @@ This project is evolving toward a lightweight AI-assisted operational risk and r
 - security operations coordination
 - remediation tracking systems
 - operational governance tooling
+- AI-assisted operational platforms
 - project management workflows
 
 Future roadmap concepts include:
 - AI-assisted remediation guidance
 - intelligent recommendation scoring
 - dashboard analytics
-- database-backed persistence
 - operational ticket integration
 - authentication and role-based access
-- web-based operational workflows
+- LLM-assisted operational workflows
+- automated operational coordination
+- executive reporting automation
+
+---
+
+# Learning Objectives
+
+This project demonstrates practical experience with:
+- Flask application development
+- SQLite database integration
+- CRUD operational workflows
+- modular Python architecture
+- operational risk concepts
+- frontend/backend integration
+- AI-assisted workflow design
+- security operations concepts
+- operational analytics
+- reporting automation
 
 ---
 
@@ -266,5 +369,8 @@ Future roadmap concepts include:
 
 Greg Dougall
 
-GitHub:
+Tacoma Community College  
+AAS Information Systems & Cybersecurity
+
+GitHub:  
 https://github.com/grgdougall-crypto
