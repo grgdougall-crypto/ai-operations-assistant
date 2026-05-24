@@ -1,6 +1,10 @@
 import json
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 try:
     from google import genai
 except ImportError:
@@ -260,8 +264,9 @@ Metrics:
 - Active risks: {executive_data.get('active_count')}
 - Critical risks: {executive_data.get('critical_count')}
 - High risks: {executive_data.get('high_count')}
-- Overdue active risks: {executive_data.get('overdue_count')}
+- Breached SLA items: {executive_data.get('overdue_count')}
 - Due within 7 days: {executive_data.get('due_soon_count')}
+- SLA health rate: {executive_data.get('sla_health_rate')}%
 - Resolution rate: {executive_data.get('resolution_rate')}%
 - Average severity: {executive_data.get('average_severity')}
 - Top category: {executive_data.get('top_category')}
@@ -382,12 +387,12 @@ def generate_rule_based_executive_summary(executive_data):
         f"The current risk portfolio contains {executive_data.get('total_risks')} tracked risks, "
         f"including {executive_data.get('active_count')} active items. Current posture is "
         f"{executive_data.get('posture')}, with {executive_data.get('critical_count')} critical risks, "
-        f"{executive_data.get('high_count')} high risks, and {executive_data.get('overdue_count')} overdue active risks."
+        f"{executive_data.get('high_count')} high risks, and {executive_data.get('overdue_count')} breached SLA items."
     )
 
     priority_focus = (
         f"Leadership should prioritize the {executive_data.get('top_category')} category and review workload assigned to "
-        f"{executive_data.get('top_owner')}. Immediate attention should focus on overdue risks, critical risks, "
+        f"{executive_data.get('top_owner')}. Immediate attention should focus on breached SLA items, critical risks, "
         "and remediation efforts approaching due dates."
     )
 
@@ -438,7 +443,7 @@ def get_provider_order():
 
 
 def call_gemini(prompt):
-    client = genai.Client()
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     response = client.models.generate_content(
@@ -453,7 +458,7 @@ def call_gemini(prompt):
 
 
 def call_openai(prompt):
-    client = OpenAI()
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
     response = client.responses.create(

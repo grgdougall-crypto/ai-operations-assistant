@@ -2,7 +2,10 @@ from collections import Counter
 from datetime import datetime, date
 import sqlite3
 
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
+
+load_dotenv()
 
 from ai_engine import generate_ai_analysis, generate_ai_executive_summary
 
@@ -48,6 +51,9 @@ OWNERS = [
     "Identity Team",
 ]
 
+RESOLVED_STATUSES = ["CLOSED", "MITIGATED", "ACCEPTED"]
+ACTIVE_STATUSES = ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
+
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -84,6 +90,7 @@ def ensure_database_schema():
         )
         """
     )
+
     conn.commit()
     conn.close()
 
@@ -103,10 +110,67 @@ def normalize_legacy_ai_source_labels():
     conn.close()
 
 
+def parse_due_date(due_date_text):
+    try:
+        return datetime.strptime(due_date_text, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return None
+
+
+def calculate_sla_status(status, due_date_text):
+    if status in RESOLVED_STATUSES:
+        return {
+            "label": "Resolved",
+            "class": "sla-resolved",
+            "days_until_due": None,
+        }
+
+    due_date = parse_due_date(due_date_text)
+
+    if due_date is None:
+        return {
+            "label": "Unknown",
+            "class": "sla-unknown",
+            "days_until_due": None,
+        }
+
+    days_until_due = (due_date - date.today()).days
+
+    if days_until_due < 0:
+        return {
+            "label": "Breached",
+            "class": "sla-breached",
+            "days_until_due": days_until_due,
+        }
+
+    if days_until_due <= 7:
+        return {
+            "label": "Due Soon",
+            "class": "sla-due-soon",
+            "days_until_due": days_until_due,
+        }
+
+    return {
+        "label": "On Track",
+        "class": "sla-on-track",
+        "days_until_due": days_until_due,
+    }
+
+
+def add_sla_metadata(risk):
+    risk_dict = dict(risk)
+    risk_dict["sla"] = calculate_sla_status(
+        risk_dict["status"],
+        risk_dict["due_date"],
+    )
+    return risk_dict
+
+
 def get_all_risks():
     conn = get_db_connection()
 
-    risks = conn.execute("""
+    rows = conn.execute(
+        """
         SELECT
             id,
             name,
@@ -121,15 +185,17 @@ def get_all_risks():
             ai_source
         FROM risks
         ORDER BY severity DESC, due_date ASC
-    """).fetchall()
+        """
+    ).fetchall()
 
     conn.close()
-    return risks
+    return [add_sla_metadata(row) for row in rows]
 
 
 def get_risk_by_id(risk_id):
     conn = get_db_connection()
-    risk = conn.execute(
+
+    row = conn.execute(
         """
         SELECT
             id,
@@ -148,12 +214,18 @@ def get_risk_by_id(risk_id):
         """,
         (risk_id,),
     ).fetchone()
+
     conn.close()
-    return risk
+
+    if row is None:
+        return None
+
+    return add_sla_metadata(row)
 
 
 def get_latest_executive_summary():
     conn = get_db_connection()
+
     summary = conn.execute(
         """
         SELECT
@@ -168,6 +240,7 @@ def get_latest_executive_summary():
         LIMIT 1
         """
     ).fetchone()
+
     conn.close()
     return summary
 
@@ -201,14 +274,7 @@ def save_executive_summary(summary_data):
 
 
 def is_active_status(status):
-    return status in ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
-
-
-def parse_due_date(due_date_text):
-    try:
-        return datetime.strptime(due_date_text, "%Y-%m-%d").date()
-    except (TypeError, ValueError):
-        return None
+    return status in ACTIVE_STATUSES
 
 
 def calculate_kpis(risks):
@@ -243,9 +309,7 @@ def convert_counter_to_bar_data(counter, total_count, limit=None):
 
 
 def calculate_executive_analytics(risks):
-    today = date.today()
     total_risks = len(risks)
-
     active_risks = [risk for risk in risks if is_active_status(risk["status"])]
     active_count = len(active_risks)
 
@@ -254,27 +318,14 @@ def calculate_executive_analytics(risks):
     moderate_count = sum(1 for risk in risks if 4 <= risk["severity"] <= 6)
     low_count = sum(1 for risk in risks if risk["severity"] <= 3)
 
-    overdue_count = 0
-    due_soon_count = 0
+    overdue_count = sum(1 for risk in active_risks if risk["sla"]["label"] == "Breached")
+    due_soon_count = sum(1 for risk in active_risks if risk["sla"]["label"] == "Due Soon")
+    on_track_count = sum(1 for risk in active_risks if risk["sla"]["label"] == "On Track")
 
-    for risk in active_risks:
-        due_date = parse_due_date(risk["due_date"])
-
-        if due_date is None:
-            continue
-
-        days_until_due = (due_date - today).days
-
-        if days_until_due < 0:
-            overdue_count += 1
-        elif days_until_due <= 7:
-            due_soon_count += 1
-
-    closed_count = sum(1 for risk in risks if risk["status"] == "CLOSED")
-    mitigated_count = sum(1 for risk in risks if risk["status"] == "MITIGATED")
-    resolved_count = closed_count + mitigated_count
+    resolved_count = sum(1 for risk in risks if risk["status"] in RESOLVED_STATUSES)
 
     resolution_rate = round((resolved_count / total_risks) * 100, 1) if total_risks else 0
+    sla_health_rate = round((on_track_count / active_count) * 100, 1) if active_count else 0
 
     average_severity = (
         round(sum(risk["severity"] for risk in risks) / total_risks, 1)
@@ -286,6 +337,7 @@ def calculate_executive_analytics(risks):
     category_counter = Counter(risk["category"] for risk in risks)
     owner_counter = Counter(risk["owner"] for risk in active_risks)
     ai_source_counter = Counter(risk["ai_source"] or "unknown" for risk in risks)
+    sla_counter = Counter(risk["sla"]["label"] for risk in risks)
 
     severity_counter = Counter()
     severity_counter["Critical"] = critical_count
@@ -310,9 +362,9 @@ def calculate_executive_analytics(risks):
     executive_brief = (
         f"Current portfolio contains {total_risks} tracked risks with "
         f"{active_count} active items. There are {critical_count} critical risks, "
-        f"{high_count} high risks, and {overdue_count} overdue active risks. "
-        f"The most common category is {top_category}, and the most loaded "
-        f"active owner is {top_owner}."
+        f"{high_count} high risks, {overdue_count} breached SLA items, "
+        f"and {due_soon_count} items due within 7 days. The most common category "
+        f"is {top_category}, and the most loaded active owner is {top_owner}."
     )
 
     return {
@@ -325,6 +377,8 @@ def calculate_executive_analytics(risks):
         "high_count": high_count,
         "overdue_count": overdue_count,
         "due_soon_count": due_soon_count,
+        "on_track_count": on_track_count,
+        "sla_health_rate": sla_health_rate,
         "resolution_rate": resolution_rate,
         "average_severity": average_severity,
         "top_category": top_category,
@@ -335,6 +389,7 @@ def calculate_executive_analytics(risks):
         "category_distribution": convert_counter_to_bar_data(category_counter, total_risks, limit=6),
         "owner_workload": convert_counter_to_bar_data(owner_counter, active_count, limit=6),
         "ai_source_distribution": convert_counter_to_bar_data(ai_source_counter, total_risks),
+        "sla_distribution": convert_counter_to_bar_data(sla_counter, total_risks),
     }
 
 

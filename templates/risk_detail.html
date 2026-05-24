@@ -35,6 +35,15 @@
                 </div>
 
                 <div class="detail-item">
+                    <span class="detail-label">SLA Status</span>
+                    <span class="detail-value">
+                        <span class="sla-badge {{ risk['sla']['class'] }}">
+                            {{ risk["sla"]["label"] }}
+                        </span>
+                    </span>
+                </div>
+
+                <div class="detail-item">
                     <span class="detail-label">Owner</span>
                     <span class="detail-value">{{ risk["owner"] }}</span>
                 </div>

@@ -89,7 +89,7 @@
         </div>
 
         <div class="metric-card danger-metric">
-            <span class="metric-label">Overdue Active Risks</span>
+            <span class="metric-label">SLA Breached</span>
             <strong>{{ executive.overdue_count }}</strong>
         </div>
 
@@ -99,8 +99,8 @@
         </div>
 
         <div class="metric-card">
-            <span class="metric-label">Resolution Rate</span>
-            <strong>{{ executive.resolution_rate }}%</strong>
+            <span class="metric-label">SLA Health</span>
+            <strong>{{ executive.sla_health_rate }}%</strong>
         </div>
 
         <div class="metric-card">
@@ -133,16 +133,16 @@
         </div>
 
         <div class="panel analytics-panel">
-            <h2>Status Breakdown</h2>
+            <h2>SLA Status</h2>
             <div class="bar-list">
-                {% for item in executive.status_distribution %}
+                {% for item in executive.sla_distribution %}
                 <div class="bar-row">
                     <div class="bar-label">
                         <span>{{ item.label }}</span>
                         <span>{{ item.count }}</span>
                     </div>
                     <div class="bar-track">
-                        <div class="bar-fill neutral-fill" style="width: {{ item.percent }}%;"></div>
+                        <div class="bar-fill sla-chart-fill" style="width: {{ item.percent }}%;"></div>
                     </div>
                 </div>
                 {% endfor %}
@@ -211,6 +211,11 @@
                     Severity {{ executive.highest_risk["severity"] }} ·
                     {{ executive.highest_risk["category"] }} ·
                     {{ executive.highest_risk["owner"] }}
+                </p>
+                <p>
+                    <span class="sla-badge {{ executive.highest_risk['sla']['class'] }}">
+                        {{ executive.highest_risk["sla"]["label"] }}
+                    </span>
                 </p>
                 {% else %}
                 <p>No risks available.</p>
@@ -315,9 +320,10 @@
                         <th>Severity ↕</th>
                         <th>Category ↕</th>
                         <th>Status ↕</th>
+                        <th>SLA</th>
                         <th>Owner ↕</th>
                         <th>Due Date ↕</th>
-                        <th>AI Analysis</th>
+                        <th>AI Recommendation Preview</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -343,25 +349,21 @@
 
                         <td>{{ risk["category"] }}</td>
                         <td>{{ risk["status"] }}</td>
+                        <td>
+                            <span class="sla-badge {{ risk['sla']['class'] }}">
+                                {{ risk["sla"]["label"] }}
+                            </span>
+                        </td>
                         <td>{{ risk["owner"] }}</td>
                         <td>{{ risk["due_date"] }}</td>
-                        <td class="recommendation-cell">
-                            <div class="ai-source-row">
-                                <span class="ai-source-label">AI Source</span>
+                        <td class="recommendation-preview-cell">
+                            <div class="preview-source-row">
                                 <span class="ai-source-badge source-{{ risk['ai_source']|default('unknown', true)|replace('_', '-')|replace(' ', '-') }}">
                                     {{ risk["ai_source"]|default("unknown", true)|replace("-", " ")|title }}
                                 </span>
                             </div>
-
-                            <div class="ai-block">
-                                <span class="ai-label">Recommendation</span>
-                                <p>{{ risk["recommendation"] }}</p>
-                            </div>
-
-                            <div class="ai-block">
-                                <span class="ai-label">Rationale</span>
-                                <p>{{ risk["ai_rationale"] }}</p>
-                            </div>
+                            <p>{{ risk["recommendation"] }}</p>
+                            <a class="read-more-link" href="{{ url_for('risk_detail', risk_id=risk['id']) }}">View full analysis</a>
                         </td>
                         <td class="action-cell">
                             <a class="detail-link" href="{{ url_for('risk_detail', risk_id=risk['id']) }}">View</a>
@@ -441,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const headers = document.querySelectorAll("#riskTable th");
 
     headers.forEach((header, index) => {
-        if (index < 7) {
+        if (index < 8 && index !== 5) {
             header.style.cursor = "pointer";
             header.addEventListener("click", () => {
                 sortTable(index);
