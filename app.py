@@ -56,11 +56,218 @@ OWNERS = [
 RESOLVED_STATUSES = ["CLOSED", "MITIGATED", "ACCEPTED"]
 ACTIVE_STATUSES = ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
 
+DEMO_RISKS = [
+    {
+        "id": "RISK-001",
+        "name": "NO MFA FOR VPN",
+        "severity": 10,
+        "category": "Authentication",
+        "status": "OPEN",
+        "owner": "Security Team",
+        "due_date": "2026-05-28",
+        "recommendation": "Require multi-factor authentication for all VPN users, especially privileged and remote access accounts. Review VPN access logs and disable inactive accounts that no longer require remote access.",
+        "ai_rationale": "VPN access without MFA creates a high-risk path for credential-based compromise. MFA reduces the likelihood that stolen or reused passwords can be used to access internal systems.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-002",
+        "name": "OUTDATED FIREWALL FIRMWARE",
+        "severity": 8,
+        "category": "Network",
+        "status": "IN PROGRESS",
+        "owner": "Network Operations",
+        "due_date": "2026-06-05",
+        "recommendation": "Schedule firewall firmware updates during an approved maintenance window. Confirm vendor release notes, capture configuration backups, and validate firewall rules after remediation.",
+        "ai_rationale": "Outdated perimeter security devices may contain known vulnerabilities that increase exposure to unauthorized access or network disruption.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-003",
+        "name": "OPEN S3 STORAGE BUCKET",
+        "severity": 10,
+        "category": "Cloud Security",
+        "status": "OPEN",
+        "owner": "Cloud Operations",
+        "due_date": "2026-05-24",
+        "recommendation": "Restrict public access to the storage bucket, review bucket policy permissions, enable access logging, and validate that sensitive data is not publicly exposed.",
+        "ai_rationale": "Publicly exposed cloud storage can lead to data leakage, compliance violations, and reputational harm if sensitive information is accessible without authorization.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-004",
+        "name": "UNPATCHED DOMAIN CONTROLLER",
+        "severity": 10,
+        "category": "Infrastructure",
+        "status": "OPEN",
+        "owner": "Infrastructure Team",
+        "due_date": "2026-05-26",
+        "recommendation": "Prioritize patching for the domain controller, verify backup integrity before maintenance, and confirm authentication services are stable after restart.",
+        "ai_rationale": "Domain controllers are critical identity infrastructure. Unpatched systems create elevated risk because compromise could affect authentication, privilege management, and domain-wide access.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-005",
+        "name": "EXPOSED RDP PORT",
+        "severity": 9,
+        "category": "Network",
+        "status": "IN PROGRESS",
+        "owner": "Network Operations",
+        "due_date": "2026-05-29",
+        "recommendation": "Block direct RDP exposure at the perimeter. Require VPN or zero-trust access, restrict source IPs, and enforce MFA for privileged remote administration.",
+        "ai_rationale": "Exposed RDP is a common attack path for brute force attempts, ransomware activity, and unauthorized remote access.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-006",
+        "name": "PHISHING CAMPAIGN DETECTED",
+        "severity": 9,
+        "category": "Security Awareness",
+        "status": "OPEN",
+        "owner": "SOC Analyst",
+        "due_date": "2026-05-30",
+        "recommendation": "Review reported messages, update mail filtering rules, notify affected users, and launch targeted phishing awareness reminders for high-risk groups.",
+        "ai_rationale": "Active phishing campaigns can lead to credential compromise, malware delivery, and unauthorized account access if not contained quickly.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-007",
+        "name": "FAILED BACKUP VALIDATION",
+        "severity": 8,
+        "category": "Backup and Recovery",
+        "status": "OPEN",
+        "owner": "Infrastructure Team",
+        "due_date": "2026-06-01",
+        "recommendation": "Perform a documented restore test, investigate failed backup jobs, correct retention issues, and confirm recovery objectives with system owners.",
+        "ai_rationale": "Backups that are not validated may fail during an incident, increasing downtime and reducing recovery confidence.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-008",
+        "name": "INACTIVE MFA ENROLLMENT",
+        "severity": 8,
+        "category": "Authentication",
+        "status": "PENDING REVIEW",
+        "owner": "Identity Team",
+        "due_date": "2026-06-08",
+        "recommendation": "Identify users not enrolled in MFA, enforce enrollment policies, and follow up with account owners for exceptions or service account exclusions.",
+        "ai_rationale": "Incomplete MFA enrollment weakens identity controls and creates inconsistent protection across the environment.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-009",
+        "name": "ENDPOINT EDR AGENT OFFLINE",
+        "severity": 7,
+        "category": "Endpoint Security",
+        "status": "IN PROGRESS",
+        "owner": "Security Team",
+        "due_date": "2026-06-10",
+        "recommendation": "Identify endpoints missing active EDR telemetry, redeploy the agent where needed, and verify that alerts and policy enforcement are functioning.",
+        "ai_rationale": "Endpoints without active monitoring reduce detection coverage and may allow malicious activity to go unnoticed.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-010",
+        "name": "PRIVILEGED ACCESS REVIEW OVERDUE",
+        "severity": 7,
+        "category": "Governance",
+        "status": "OPEN",
+        "owner": "Compliance Team",
+        "due_date": "2026-06-12",
+        "recommendation": "Complete the overdue privileged access review, validate active administrative accounts, remove unnecessary privileges, and document approvals.",
+        "ai_rationale": "Delayed access reviews increase the chance that excessive or outdated privileges remain active across critical systems.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-011",
+        "name": "MISSING INCIDENT RESPONSE PLAYBOOK",
+        "severity": 6,
+        "category": "Incident Response",
+        "status": "OPEN",
+        "owner": "SOC Analyst",
+        "due_date": "2026-06-18",
+        "recommendation": "Create or update incident response playbooks for phishing, ransomware, cloud exposure, and privileged account compromise scenarios.",
+        "ai_rationale": "Documented playbooks reduce response confusion and improve consistency during security or operational incidents.",
+        "ai_source": "rule-based-demo",
+    },
+    {
+        "id": "RISK-012",
+        "name": "SECURITY POLICY EXCEPTION UNREVIEWED",
+        "severity": 5,
+        "category": "Compliance",
+        "status": "PENDING REVIEW",
+        "owner": "Compliance Team",
+        "due_date": "2026-06-20",
+        "recommendation": "Review the policy exception, confirm business justification, assign an expiration date, and document compensating controls.",
+        "ai_rationale": "Unreviewed exceptions can become permanent control gaps if ownership, expiration, and compensating controls are not maintained.",
+        "ai_source": "rule-based-demo",
+    },
+]
+
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE, timeout=10)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def seed_demo_data_if_empty(conn):
+    risk_count = conn.execute("SELECT COUNT(*) AS count FROM risks").fetchone()["count"]
+
+    if risk_count > 0:
+        return
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    for risk in DEMO_RISKS:
+        conn.execute(
+            """
+            INSERT INTO risks (
+                id,
+                name,
+                severity,
+                category,
+                status,
+                owner,
+                timestamp,
+                due_date,
+                recommendation,
+                ai_rationale,
+                ai_source
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                risk["id"],
+                risk["name"],
+                risk["severity"],
+                risk["category"],
+                risk["status"],
+                risk["owner"],
+                timestamp,
+                risk["due_date"],
+                risk["recommendation"],
+                risk["ai_rationale"],
+                risk["ai_source"],
+            ),
+        )
+
+    conn.execute(
+        """
+        INSERT INTO audit_logs (
+            event_type,
+            event_description,
+            related_risk_id,
+            created_at
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            "Demo Data Seeded",
+            f"Demo dataset initialized with {len(DEMO_RISKS)} operational risks.",
+            None,
+            timestamp,
+        ),
+    )
 
 
 def ensure_database_schema():
@@ -123,6 +330,8 @@ def ensure_database_schema():
         )
         """
     )
+
+    seed_demo_data_if_empty(conn)
 
     conn.commit()
     conn.close()
@@ -1079,10 +1288,6 @@ def delete_risk(risk_id):
     delete_existing_risk(risk_id)
     return redirect(url_for("dashboard"))
 
-
-# -------------------------------
-# APPLICATION STARTUP
-# -------------------------------
 
 if __name__ == "__main__":
     ensure_database_schema()
