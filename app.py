@@ -1062,6 +1062,17 @@ def delete_risk(risk_id):
     return redirect(url_for("dashboard"))
 
 
+# -------------------------------
+# APPLICATION STARTUP
+# -------------------------------
+
 if __name__ == "__main__":
     ensure_database_schema()
-    app.run(debug=True)
+
+    debug_mode = False
+
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=debug_mode
+    )
