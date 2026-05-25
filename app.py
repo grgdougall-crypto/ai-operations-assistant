@@ -66,6 +66,24 @@ def get_db_connection():
 def ensure_database_schema():
     conn = get_db_connection()
 
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS risks (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            severity INTEGER NOT NULL,
+            category TEXT NOT NULL,
+            status TEXT NOT NULL,
+            owner TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            due_date TEXT NOT NULL,
+            recommendation TEXT,
+            ai_rationale TEXT,
+            ai_source TEXT
+        )
+        """
+    )
+
     columns = conn.execute("PRAGMA table_info(risks)").fetchall()
     column_names = [column["name"] for column in columns]
 
