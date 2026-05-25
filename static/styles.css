@@ -54,6 +54,10 @@ h1 {
     font-size: 16px;
 }
 
+.audit-hero {
+    margin-bottom: 20px;
+}
+
 .executive-summary-panel {
     margin-bottom: 24px;
 }
@@ -202,6 +206,10 @@ h1 {
     margin-bottom: 22px;
 }
 
+.audit-summary-grid {
+    grid-template-columns: repeat(5, 1fr);
+}
+
 .metric-card {
     padding: 18px;
 }
@@ -296,11 +304,19 @@ h1 {
     margin-bottom: 24px;
 }
 
+.full-audit-panel {
+    margin-top: 24px;
+}
+
 .audit-log-list {
     padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.full-audit-log-list {
+    max-height: none;
 }
 
 .audit-log-item {
@@ -369,6 +385,28 @@ h1 {
 
 .audit-empty-text {
     padding: 18px;
+}
+
+.audit-panel-footer {
+    padding: 0 18px 18px 18px;
+}
+
+.audit-filter-panel {
+    margin-bottom: 24px;
+}
+
+.audit-filter-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 14px;
+    padding: 18px;
+    align-items: end;
+}
+
+.audit-filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .form-panel {
@@ -749,6 +787,10 @@ tr:hover {
     .executive-metrics-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .audit-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 1200px) {
@@ -757,12 +799,14 @@ tr:hover {
     }
 
     .risk-form,
-    .edit-risk-form {
+    .edit-risk-form,
+    .audit-filter-form {
         grid-template-columns: 1fr 1fr;
     }
 
     .form-actions,
-    .edit-actions {
+    .edit-actions,
+    .audit-filter-actions {
         grid-column: span 2;
     }
 
@@ -804,7 +848,8 @@ tr:hover {
     }
 
     .executive-metrics-grid,
-    .chart-grid {
+    .chart-grid,
+    .audit-summary-grid {
         grid-template-columns: 1fr;
     }
 
@@ -813,12 +858,14 @@ tr:hover {
     }
 
     .risk-form,
-    .edit-risk-form {
+    .edit-risk-form,
+    .audit-filter-form {
         grid-template-columns: 1fr;
     }
 
     .form-actions,
-    .edit-actions {
+    .edit-actions,
+    .audit-filter-actions {
         grid-column: span 1;
     }
 
@@ -836,7 +883,8 @@ tr:hover {
         grid-template-columns: 1fr;
     }
 
-    .executive-metrics-grid {
+    .executive-metrics-grid,
+    .audit-summary-grid {
         grid-template-columns: 1fr;
     }
 

@@ -173,6 +173,73 @@ def get_recent_audit_logs(limit=10):
     return rows
 
 
+def get_audit_event_types():
+    conn = get_db_connection()
+
+    rows = conn.execute(
+        """
+        SELECT DISTINCT event_type
+        FROM audit_logs
+        ORDER BY event_type ASC
+        """
+    ).fetchall()
+
+    conn.close()
+    return [row["event_type"] for row in rows]
+
+
+def get_all_audit_logs(search_query="", event_type=""):
+    conn = get_db_connection()
+
+    base_query = """
+        SELECT
+            id,
+            event_type,
+            event_description,
+            related_risk_id,
+            created_at
+        FROM audit_logs
+        WHERE 1 = 1
+    """
+
+    params = []
+
+    if search_query:
+        base_query += """
+            AND (
+                LOWER(event_description) LIKE ?
+                OR LOWER(related_risk_id) LIKE ?
+                OR LOWER(event_type) LIKE ?
+            )
+        """
+        search_pattern = f"%{search_query.lower()}%"
+        params.extend([search_pattern, search_pattern, search_pattern])
+
+    if event_type:
+        base_query += " AND event_type = ?"
+        params.append(event_type)
+
+    base_query += " ORDER BY id DESC"
+
+    rows = conn.execute(base_query, params).fetchall()
+    conn.close()
+    return rows
+
+
+def calculate_audit_summary(audit_logs):
+    total_events = len(audit_logs)
+    event_counter = Counter(log["event_type"] for log in audit_logs)
+
+    return {
+        "total_events": total_events,
+        "risk_created": event_counter.get("Risk Created", 0),
+        "risk_updated": event_counter.get("Risk Updated", 0),
+        "risk_deleted": event_counter.get("Risk Deleted", 0),
+        "exports": event_counter.get("CSV Export", 0) + event_counter.get("Markdown Export", 0),
+        "summaries": event_counter.get("Executive Summary Generated", 0),
+    }
+
+
 def describe_risk_changes(old_risk, new_data):
     changes = []
 
@@ -840,6 +907,30 @@ def dashboard():
         categories=CATEGORIES,
         statuses=STATUSES,
         owners=OWNERS,
+    )
+
+
+@app.route("/audit-log")
+def audit_log():
+    ensure_database_schema()
+
+    search_query = request.args.get("search", "").strip()
+    selected_event_type = request.args.get("event_type", "").strip()
+
+    audit_logs = get_all_audit_logs(
+        search_query=search_query,
+        event_type=selected_event_type,
+    )
+    event_types = get_audit_event_types()
+    audit_summary = calculate_audit_summary(audit_logs)
+
+    return render_template(
+        "audit_log.html",
+        audit_logs=audit_logs,
+        event_types=event_types,
+        audit_summary=audit_summary,
+        search_query=search_query,
+        selected_event_type=selected_event_type,
     )
 
 
