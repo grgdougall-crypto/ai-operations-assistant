@@ -34,6 +34,16 @@ The platform provides an executive dashboard focused on operational posture, SLA
 
 ---
 
+## Live Demo
+
+[View the deployed application on Render](https://ai-operations-assistant-5o3p.onrender.com)
+
+> Note: Render free-tier apps may take 30–60 seconds to wake after inactivity.
+
+The deployed demo includes seeded operational risk data so the dashboard, audit log, analytics, and reporting features can be reviewed immediately.
+
+---
+
 # Screenshots
 
 ## Executive Dashboard Overview
