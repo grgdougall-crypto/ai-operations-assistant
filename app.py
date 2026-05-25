@@ -1,9 +1,11 @@
 from collections import Counter
 from datetime import datetime, date
+import csv
+import io
 import sqlite3
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, make_response, redirect, render_template, request, url_for
 
 load_dotenv()
 
@@ -544,6 +546,50 @@ def validate_risk_form(form):
     }
 
 
+def build_risk_export_csv(risks):
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(
+        [
+            "Risk ID",
+            "Risk Name",
+            "Severity",
+            "Category",
+            "Status",
+            "SLA Status",
+            "Days Until Due",
+            "Owner",
+            "Created Timestamp",
+            "Due Date",
+            "AI Source",
+            "AI Recommendation",
+            "AI Rationale",
+        ]
+    )
+
+    for risk in risks:
+        writer.writerow(
+            [
+                risk["id"],
+                risk["name"],
+                risk["severity"],
+                risk["category"],
+                risk["status"],
+                risk["sla"]["label"],
+                risk["sla"]["days_until_due"],
+                risk["owner"],
+                risk["timestamp"],
+                risk["due_date"],
+                risk["ai_source"],
+                risk["recommendation"],
+                risk["ai_rationale"],
+            ]
+        )
+
+    return output.getvalue()
+
+
 @app.route("/")
 def dashboard():
     ensure_database_schema()
@@ -564,6 +610,23 @@ def dashboard():
         statuses=STATUSES,
         owners=OWNERS,
     )
+
+
+@app.route("/export/risks.csv")
+def export_risks_csv():
+    ensure_database_schema()
+    normalize_legacy_ai_source_labels()
+
+    risks = get_all_risks()
+    csv_data = build_risk_export_csv(risks)
+    generated_at = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"ai_operations_risk_export_{generated_at}.csv"
+
+    response = make_response(csv_data)
+    response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+    response.headers["Content-Type"] = "text/csv; charset=utf-8"
+
+    return response
 
 
 @app.route("/generate-executive-summary", methods=["POST"])
