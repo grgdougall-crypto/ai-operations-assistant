@@ -66,11 +66,12 @@
 
         <div class="executive-summary-content">
             <p class="empty-summary-text">
-                Export the current risk portfolio from SQLite as a CSV file for operational review, management reporting, or offline analysis.
+                Export the current risk portfolio from SQLite for operational review, management reporting, offline analysis, or documentation.
             </p>
 
-            <div class="summary-action-form">
+            <div class="summary-meta-row">
                 <a class="detail-button" href="{{ url_for('export_risks_csv') }}">Export Risks to CSV</a>
+                <a class="detail-button" href="{{ url_for('export_executive_report') }}">Export Executive Markdown Report</a>
             </div>
         </div>
     </div>
