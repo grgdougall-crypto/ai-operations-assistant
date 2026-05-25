@@ -1,5 +1,28 @@
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# VS Code
 .vscode/
+
+# Environment variables
 .env
+
+# Local SQLite database
 risks.db
+*.db
+
+# Generated local exports
+*_export_*.csv
+executive_risk_report_*.md
+
+# OS files
+.DS_Store
+Thumbs.db
