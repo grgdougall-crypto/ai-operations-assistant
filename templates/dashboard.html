@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>AI Operations Risk Platform</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -114,93 +115,43 @@
         </div>
     </div>
 
-    <div class="analytics-grid">
-        <div class="panel analytics-panel">
+    <div class="chart-grid">
+        <div class="panel chart-panel">
             <h2>Severity Distribution</h2>
-            <div class="bar-list">
-                {% for item in executive.severity_distribution %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label }}</span>
-                        <span>{{ item.count }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill severity-{{ item.label|lower }}" style="width: {{ item.percent }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div class="chart-box">
+                <canvas id="severityChart"></canvas>
             </div>
         </div>
 
-        <div class="panel analytics-panel">
+        <div class="panel chart-panel">
             <h2>SLA Status</h2>
-            <div class="bar-list">
-                {% for item in executive.sla_distribution %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label }}</span>
-                        <span>{{ item.count }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill sla-chart-fill" style="width: {{ item.percent }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div class="chart-box">
+                <canvas id="slaChart"></canvas>
             </div>
         </div>
 
-        <div class="panel analytics-panel">
-            <h2>Top Categories</h2>
-            <div class="bar-list">
-                {% for item in executive.category_distribution %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label }}</span>
-                        <span>{{ item.count }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill category-fill" style="width: {{ item.percent }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
+        <div class="panel chart-panel">
+            <h2>Risk Categories</h2>
+            <div class="chart-box">
+                <canvas id="categoryChart"></canvas>
             </div>
         </div>
 
-        <div class="panel analytics-panel">
+        <div class="panel chart-panel">
             <h2>Owner Workload</h2>
-            <div class="bar-list">
-                {% for item in executive.owner_workload %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label }}</span>
-                        <span>{{ item.count }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill owner-fill" style="width: {{ item.percent }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div class="chart-box">
+                <canvas id="ownerChart"></canvas>
             </div>
         </div>
 
-        <div class="panel analytics-panel">
+        <div class="panel chart-panel">
             <h2>AI Source Distribution</h2>
-            <div class="bar-list">
-                {% for item in executive.ai_source_distribution %}
-                <div class="bar-row">
-                    <div class="bar-label">
-                        <span>{{ item.label|replace('-', ' ')|title }}</span>
-                        <span>{{ item.count }}</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill ai-fill" style="width: {{ item.percent }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div class="chart-box">
+                <canvas id="aiSourceChart"></canvas>
             </div>
         </div>
 
-        <div class="panel analytics-panel">
+        <div class="panel chart-panel">
             <h2>Highest Risk</h2>
             <div class="highest-risk-box">
                 {% if executive.highest_risk %}
@@ -381,6 +332,79 @@
     </div>
 
 <script>
+const chartData = {{ executive.chart_data | tojson }};
+
+function createDoughnutChart(canvasId, labels, values) {
+    const context = document.getElementById(canvasId);
+
+    if (!context) {
+        return;
+    }
+
+    new Chart(context, {
+        type: "doughnut",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+}
+
+function createBarChart(canvasId, labels, values) {
+    const context = document.getElementById(canvasId);
+
+    if (!context) {
+        return;
+    }
+
+    new Chart(context, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Count",
+                data: values,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+}
+
+createDoughnutChart("severityChart", chartData.severity.labels, chartData.severity.values);
+createDoughnutChart("slaChart", chartData.sla.labels, chartData.sla.values);
+createBarChart("categoryChart", chartData.categories.labels, chartData.categories.values);
+createBarChart("ownerChart", chartData.owners.labels, chartData.owners.values);
+createDoughnutChart("aiSourceChart", chartData.ai_sources.labels, chartData.ai_sources.values);
+
 function filterTable() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const severityValue = document.getElementById("severityFilter").value.toLowerCase();

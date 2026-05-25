@@ -56,7 +56,7 @@ ACTIVE_STATUSES = ["OPEN", "IN PROGRESS", "PENDING REVIEW"]
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, timeout=10)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -308,6 +308,15 @@ def convert_counter_to_bar_data(counter, total_count, limit=None):
     return results
 
 
+def convert_counter_to_chart_data(counter, limit=None):
+    items = counter.most_common(limit)
+
+    return {
+        "labels": [label for label, count in items],
+        "values": [count for label, count in items],
+    }
+
+
 def calculate_executive_analytics(risks):
     total_risks = len(risks)
     active_risks = [risk for risk in risks if is_active_status(risk["status"])]
@@ -390,6 +399,14 @@ def calculate_executive_analytics(risks):
         "owner_workload": convert_counter_to_bar_data(owner_counter, active_count, limit=6),
         "ai_source_distribution": convert_counter_to_bar_data(ai_source_counter, total_risks),
         "sla_distribution": convert_counter_to_bar_data(sla_counter, total_risks),
+        "chart_data": {
+            "severity": convert_counter_to_chart_data(severity_counter),
+            "sla": convert_counter_to_chart_data(sla_counter),
+            "categories": convert_counter_to_chart_data(category_counter, limit=6),
+            "owners": convert_counter_to_chart_data(owner_counter, limit=6),
+            "ai_sources": convert_counter_to_chart_data(ai_source_counter),
+            "statuses": convert_counter_to_chart_data(status_counter),
+        },
     }
 
 
