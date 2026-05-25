@@ -65,6 +65,7 @@ def get_db_connection():
 
 def ensure_database_schema():
     conn = get_db_connection()
+
     columns = conn.execute("PRAGMA table_info(risks)").fetchall()
     column_names = [column["name"] for column in columns]
 
@@ -93,6 +94,18 @@ def ensure_database_schema():
         """
     )
 
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS audit_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_type TEXT NOT NULL,
+            event_description TEXT NOT NULL,
+            related_risk_id TEXT,
+            created_at TEXT NOT NULL
+        )
+        """
+    )
+
     conn.commit()
     conn.close()
 
@@ -110,6 +123,79 @@ def normalize_legacy_ai_source_labels():
 
     conn.commit()
     conn.close()
+
+
+def create_audit_log(event_type, event_description, related_risk_id=None):
+    conn = get_db_connection()
+    created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    conn.execute(
+        """
+        INSERT INTO audit_logs (
+            event_type,
+            event_description,
+            related_risk_id,
+            created_at
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            event_type,
+            event_description,
+            related_risk_id,
+            created_at,
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_recent_audit_logs(limit=10):
+    conn = get_db_connection()
+
+    rows = conn.execute(
+        """
+        SELECT
+            id,
+            event_type,
+            event_description,
+            related_risk_id,
+            created_at
+        FROM audit_logs
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    conn.close()
+    return rows
+
+
+def describe_risk_changes(old_risk, new_data):
+    changes = []
+
+    comparison_fields = [
+        ("name", "Name"),
+        ("severity", "Severity"),
+        ("category", "Category"),
+        ("status", "Status"),
+        ("owner", "Owner"),
+        ("due_date", "Due Date"),
+    ]
+
+    for field_name, label in comparison_fields:
+        old_value = old_risk[field_name]
+        new_value = new_data[field_name]
+
+        if str(old_value) != str(new_value):
+            changes.append(f"{label} changed from {old_value} to {new_value}")
+
+    if not changes:
+        return "Risk saved with no field changes."
+
+    return "; ".join(changes)
 
 
 def parse_due_date(due_date_text):
@@ -472,8 +558,30 @@ def insert_new_risk(name, severity, category, status, owner, due_date):
     conn.commit()
     conn.close()
 
+    create_audit_log(
+        "Risk Created",
+        f"Risk created: {name.upper()} with severity {severity}, assigned to {owner}.",
+        new_risk_id,
+    )
+
 
 def update_existing_risk(risk_id, name, severity, category, status, owner, due_date):
+    old_risk = get_risk_by_id(risk_id)
+
+    if old_risk is None:
+        return
+
+    new_data = {
+        "name": name.upper(),
+        "severity": severity,
+        "category": category,
+        "status": status,
+        "owner": owner,
+        "due_date": due_date,
+    }
+
+    change_description = describe_risk_changes(old_risk, new_data)
+
     conn = get_db_connection()
     ai_analysis = generate_ai_analysis(name, category, severity)
 
@@ -509,12 +617,27 @@ def update_existing_risk(risk_id, name, severity, category, status, owner, due_d
     conn.commit()
     conn.close()
 
+    create_audit_log(
+        "Risk Updated",
+        f"Risk updated: {risk_id}. {change_description}",
+        risk_id,
+    )
+
 
 def delete_existing_risk(risk_id):
+    risk = get_risk_by_id(risk_id)
+    risk_name = risk["name"] if risk else risk_id
+
     conn = get_db_connection()
     conn.execute("DELETE FROM risks WHERE id = ?", (risk_id,))
     conn.commit()
     conn.close()
+
+    create_audit_log(
+        "Risk Deleted",
+        f"Risk deleted: {risk_name} ({risk_id}).",
+        risk_id,
+    )
 
 
 def validate_risk_form(form):
@@ -705,6 +828,7 @@ def dashboard():
     kpis = calculate_kpis(risks)
     executive = calculate_executive_analytics(risks)
     latest_executive_summary = get_latest_executive_summary()
+    recent_audit_logs = get_recent_audit_logs()
 
     return render_template(
         "dashboard.html",
@@ -712,6 +836,7 @@ def dashboard():
         kpis=kpis,
         executive=executive,
         latest_executive_summary=latest_executive_summary,
+        recent_audit_logs=recent_audit_logs,
         categories=CATEGORIES,
         statuses=STATUSES,
         owners=OWNERS,
@@ -727,6 +852,11 @@ def export_risks_csv():
     csv_data = build_risk_export_csv(risks)
     generated_at = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"ai_operations_risk_export_{generated_at}.csv"
+
+    create_audit_log(
+        "CSV Export",
+        f"CSV risk export generated with {len(risks)} risks.",
+    )
 
     response = make_response(csv_data)
     response.headers["Content-Disposition"] = f"attachment; filename={filename}"
@@ -753,6 +883,11 @@ def export_executive_report():
     generated_at = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"executive_risk_report_{generated_at}.md"
 
+    create_audit_log(
+        "Markdown Export",
+        f"Executive markdown report generated with {len(risks)} risks.",
+    )
+
     response = make_response(markdown_report)
     response.headers["Content-Disposition"] = f"attachment; filename={filename}"
     response.headers["Content-Type"] = "text/markdown; charset=utf-8"
@@ -769,6 +904,11 @@ def generate_executive_summary():
     executive = calculate_executive_analytics(risks)
     summary_data = generate_ai_executive_summary(executive)
     save_executive_summary(summary_data)
+
+    create_audit_log(
+        "Executive Summary Generated",
+        f"AI executive summary generated using {summary_data.get('source', 'unknown')}.",
+    )
 
     return redirect(url_for("dashboard"))
 

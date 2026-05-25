@@ -190,6 +190,33 @@
         </div>
     </div>
 
+    <div class="panel audit-panel">
+        <h2>Recent Activity / Audit History</h2>
+
+        <div class="audit-log-list">
+            {% if recent_audit_logs %}
+                {% for log in recent_audit_logs %}
+                <div class="audit-log-item">
+                    <div class="audit-log-main">
+                        <span class="audit-event-type">{{ log["event_type"] }}</span>
+                        <p>{{ log["event_description"] }}</p>
+                    </div>
+                    <div class="audit-log-meta">
+                        <span>{{ log["created_at"] }}</span>
+                        {% if log["related_risk_id"] %}
+                            <span class="audit-risk-id">{{ log["related_risk_id"] }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-summary-text audit-empty-text">
+                    No audit events have been recorded yet. Create, update, delete, export, or generate a summary to populate this timeline.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="panel form-panel">
         <h2>Add New Risk</h2>
 

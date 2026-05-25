@@ -292,6 +292,85 @@ h1 {
     font-size: 15px;
 }
 
+.audit-panel {
+    margin-bottom: 24px;
+}
+
+.audit-log-list {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.audit-log-item {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 18px;
+    align-items: start;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: all 0.2s ease;
+}
+
+.audit-log-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.audit-log-main {
+    min-width: 0;
+}
+
+.audit-event-type {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #075985;
+    border: 1px solid #bae6fd;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+}
+
+.audit-log-main p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+.audit-log-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.audit-risk-id {
+    display: inline-block;
+    background: #e5e7eb;
+    color: #334155;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.audit-empty-text {
+    padding: 18px;
+}
+
 .form-panel {
     margin-bottom: 24px;
 }
@@ -614,15 +693,20 @@ tr:hover {
 }
 
 .detail-button {
+    display: inline-block;
     background: #0f172a;
     color: white;
     padding: 10px 14px;
     border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
 }
 
 .detail-button:hover {
     background: #1e293b;
     text-decoration: none;
+    transform: translateY(-1px);
 }
 
 .detail-delete-button {
@@ -684,6 +768,16 @@ tr:hover {
 
     .detail-grid {
         grid-template-columns: 1fr;
+    }
+
+    .audit-log-item {
+        grid-template-columns: 1fr;
+    }
+
+    .audit-log-meta {
+        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 }
 
@@ -753,5 +847,14 @@ tr:hover {
 
     .highest-risk-box a {
         font-size: 20px;
+    }
+
+    .summary-meta-row {
+        align-items: stretch;
+    }
+
+    .detail-button {
+        width: 100%;
+        text-align: center;
     }
 }
