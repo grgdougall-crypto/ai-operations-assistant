@@ -1246,7 +1246,7 @@ tr:hover {
 
 .risk-heatmap-shell {
     display: grid;
-    grid-template-columns: minmax(0, 940px) minmax(320px, 1fr);
+    grid-template-columns: minmax(620px, 1.4fr) minmax(420px, 1fr);
     gap: 24px;
     align-items: start;
     padding: 24px;
