@@ -698,6 +698,154 @@ def convert_counter_to_chart_data(counter, limit=None):
         "values": [count for label, count in items],
     }
 
+def estimate_likelihood_score(risk):
+    """
+    Estimate likelihood from current operational indicators.
+
+    This avoids adding new database fields while still creating
+    a useful risk heat map from existing portfolio data.
+    """
+    severity = risk["severity"]
+    status = risk["status"]
+    sla_label = risk["sla"]["label"]
+
+    likelihood = 2
+
+    if severity >= 9:
+        likelihood += 2
+    elif severity >= 7:
+        likelihood += 1
+
+    if status == "OPEN":
+        likelihood += 1
+    elif status == "IN PROGRESS":
+        likelihood += 0
+    elif status == "PENDING REVIEW":
+        likelihood += 0
+
+    if sla_label == "Breached":
+        likelihood += 2
+    elif sla_label == "Due Soon":
+        likelihood += 1
+
+    return max(1, min(5, likelihood))
+
+
+def estimate_impact_score(risk):
+    """
+    Estimate impact from severity so the heat map can use
+    a standard 1-5 operational risk model.
+    """
+    severity = risk["severity"]
+
+    if severity >= 9:
+        return 5
+    if severity >= 7:
+        return 4
+    if severity >= 5:
+        return 3
+    if severity >= 3:
+        return 2
+
+    return 1
+
+
+def calculate_heat_map_data(risks):
+    """
+    Build a 5x5 heat map using estimated likelihood and impact.
+
+    Likelihood is shown from 5 down to 1.
+    Impact is shown from 1 to 5.
+    """
+    matrix = []
+
+    for likelihood in range(5, 0, -1):
+        row = []
+
+        for impact in range(1, 6):
+            matching_risks = []
+
+            for risk in risks:
+                risk_likelihood = estimate_likelihood_score(risk)
+                risk_impact = estimate_impact_score(risk)
+
+                if risk_likelihood == likelihood and risk_impact == impact:
+                    matching_risks.append(risk)
+
+            risk_count = len(matching_risks)
+            max_severity = max(
+                [risk["severity"] for risk in matching_risks],
+                default=0,
+            )
+
+            if risk_count == 0:
+                heat_level = "heat-empty"
+            elif likelihood * impact >= 20 or max_severity >= 9:
+                heat_level = "heat-critical"
+            elif likelihood * impact >= 12:
+                heat_level = "heat-high"
+            elif likelihood * impact >= 6:
+                heat_level = "heat-moderate"
+            else:
+                heat_level = "heat-low"
+
+            top_cell_risks = sorted(
+                matching_risks,
+                key=lambda risk: risk["severity"],
+                reverse=True,
+            )[:3]
+
+            row.append(
+                {
+                    "likelihood": likelihood,
+                    "impact": impact,
+                    "count": risk_count,
+                    "score": likelihood * impact,
+                    "class": heat_level,
+                    "risks": top_cell_risks,
+                }
+            )
+
+        matrix.append(
+            {
+                "likelihood": likelihood,
+                "cells": row,
+            }
+        )
+
+    top_heat_risks = sorted(
+        risks,
+        key=lambda risk: (
+            estimate_likelihood_score(risk) * estimate_impact_score(risk),
+            risk["severity"],
+        ),
+        reverse=True,
+    )[:5]
+
+    enriched_top_risks = []
+
+    for risk in top_heat_risks:
+        likelihood = estimate_likelihood_score(risk)
+        impact = estimate_impact_score(risk)
+
+        enriched_top_risks.append(
+            {
+                "id": risk["id"],
+                "name": risk["name"],
+                "severity": risk["severity"],
+                "category": risk["category"],
+                "owner": risk["owner"],
+                "sla": risk["sla"],
+                "likelihood": likelihood,
+                "impact": impact,
+                "score": likelihood * impact,
+            }
+        )
+
+    return {
+        "matrix": matrix,
+        "top_risks": enriched_top_risks,
+    }
 
 def calculate_executive_analytics(risks):
     total_risks = len(risks)
@@ -775,6 +923,7 @@ def calculate_executive_analytics(risks):
         "top_category": top_category,
         "top_owner": top_owner,
         "highest_risk": highest_risk,
+        "heat_map": calculate_heat_map_data(risks),
         "severity_distribution": convert_counter_to_bar_data(severity_counter, total_risks),
         "status_distribution": convert_counter_to_bar_data(status_counter, total_risks),
         "category_distribution": convert_counter_to_bar_data(category_counter, total_risks, limit=6),
