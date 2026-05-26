@@ -1442,6 +1442,7 @@ tr:hover {
 .risk-alert-card:hover {
     transform: translateY(-2px);
     border-color: var(--blue);
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.12);
 }
 
 .risk-alert-header {
@@ -1490,4 +1491,17 @@ tr:hover {
     width: 100% !important;
     height: 100% !important;
     max-height: none !important;
+}
+
+@media (max-width: 1400px) {
+
+    .risk-heatmap-shell {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .risk-heatmap-right {
+        width: 100%;
+        max-width: 900px;
+    }
 }
