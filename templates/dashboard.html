@@ -380,7 +380,97 @@
 <script>
 const chartData = {{ executive.chart_data | tojson }};
 
-function createDoughnutChart(canvasId, labels, values) {
+const chartPalette = {
+    critical: "#dc2626",
+    high: "#f97316",
+    moderate: "#eab308",
+    low: "#22c55e",
+    blue: "#2563eb",
+    cyan: "#06b6d4",
+    indigo: "#4f46e5",
+    violet: "#7c3aed",
+    slate: "#475569",
+    green: "#16a34a",
+    amber: "#d97706",
+    red: "#dc2626",
+    gray: "#94a3b8"
+};
+
+const dashboardColors = [
+    chartPalette.blue,
+    chartPalette.indigo,
+    chartPalette.cyan,
+    chartPalette.violet,
+    chartPalette.green,
+    chartPalette.amber,
+    chartPalette.red,
+    chartPalette.slate
+];
+
+const severityColors = {
+    Critical: chartPalette.critical,
+    High: chartPalette.high,
+    Moderate: chartPalette.moderate,
+    Low: chartPalette.low
+};
+
+const slaColors = {
+    "Breached": chartPalette.red,
+    "Due Soon": chartPalette.amber,
+    "On Track": chartPalette.green,
+    "Resolved": chartPalette.blue,
+    "Unknown": chartPalette.gray
+};
+
+const aiSourceColors = {
+    "gemini": chartPalette.green,
+    "openai": chartPalette.blue,
+    "rule-based": chartPalette.amber,
+    "rule-based-demo": chartPalette.amber,
+    "rule-based-fallback": chartPalette.red,
+    "unknown": chartPalette.gray
+};
+
+Chart.defaults.font.family = "Segoe UI, Arial, sans-serif";
+Chart.defaults.color = "#475569";
+Chart.defaults.plugins.tooltip.backgroundColor = "#0f172a";
+Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
+Chart.defaults.plugins.tooltip.bodyColor = "#e2e8f0";
+Chart.defaults.plugins.tooltip.padding = 12;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.displayColors = true;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.boxWidth = 8;
+Chart.defaults.plugins.legend.labels.boxHeight = 8;
+
+function formatLabel(label) {
+    if (!label) {
+        return "Unknown";
+    }
+
+    return label
+        .replaceAll("_", " ")
+        .replaceAll("-", " ")
+        .replace(/\b\w/g, character => character.toUpperCase());
+}
+
+function getColorsForLabels(labels, colorMap = null) {
+    return labels.map((label, index) => {
+        if (colorMap && colorMap[label]) {
+            return colorMap[label];
+        }
+
+        const lowerLabel = String(label).toLowerCase();
+
+        if (colorMap && colorMap[lowerLabel]) {
+            return colorMap[lowerLabel];
+        }
+
+        return dashboardColors[index % dashboardColors.length];
+    });
+}
+
+function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null) {
     const context = document.getElementById(canvasId);
 
     if (!context) {
@@ -393,22 +483,72 @@ function createDoughnutChart(canvasId, labels, values) {
             labels: labels,
             datasets: [{
                 data: values,
-                borderWidth: 1
+                backgroundColor: getColorsForLabels(labels, colorMap),
+                borderColor: "#ffffff",
+                borderWidth: 3,
+                hoverOffset: 10,
+                spacing: 3
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: "64%",
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 900,
+                easing: "easeOutQuart"
+            },
             plugins: {
                 legend: {
-                    position: "bottom"
+                    position: "bottom",
+                    labels: {
+                        padding: 18,
+                        font: {
+                            size: 12,
+                            weight: "600"
+                        },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+
+                            if (!data.labels.length) {
+                                return [];
+                            }
+
+                            return data.labels.map((label, index) => {
+                                const value = data.datasets[0].data[index];
+                                const backgroundColor = data.datasets[0].backgroundColor[index];
+
+                                return {
+                                    text: `${formatLabel(label)} (${value})`,
+                                    fillStyle: backgroundColor,
+                                    strokeStyle: backgroundColor,
+                                    lineWidth: 0,
+                                    hidden: false,
+                                    index: index
+                                };
+                            });
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = formatLabel(context.label);
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((sum, current) => sum + current, 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} (${percent}%)`;
+                        }
+                    }
                 }
             }
         }
     });
 }
 
-function createBarChart(canvasId, labels, values) {
+function createExecutiveBarChart(canvasId, labels, values) {
     const context = document.getElementById(canvasId);
 
     if (!context) {
@@ -418,26 +558,63 @@ function createBarChart(canvasId, labels, values) {
     new Chart(context, {
         type: "bar",
         data: {
-            labels: labels,
+            labels: labels.map(formatLabel),
             datasets: [{
                 label: "Count",
                 data: values,
-                borderWidth: 1
+                backgroundColor: getColorsForLabels(labels),
+                borderRadius: 10,
+                borderSkipped: false,
+                maxBarThickness: 46
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                duration: 850,
+                easing: "easeOutQuart"
+            },
             plugins: {
                 legend: {
                     display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Count: ${context.raw}`;
+                        }
+                    }
                 }
             },
             scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: "#64748b",
+                        font: {
+                            size: 11,
+                            weight: "600"
+                        },
+                        maxRotation: 25,
+                        minRotation: 0
+                    }
+                },
                 y: {
                     beginAtZero: true,
+                    grid: {
+                        color: "rgba(148, 163, 184, 0.22)",
+                        drawBorder: false
+                    },
                     ticks: {
-                        precision: 0
+                        precision: 0,
+                        color: "#64748b",
+                        font: {
+                            size: 11,
+                            weight: "600"
+                        }
                     }
                 }
             }
@@ -445,11 +622,38 @@ function createBarChart(canvasId, labels, values) {
     });
 }
 
-createDoughnutChart("severityChart", chartData.severity.labels, chartData.severity.values);
-createDoughnutChart("slaChart", chartData.sla.labels, chartData.sla.values);
-createBarChart("categoryChart", chartData.categories.labels, chartData.categories.values);
-createBarChart("ownerChart", chartData.owners.labels, chartData.owners.values);
-createDoughnutChart("aiSourceChart", chartData.ai_sources.labels, chartData.ai_sources.values);
+createExecutiveDoughnutChart(
+    "severityChart",
+    chartData.severity.labels,
+    chartData.severity.values,
+    severityColors
+);
+
+createExecutiveDoughnutChart(
+    "slaChart",
+    chartData.sla.labels,
+    chartData.sla.values,
+    slaColors
+);
+
+createExecutiveBarChart(
+    "categoryChart",
+    chartData.categories.labels,
+    chartData.categories.values
+);
+
+createExecutiveBarChart(
+    "ownerChart",
+    chartData.owners.labels,
+    chartData.owners.values
+);
+
+createExecutiveDoughnutChart(
+    "aiSourceChart",
+    chartData.ai_sources.labels,
+    chartData.ai_sources.values,
+    aiSourceColors
+);
 
 function filterTable() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
