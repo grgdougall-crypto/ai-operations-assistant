@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>AI Operations Risk Platform</title>
+    <script>
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <h1>AI Operations Risk Platform</h1>
+    <div class="top-bar">
+        <div>
+            <span class="section-eyebrow">AI Operations</span>
+            <h1>AI Operations Risk Platform</h1>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <span class="theme-toggle-icon">☾</span>
+            <span class="theme-toggle-text">Dark Mode</span>
+        </button>
+    </div>
 
     <div class="executive-hero">
         <div>
@@ -379,6 +393,7 @@
 
 <script>
 const chartData = {{ executive.chart_data | tojson }};
+let chartInstances = [];
 
 const chartPalette = {
     critical: "#dc2626",
@@ -431,17 +446,50 @@ const aiSourceColors = {
     "unknown": chartPalette.gray
 };
 
-Chart.defaults.font.family = "Segoe UI, Arial, sans-serif";
-Chart.defaults.color = "#475569";
-Chart.defaults.plugins.tooltip.backgroundColor = "#0f172a";
-Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
-Chart.defaults.plugins.tooltip.bodyColor = "#e2e8f0";
-Chart.defaults.plugins.tooltip.padding = 12;
-Chart.defaults.plugins.tooltip.cornerRadius = 8;
-Chart.defaults.plugins.tooltip.displayColors = true;
-Chart.defaults.plugins.legend.labels.usePointStyle = true;
-Chart.defaults.plugins.legend.labels.boxWidth = 8;
-Chart.defaults.plugins.legend.labels.boxHeight = 8;
+function getThemeColors() {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+
+    if (currentTheme === "dark") {
+        return {
+            text: "#e5e7eb",
+            muted: "#cbd5e1",
+            grid: "rgba(203, 213, 225, 0.18)",
+            tooltipBg: "#020617",
+            tooltipTitle: "#ffffff",
+            tooltipBody: "#e5e7eb",
+            border: "#0f172a"
+        };
+    }
+
+    return {
+        text: "#1e293b",
+        muted: "#475569",
+        grid: "rgba(148, 163, 184, 0.22)",
+        tooltipBg: "#0f172a",
+        tooltipTitle: "#ffffff",
+        tooltipBody: "#e2e8f0",
+        border: "#ffffff"
+    };
+}
+
+function applyChartDefaults() {
+    const themeColors = getThemeColors();
+
+    Chart.defaults.font.family = "Segoe UI, Arial, sans-serif";
+    Chart.defaults.color = themeColors.text;
+    Chart.defaults.plugins.tooltip.backgroundColor = themeColors.tooltipBg;
+    Chart.defaults.plugins.tooltip.titleColor = themeColors.tooltipTitle;
+    Chart.defaults.plugins.tooltip.bodyColor = themeColors.tooltipBody;
+    Chart.defaults.plugins.tooltip.padding = 12;
+    Chart.defaults.plugins.tooltip.cornerRadius = 8;
+    Chart.defaults.plugins.tooltip.displayColors = true;
+    Chart.defaults.plugins.tooltip.borderColor = "rgba(148, 163, 184, 0.35)";
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    Chart.defaults.plugins.legend.labels.boxWidth = 8;
+    Chart.defaults.plugins.legend.labels.boxHeight = 8;
+    Chart.defaults.plugins.legend.labels.color = themeColors.text;
+}
 
 function formatLabel(label) {
     if (!label) {
@@ -470,21 +518,27 @@ function getColorsForLabels(labels, colorMap = null) {
     });
 }
 
+function destroyCharts() {
+    chartInstances.forEach(chart => chart.destroy());
+    chartInstances = [];
+}
+
 function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null) {
     const context = document.getElementById(canvasId);
+    const themeColors = getThemeColors();
 
     if (!context) {
         return;
     }
 
-    new Chart(context, {
+    const chart = new Chart(context, {
         type: "doughnut",
         data: {
             labels: labels,
             datasets: [{
                 data: values,
                 backgroundColor: getColorsForLabels(labels, colorMap),
-                borderColor: "#ffffff",
+                borderColor: themeColors.border,
                 borderWidth: 3,
                 hoverOffset: 10,
                 spacing: 3
@@ -504,10 +558,14 @@ function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null)
                 legend: {
                     position: "bottom",
                     labels: {
+                        color: themeColors.text,
                         padding: 18,
+                        boxWidth: 9,
+                        boxHeight: 9,
+                        usePointStyle: true,
                         font: {
                             size: 12,
-                            weight: "600"
+                            weight: "700"
                         },
                         generateLabels: function(chart) {
                             const data = chart.data;
@@ -524,6 +582,8 @@ function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null)
                                     text: `${formatLabel(label)} (${value})`,
                                     fillStyle: backgroundColor,
                                     strokeStyle: backgroundColor,
+                                    fontColor: themeColors.text,
+                                    color: themeColors.text,
                                     lineWidth: 0,
                                     hidden: false,
                                     index: index
@@ -533,6 +593,11 @@ function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null)
                     }
                 },
                 tooltip: {
+                    backgroundColor: themeColors.tooltipBg,
+                    titleColor: themeColors.tooltipTitle,
+                    bodyColor: themeColors.tooltipBody,
+                    borderColor: "rgba(148, 163, 184, 0.35)",
+                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
                             const label = formatLabel(context.label);
@@ -546,16 +611,19 @@ function createExecutiveDoughnutChart(canvasId, labels, values, colorMap = null)
             }
         }
     });
+
+    chartInstances.push(chart);
 }
 
 function createExecutiveBarChart(canvasId, labels, values) {
     const context = document.getElementById(canvasId);
+    const themeColors = getThemeColors();
 
     if (!context) {
         return;
     }
 
-    new Chart(context, {
+    const chart = new Chart(context, {
         type: "bar",
         data: {
             labels: labels.map(formatLabel),
@@ -580,6 +648,11 @@ function createExecutiveBarChart(canvasId, labels, values) {
                     display: false
                 },
                 tooltip: {
+                    backgroundColor: themeColors.tooltipBg,
+                    titleColor: themeColors.tooltipTitle,
+                    bodyColor: themeColors.tooltipBody,
+                    borderColor: "rgba(148, 163, 184, 0.35)",
+                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
                             return `Count: ${context.raw}`;
@@ -593,10 +666,10 @@ function createExecutiveBarChart(canvasId, labels, values) {
                         display: false
                     },
                     ticks: {
-                        color: "#64748b",
+                        color: themeColors.muted,
                         font: {
                             size: 11,
-                            weight: "600"
+                            weight: "700"
                         },
                         maxRotation: 25,
                         minRotation: 0
@@ -605,55 +678,95 @@ function createExecutiveBarChart(canvasId, labels, values) {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: "rgba(148, 163, 184, 0.22)",
+                        color: themeColors.grid,
                         drawBorder: false
                     },
                     ticks: {
                         precision: 0,
-                        color: "#64748b",
+                        color: themeColors.muted,
                         font: {
                             size: 11,
-                            weight: "600"
+                            weight: "700"
                         }
                     }
                 }
             }
         }
     });
+
+    chartInstances.push(chart);
 }
 
-createExecutiveDoughnutChart(
-    "severityChart",
-    chartData.severity.labels,
-    chartData.severity.values,
-    severityColors
-);
+function renderCharts() {
+    destroyCharts();
+    applyChartDefaults();
 
-createExecutiveDoughnutChart(
-    "slaChart",
-    chartData.sla.labels,
-    chartData.sla.values,
-    slaColors
-);
+    createExecutiveDoughnutChart(
+        "severityChart",
+        chartData.severity.labels,
+        chartData.severity.values,
+        severityColors
+    );
 
-createExecutiveBarChart(
-    "categoryChart",
-    chartData.categories.labels,
-    chartData.categories.values
-);
+    createExecutiveDoughnutChart(
+        "slaChart",
+        chartData.sla.labels,
+        chartData.sla.values,
+        slaColors
+    );
 
-createExecutiveBarChart(
-    "ownerChart",
-    chartData.owners.labels,
-    chartData.owners.values
-);
+    createExecutiveBarChart(
+        "categoryChart",
+        chartData.categories.labels,
+        chartData.categories.values
+    );
 
-createExecutiveDoughnutChart(
-    "aiSourceChart",
-    chartData.ai_sources.labels,
-    chartData.ai_sources.values,
-    aiSourceColors
-);
+    createExecutiveBarChart(
+        "ownerChart",
+        chartData.owners.labels,
+        chartData.owners.values
+    );
+
+    createExecutiveDoughnutChart(
+        "aiSourceChart",
+        chartData.ai_sources.labels,
+        chartData.ai_sources.values,
+        aiSourceColors
+    );
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+
+    const toggleIcon = document.querySelector(".theme-toggle-icon");
+    const toggleText = document.querySelector(".theme-toggle-text");
+
+    if (theme === "dark") {
+        toggleIcon.textContent = "☀";
+        toggleText.textContent = "Light Mode";
+    } else {
+        toggleIcon.textContent = "☾";
+        toggleText.textContent = "Dark Mode";
+    }
+
+    renderCharts();
+}
+
+function initializeThemeToggle() {
+    const currentTheme = localStorage.getItem("theme") || "light";
+    const themeToggle = document.getElementById("themeToggle");
+
+    setTheme(currentTheme);
+
+    if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+            const activeTheme = document.documentElement.getAttribute("data-theme") || "light";
+            const nextTheme = activeTheme === "dark" ? "light" : "dark";
+            setTheme(nextTheme);
+        });
+    }
+}
 
 function filterTable() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
@@ -714,6 +827,8 @@ function sortTable(columnIndex) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    initializeThemeToggle();
+
     const headers = document.querySelectorAll("#riskTable th");
 
     headers.forEach((header, index) => {
