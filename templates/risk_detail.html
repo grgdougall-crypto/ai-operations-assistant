@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ risk["id"] }} Risk Detail</title>
+    <script>
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>

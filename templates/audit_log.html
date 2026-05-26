@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Audit Log | AI Operations Risk Platform</title>
+
+    <script>
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    </script>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -16,8 +22,10 @@
         <div>
             <span class="section-eyebrow">Governance History</span>
             <h2>Operational Activity Timeline</h2>
+
             <p>
-                Review logged system activity including risk creation, updates, deletions, exports, and AI-generated executive summaries.
+                Review logged system activity including risk creation,
+                updates, deletions, exports, and AI-generated executive summaries.
             </p>
         </div>
 
@@ -28,6 +36,7 @@
     </div>
 
     <div class="executive-metrics-grid audit-summary-grid">
+
         <div class="metric-card">
             <span class="metric-label">Risks Created</span>
             <strong>{{ audit_summary.risk_created }}</strong>
@@ -52,14 +61,17 @@
             <span class="metric-label">AI Summaries</span>
             <strong>{{ audit_summary.summaries }}</strong>
         </div>
+
     </div>
 
     <div class="panel audit-filter-panel">
         <h2>Filter Audit Events</h2>
 
         <form class="audit-filter-form" action="{{ url_for('audit_log') }}" method="GET">
+
             <div class="form-group">
                 <label for="search">Search Events</label>
+
                 <input
                     type="text"
                     id="search"
@@ -71,10 +83,15 @@
 
             <div class="form-group">
                 <label for="event_type">Event Type</label>
+
                 <select id="event_type" name="event_type">
                     <option value="">All Event Types</option>
+
                     {% for event_type in event_types %}
-                    <option value="{{ event_type }}" {% if selected_event_type == event_type %}selected{% endif %}>
+                    <option
+                        value="{{ event_type }}"
+                        {% if selected_event_type == event_type %}selected{% endif %}
+                    >
                         {{ event_type }}
                     </option>
                     {% endfor %}
@@ -83,8 +100,12 @@
 
             <div class="form-actions audit-filter-actions">
                 <button type="submit">Apply Filters</button>
-                <a class="cancel-link" href="{{ url_for('audit_log') }}">Clear Filters</a>
+
+                <a class="cancel-link" href="{{ url_for('audit_log') }}">
+                    Clear Filters
+                </a>
             </div>
+
         </form>
     </div>
 
@@ -92,26 +113,45 @@
         <h2>Full Audit History</h2>
 
         <div class="audit-log-list full-audit-log-list">
+
             {% if audit_logs %}
+
                 {% for log in audit_logs %}
+
                 <div class="audit-log-item">
+
                     <div class="audit-log-main">
-                        <span class="audit-event-type">{{ log["event_type"] }}</span>
+                        <span class="audit-event-type">
+                            {{ log["event_type"] }}
+                        </span>
+
                         <p>{{ log["event_description"] }}</p>
                     </div>
+
                     <div class="audit-log-meta">
+
                         <span>{{ log["created_at"] }}</span>
+
                         {% if log["related_risk_id"] %}
-                            <span class="audit-risk-id">{{ log["related_risk_id"] }}</span>
+                            <span class="audit-risk-id">
+                                {{ log["related_risk_id"] }}
+                            </span>
                         {% endif %}
+
                     </div>
+
                 </div>
+
                 {% endfor %}
+
             {% else %}
+
                 <p class="empty-summary-text audit-empty-text">
                     No audit events matched the selected filters.
                 </p>
+
             {% endif %}
+
         </div>
     </div>
 
