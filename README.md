@@ -1,354 +1,203 @@
-# AI Operations Risk Platform
+# AI Operations Assistant
 
-An AI-assisted operational governance and risk management platform built with Flask, SQLite, Chart.js, and multi-provider AI integrations.
-
-This project evolved from a simple CLI/CSV prototype into a dashboard-driven operational platform focused on:
-
-- operational risk management
-- governance visibility
-- AI-assisted remediation workflows
-- executive reporting
-- audit logging
-- SLA tracking
-- analytics and operational KPIs
-
-The platform simulates a realistic internal operations or security governance environment while remaining lightweight and beginner-friendly.
+AI-powered operational risk management and executive reporting platform built with Flask, SQLite, HTML/CSS, and AI-assisted reporting workflows.
 
 ---
 
-# Executive Dashboard Overview
+## Live Deployment
 
-The platform provides an executive dashboard focused on operational posture, SLA health, risk prioritization, workload visibility, and AI-generated reporting.
+Deployed on Render:
 
-## Key Dashboard Capabilities
-
-- Executive operational posture summaries
-- AI-generated executive reporting
-- Severity and SLA analytics
-- Risk category distribution
-- Team workload visibility
-- AI source tracking
-- Operational KPI monitoring
-- Live SQLite-backed risk workflows
-- Audit history and governance visibility
+https://ai-operations-assistant-5o3p.onrender.com
 
 ---
 
-## Live Demo
+## Dashboard Overview
 
-[View the deployed application on Render](https://ai-operations-assistant-5o3p.onrender.com)
+![Dashboard Overview](screenshots/current/01_dashboard_overview.png)
 
-> Note: Render free-tier apps may take 30–60 seconds to wake after inactivity.
-
-The deployed demo includes seeded operational risk data so the dashboard, audit log, analytics, and reporting features can be reviewed immediately.
-
----
-
-# Screenshots
-
-## Executive Dashboard Overview
-
-<img src="screenshots/current/01_dashboard_overview.png" width="100%">
-
-The executive dashboard provides a high-level operational posture summary including risk exposure, SLA health, AI-generated reporting, and export capabilities.
+Modern executive dashboard for operational risk visibility, SLA monitoring, audit tracking, and executive reporting.
 
 ---
 
 ## Operational Analytics
 
-<img src="screenshots/current/02_operational_analytics.png" width="100%">
+![Operational Analytics](screenshots/current/02_operational_analytics.png)
 
-Operational analytics panels provide visibility into:
+Features include:
 
-- severity distribution
-- SLA performance
-- risk category concentration
-- owner workload
-- AI provider usage
-- highest-priority operational risks
+- Operational KPI monitoring
+- SLA health tracking
+- Risk severity distribution
+- Risk category analytics
+- Owner workload visualization
+- Operational heat map analysis
 
 ---
 
 ## Risk Management Workflow
 
-<img src="screenshots/current/03_risk_management_workflow.png" width="100%">
+![Risk Management Workflow](screenshots/current/03_risk_management_workflow.png)
 
-The operational workflow layer includes:
+Workflow capabilities include:
 
-- risk creation
-- status management
-- SLA tracking
-- filtering and search
-- AI-generated remediation previews
-- operational ownership assignment
+- Risk creation and editing
+- Severity scoring
+- SLA assignment and monitoring
+- Recommendation management
+- Operational ownership tracking
 
 ---
 
-## AI-Assisted Risk Analysis
+## Risk Detail Analysis
 
-<img src="screenshots/current/04_risk_detail_analysis.png" width="100%">
+![Risk Detail Analysis](screenshots/current/04_risk_detail_analysis.png)
 
-Each risk contains detailed AI-assisted remediation guidance including:
+Detailed operational risk review including:
 
-- recommendations
-- rationale
-- AI provider attribution
-- operational metadata
-- lifecycle tracking
+- Risk scoring
+- Business impact analysis
+- Recommendation tracking
+- SLA visibility
+- Ownership and workflow management
 
 ---
 
 ## Audit Log Overview
 
-<img src="screenshots/current/05_audit_log_overview.png" width="100%">
+![Audit Log Overview](screenshots/current/05_audit_log_overview.png)
 
-The governance layer includes a centralized audit log system for tracking:
+Comprehensive audit logging system with:
 
-- risk creation
-- updates
-- deletions
-- exports
-- executive summary generation
-- operational activity history
+- Risk activity history
+- Export tracking
+- Executive summary generation logging
+- Operational workflow visibility
 
 ---
 
-## Audit Filtering and Search
+## Executive Markdown Reporting
 
-<img src="screenshots/current/06_audit_log_filtering.png" width="100%">
+![Executive Markdown Reporting](screenshots/current/06_markdown_executive_reporting.png)
 
-Audit filtering and search capabilities allow operational review and governance traceability across historical events.
+Exportable executive-ready markdown reports containing:
+
+- Executive posture summaries
+- KPI snapshots
+- Operational insights
+- AI-generated executive analysis
+- SLA and risk reporting
 
 ---
 
-## Reporting and Export Features
+## Export & Reporting Features
 
-<img src="screenshots/current/07_export_reporting.png" width="100%">
+![Export Reporting](screenshots/current/07_export_reporting.png)
 
-The platform supports operational reporting exports including:
+Reporting functionality includes:
 
-- CSV portfolio exports
+- CSV risk exports
 - Executive markdown reports
-- offline operational analysis
-- management-ready reporting workflows
+- AI-assisted executive summaries
+- Operational reporting workflows
 
 ---
 
 ## Architecture Documentation
 
-<img src="screenshots/current/08_architecture_documentation.png" width="100%">
+![Architecture Documentation](screenshots/current/08_architecture_documentation.png)
 
-The project includes architecture documentation and operational workflow diagrams using Mermaid.
+Repository includes supporting operational documentation:
 
----
-
-# Core Features
-
-## AI Recommendation Engine
-
-The platform uses a multi-stage fallback AI architecture:
-
-1. Gemini API
-2. OpenAI API
-3. Local rule-based fallback engine
-
-This architecture allows the platform to continue functioning even if external AI providers become unavailable.
-
-### AI Features
-
-- AI-generated remediation recommendations
-- AI-generated rationale summaries
-- AI-generated executive reporting
-- AI source attribution
-- operational fallback resilience
+- System workflow documentation
+- AI fallback architecture
+- Operational workflow diagrams
+- Project structure documentation
 
 ---
 
-## Operational Governance Features
+## Responsive Dashboard Layout
 
-### SLA Tracking
+![Responsive Dashboard](screenshots/current/09_mobile_responsive_view.png)
 
-Risks are automatically categorized into:
+Responsive layout scaling for:
 
-- On Track
-- Due Soon
-- Breached
-- Resolved
-
-### Audit Logging
-
-The platform maintains a centralized audit trail for:
-
-- risk lifecycle events
-- exports
-- executive report generation
-- operational workflow activity
-
-### Executive Reporting
-
-The dashboard provides:
-
-- operational posture summaries
-- KPI metrics
-- workload distribution
-- severity analytics
-- SLA visibility
-- executive narrative summaries
+- Smaller displays
+- Portable monitors
+- Resized browser windows
+- Flexible operational review workflows
 
 ---
 
-# Technology Stack
-
-## Backend
+## Technologies Used
 
 - Python
 - Flask
 - SQLite
-
-## Frontend
-
-- HTML
-- CSS
-- Jinja2 Templates
+- HTML5
+- CSS3
+- Jinja2
 - Chart.js
-
-## AI Integrations
-
-- Gemini API
-- OpenAI API
-- Local Rule-Based Fallback Engine
-
-## Reporting
-
-- CSV Exports
-- Markdown Executive Reports
+- Render
+- GitHub
 
 ---
 
-# Project Architecture
+## Key Features
 
-Architecture documentation is included in the `/documentation` directory.
-
-## Included Documentation
-
-- System architecture diagram
-- AI fallback flow diagram
-- Operational workflow diagram
-
-### Documentation Files
-
-```text
-/documentation
-├── architecture-diagram.md
-├── ai-fallback-flow.md
-└── operational-workflow.md
-```
+- AI-assisted executive summaries
+- Operational risk scoring
+- SLA monitoring
+- Audit logging
+- Heat map visualization
+- Executive markdown reporting
+- CSV export functionality
+- Responsive dashboard design
+- Cloud deployment with Render
 
 ---
 
-# Repository Structure
+## Repository Structure
 
 ```text
 ai-operations-assistant/
+│
 ├── documentation/
+│   ├── ai-fallback-flow.md
+│   ├── architecture-diagram.md
+│   └── operational-workflow.md
+│
 ├── screenshots/
-│   ├── current/
-│   └── archive/
+│   ├── archive/
+│   └── current/
+│
 ├── static/
 ├── templates/
+│
 ├── app.py
 ├── ai_engine.py
+├── risk_summary.py
 ├── requirements.txt
-├── README.md
-└── LICENSE
+├── render.yaml
+└── README.md
 ```
 
 ---
 
-# Current Capabilities
+## Future Improvements
 
-## Operational Analytics
+Potential future enhancements:
 
-- Executive KPI dashboards
-- Severity tracking
-- SLA monitoring
-- Owner workload analysis
-- AI source analytics
-
-## Risk Workflows
-
-- Create risks
-- Update risk status
-- Delete risks
-- Search and filter risks
-- Risk detail analysis
-
-## Reporting
-
-- CSV exports
-- Markdown executive reports
-- AI-generated summaries
-
-## Governance
-
-- Audit logging
-- Activity tracking
-- Event filtering
-- Operational traceability
+- User authentication
+- Role-based access control
+- Risk trend forecasting
+- AI remediation recommendations
+- Database migration support
+- PDF executive exports
+- Real-time dashboard updates
 
 ---
 
-# Future Roadmap
-
-Planned future enhancements include:
-
-- PostgreSQL migration
-- public deployment
-- authentication and RBAC
-- remediation aging analytics
-- SLA forecasting
-- workflow escalation logic
-- Jira/ServiceNow-style workflow simulation
-- enhanced AI remediation intelligence
-- historical trend analytics
-- deployment automation
-
----
-
-# Deployment Goals
-
-Planned deployment targets include:
-
-- Render
-- Railway
-- Fly.io
-
-Future deployment goals include:
-
-- public demo environment
-- production-style environment variables
-- PostgreSQL backend migration
-- persistent hosted database
-
----
-
-# Portfolio Goals
-
-This project was designed to demonstrate:
-
-- Flask application development
-- operational governance concepts
-- cybersecurity risk workflows
-- AI-assisted operational tooling
-- dashboard analytics
-- SQLite persistence
-- architecture documentation
-- reporting and export pipelines
-- audit logging systems
-- responsive frontend design
-
----
-
-# License
+## License
 
 This project is licensed under the MIT License.
