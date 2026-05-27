@@ -2,6 +2,8 @@
 
 AI-powered operational risk management and executive reporting platform built with Flask, SQLite, HTML/CSS, and AI-assisted reporting workflows.
 
+Designed as a portfolio-ready operations platform prototype focused on operational risk visibility, executive reporting, SLA monitoring, workflow coordination, and AI-assisted analysis.
+
 ---
 
 ## Live Deployment
@@ -157,6 +159,16 @@ Responsive layout scaling for:
 
 ---
 
+## Deployment Architecture
+
+- Flask backend hosted on Render
+- SQLite operational datastore
+- Chart.js visualization layer
+- Markdown executive reporting engine
+- GitHub-integrated deployment workflow
+
+---
+
 ## Repository Structure
 
 ```text
@@ -165,7 +177,10 @@ ai-operations-assistant/
 ├── documentation/
 │   ├── ai-fallback-flow.md
 │   ├── architecture-diagram.md
-│   └── operational-workflow.md
+│   ├── operational-workflow.md
+│   └── examples/
+│       ├── risk_report.md
+│       └── risk_report.txt
 │
 ├── screenshots/
 │   ├── archive/
@@ -179,25 +194,5 @@ ai-operations-assistant/
 ├── risk_summary.py
 ├── requirements.txt
 ├── render.yaml
+├── sample_risks.csv
 └── README.md
-```
-
----
-
-## Future Improvements
-
-Potential future enhancements:
-
-- User authentication
-- Role-based access control
-- Risk trend forecasting
-- AI remediation recommendations
-- Database migration support
-- PDF executive exports
-- Real-time dashboard updates
-
----
-
-## License
-
-This project is licensed under the MIT License.
