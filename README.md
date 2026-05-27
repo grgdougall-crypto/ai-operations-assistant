@@ -1,8 +1,24 @@
 # AI Operations Assistant
 
-AI-powered operational risk management and executive reporting platform built with Flask, SQLite, HTML/CSS, and AI-assisted reporting workflows.
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![Flask](https://img.shields.io/badge/Flask-Web_App-black)
+![SQLite](https://img.shields.io/badge/Database-SQLite-blue)
+![Render](https://img.shields.io/badge/Deployment-Render-purple)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-Designed as a portfolio-ready operations platform prototype focused on operational risk visibility, executive reporting, SLA monitoring, workflow coordination, and AI-assisted analysis.
+AI-powered operational risk management and executive reporting platform built with Flask, SQLite, HTML/CSS, and AI-assisted remediation workflows.
+
+The platform uses AI assistance to generate remediation recommendations, explain operational risk rationale, and create executive-ready summaries from the active risk portfolio. AI outputs include source attribution and fallback handling between Gemini, OpenAI, and a local rule-based recommendation engine.
+
+Designed as a portfolio-ready operations platform prototype focused on:
+
+- operational risk visibility
+- executive reporting
+- SLA monitoring
+- workflow coordination
+- audit logging
+- analytics and operational governance
+- AI-assisted operational analysis
 
 ---
 
@@ -11,6 +27,8 @@ Designed as a portfolio-ready operations platform prototype focused on operation
 Deployed on Render:
 
 https://ai-operations-assistant-5o3p.onrender.com
+
+> Render free-tier deployments may take 30–60 seconds to wake after inactivity.
 
 ---
 
@@ -51,17 +69,20 @@ Workflow capabilities include:
 
 ---
 
-## Risk Detail Analysis
+## AI-Assisted Risk Analysis
 
 ![Risk Detail Analysis](screenshots/current/04_risk_detail_analysis.png)
 
-Detailed operational risk review including:
+Each operational risk contains AI-assisted analysis including:
 
-- Risk scoring
-- Business impact analysis
-- Recommendation tracking
-- SLA visibility
-- Ownership and workflow management
+- remediation recommendations
+- rationale explanations
+- business impact analysis
+- operational metadata
+- lifecycle tracking
+- AI provider attribution
+
+AI recommendations are generated through a multi-stage fallback workflow using Gemini, OpenAI, and local fallback logic.
 
 ---
 
@@ -133,29 +154,58 @@ Responsive layout scaling for:
 
 ## Technologies Used
 
+### Backend
+
 - Python
 - Flask
 - SQLite
+
+### Frontend
+
 - HTML5
 - CSS3
 - Jinja2
 - Chart.js
+
+### AI Integrations
+
+- Gemini API
+- OpenAI API
+- Local Rule-Based Fallback Engine
+
+### Deployment & Tooling
+
 - Render
 - GitHub
+- Git
 
 ---
 
-## Key Features
+## Core Features
 
-- AI-assisted executive summaries
-- Operational risk scoring
+### AI-Assisted Operational Analysis
+
+- AI-generated remediation recommendations
+- AI-generated rationale summaries
+- Executive operational summaries
+- AI provider attribution
+- Fallback AI resilience logic
+
+### Operational Governance
+
 - SLA monitoring
+- Operational KPI dashboards
+- Risk prioritization
+- Owner workload visibility
+- Operational heat map visualization
+
+### Reporting & Auditability
+
 - Audit logging
-- Heat map visualization
-- Executive markdown reporting
-- CSV export functionality
-- Responsive dashboard design
-- Cloud deployment with Render
+- CSV exports
+- Executive markdown reports
+- Operational reporting workflows
+- Activity traceability
 
 ---
 
@@ -196,3 +246,41 @@ ai-operations-assistant/
 ├── render.yaml
 ├── sample_risks.csv
 └── README.md
+```
+
+---
+
+## Future Improvements
+
+Potential future enhancements:
+
+- User authentication
+- Role-based access control
+- Risk trend forecasting
+- AI remediation recommendations
+- Database migration support
+- PDF executive exports
+- Real-time dashboard updates
+
+---
+
+## Portfolio Goals
+
+This project was designed to demonstrate:
+
+- Flask application development
+- operational governance concepts
+- cybersecurity risk workflows
+- AI-assisted operational tooling
+- dashboard analytics
+- SQLite persistence
+- architecture documentation
+- reporting and export pipelines
+- audit logging systems
+- responsive frontend design
+
+---
+
+## License
+
+This project is licensed under the MIT License.
