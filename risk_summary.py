@@ -4,7 +4,7 @@ from datetime import datetime, date, timedelta
 
 import matplotlib.pyplot as plt
 
-CSV_FILE = "risks.csv"
+CSV_FILE = "sample_risks.csv"
 TXT_REPORT = "risk_report.txt"
 MD_REPORT = "risk_report.md"
 HTML_REPORT = "dashboard.html"
@@ -161,7 +161,7 @@ def load_risks():
                 })
 
     except FileNotFoundError:
-        print("risks.csv not found. A new file will be created when you add a risk.")
+        print("sample_risks.csv not found. A new file will be created when you add a risk.")
 
     return risks
 
