@@ -5,6 +5,8 @@
 ![SQLite](https://img.shields.io/badge/Database-SQLite-blue)
 ![Render](https://img.shields.io/badge/Deployment-Render-purple)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Gemini](https://img.shields.io/badge/AI-Gemini-blue)
+![OpenAI](https://img.shields.io/badge/AI-OpenAI-green)
 
 AI-powered operational risk management and executive reporting platform built with Flask, SQLite, HTML/CSS, and AI-assisted remediation workflows.
 
